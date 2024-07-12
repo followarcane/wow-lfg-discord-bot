@@ -1,4 +1,4 @@
-package followarcane.WoW_Lfg_Discord_Bot;
+package followarcane.wow_lfg_discord_bot;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
