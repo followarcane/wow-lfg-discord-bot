@@ -1,0 +1,25 @@
+server:
+  port: 1905
+
+
+wow-api:
+  username: pyro
+  password: pyro
+
+
+discord:
+  bot:
+    token: ${DISCORD_BOT_TOKEN}
+    
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wowdiscordbot
+    username: postgres
+    password: pass
+  jpa:
+    hibernate:
+      ddl-auto: create
+  flyway:
+    enabled: true
+    clean-disabled: true

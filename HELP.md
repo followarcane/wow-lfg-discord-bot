@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'followarcane.WoW-Lfg-Discord-Bot' is invalid and this project uses 'followarcane.WoW_Lfg_Discord_Bot' instead.
+* The original package name 'followarcane.WoW-Lfg-Discord-Bot' is invalid and this project uses 'followarcane.wow_lfg_discord_bot' instead.
 
 # Getting Started
 
