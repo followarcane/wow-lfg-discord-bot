@@ -1,15 +1,6 @@
-server:
-  port: 1905
-
-
-wow-api:
-  username: pyro
-  password: pyro
-
-
 discord:
   bot:
-    token: MTI2MTM0NDU4OTYwOTE3MzA0Mg.GOYY-o.8D2BEslm7ixYMeHvy2kCdEaUUcSfy5hSY2lTkM
+    token: YOUR_DISCORD_BOT_TOKEN
 
 spring:
   datasource:
