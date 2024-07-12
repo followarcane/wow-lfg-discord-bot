@@ -14,6 +14,7 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String messageGuildId;
     private String messageChannelId;
     private String messageContent;
     private Long timestamp;
