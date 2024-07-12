@@ -1,6 +1,6 @@
 # WoW LFG Discord Bot
 
-This project is a Discord bot that automatically posts World of Warcraft players' LFG (Looking for Group) listings to specific Discord channels. The bot fetches data from another project called [WowProgressDataCrawler](https://github.com/followarcane/WowProgressDataCrawler). This data includes the latest LFG listings of players, and the bot posts these listings to a specified Discord channel.
+This project is a Discord bot that automatically posts World of Warcraft players' LFG (Looking for Group) listings to specific Discord channels. The bot fetches data from another project called [WowProgressDataCrawler](https://github.com/followarcane/WowProgressDataCrawler). This data includes the latest LFG listings of players, and the bot posts these listings to a specified Discord channel. The data is scraped from wowprogress.com and supplemented with additional information from raider.io and warcraftlogs.com.
 
 ## Features
 
@@ -9,6 +9,12 @@ This project is a Discord bot that automatically posts World of Warcraft players
 - Update data every 30 seconds
 - Post messages as embeds
 - Compare with previous data and only post new listings
+
+## Data From
+
+- wowprogress.com
+- warcraftlogs.com
+- raider.io
 
 ## Requirements
 
@@ -21,22 +27,22 @@ This project is a Discord bot that automatically posts World of Warcraft players
 
 ### Step 1: Clone the Project
 
-\```bash
+```bash
 git clone https://github.com/followarcane/wow-lfg-discord-bot.git
 cd wow-lfg-discord-bot
-\```
+```
 
 ### Step 2: Install Dependencies
 
-\```bash
+```bash
 ./gradlew build
-\```
+```
 
 ### Step 3: Configure the Application
 
 Open the `src/main/resources/application.yml` file and configure the necessary settings.
 
-\```yaml
+```yaml
 server:
   port: 8081
 
@@ -59,36 +65,36 @@ spring:
   flyway:
     enabled: true
     clean-disabled: true
-\```
+```
 
 ### Step 4: Set Environment Variables
 
 Set your Discord bot token as an environment variable.
 
 Linux/MacOS:
-\```bash
+```bash
 export DISCORD_BOT_TOKEN=your_discord_bot_token
-\```
+```
 
 Windows:
-\```cmd
+```cmd
 set DISCORD_BOT_TOKEN=your_discord_bot_token
-\```
+```
 
 ### Step 5: Database Setup
 
 Set up your PostgreSQL database and update the database configuration in `application.yml`.
 
-\```sql
+```sql
 CREATE DATABASE wowdiscordbot;
-\```
+```
 
 ### Step 6: Run the Project
 
-\```bash
+```bash
 ./gradlew bootRun
-\```
+```
 
 ## Usage
 
-Once the bot is running, it will make a request to the [WowProgressDataCrawler](https://github.com/followarcane/WowProgressDataCrawler) API every 30 seconds and fetch the latest LFG listings. These listings are then posted to a specific Discord channel.
+Once the bot is running, it will make a request to the [WowProgressDataCrawler](https://github.com/followarcane/WowProgressDataCrawler) API every 30 seconds and fetch the latest LFG listings. These listings are then posted to a specific Discord channel. The data is collected from wowprogress.com and enhanced with additional information from raider.io and warcraftlogs.com.
