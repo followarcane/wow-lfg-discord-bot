@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.LoginException;
+import java.util.Objects;
 
 @Service
 public class DiscordBotService {
@@ -36,19 +37,15 @@ public class DiscordBotService {
         }
     }
 
-    public void sendEmbedMessageToChannel(EmbedBuilder embed) {
-        jda.getGuilds().forEach(guild -> guild.getTextChannels().forEach(textChannel -> {
-            if (textChannel != null) {
-                textChannel.sendMessageEmbeds(embed.build()).queue();
+    public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed) {
+        Objects.requireNonNull(jda.getTextChannelById(channelId)).sendMessageEmbeds(embed.build()).queue();
 
-                Message message = new Message();
-                message.setMessageGuildId(guild.getId());
-                message.setMessageChannelId(textChannel.getId());
-                message.setMessageContent(embed.build().getTitle());
-                message.setTimestamp(System.currentTimeMillis());
+        Message message = new Message();
+        message.setMessageGuildId("guildIdHere");
+        message.setMessageChannelId(channelId);
+        message.setMessageContent(embed.build().getTitle());
+        message.setTimestamp(System.currentTimeMillis());
 
-                messageRepository.save(message);
-            }
-        }));
+        messageRepository.save(message);
     }
 }

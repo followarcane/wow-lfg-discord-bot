@@ -1,4 +1,4 @@
-package followarcane.wow_lfg_discord_bot.application;
+package followarcane.wow_lfg_discord_bot.application.response;
 
 import lombok.Builder;
 import lombok.Data;
