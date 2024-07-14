@@ -1,7 +1,7 @@
 package followarcane.wow_lfg_discord_bot.application.service;
 
-import followarcane.wow_lfg_discord_bot.application.CharacterInfoResponse;
-import followarcane.wow_lfg_discord_bot.domain.model.Message;
+import followarcane.wow_lfg_discord_bot.application.response.CharacterInfoResponse;
+import followarcane.wow_lfg_discord_bot.domain.model.UserSettings;
 import followarcane.wow_lfg_discord_bot.domain.repository.MessageRepository;
 import followarcane.wow_lfg_discord_bot.infrastructure.properties.ApiProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +28,17 @@ public class DataFetcherService {
 
     private final DiscordBotService discordBotService;
     private final ApiProperties apiProperties;
+    private final DiscordService discordService;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final String wowApi = "http://localhost:8080/api/v1/wdc/latest-lfg";
     private Set<CharacterInfoResponse> previousData = new HashSet<>();
 
     @Autowired
-    public DataFetcherService(DiscordBotService discordBotService, MessageRepository messageRepository, ApiProperties apiProperties) {
+    public DataFetcherService(DiscordBotService discordBotService, MessageRepository messageRepository, ApiProperties apiProperties, DiscordService discordService) {
         this.discordBotService = discordBotService;
         this.apiProperties = apiProperties;
+        this.discordService = discordService;
 
         // Check if username and password are not null or empty
         Assert.notNull(apiProperties.getUsername(), "Username must not be null");
@@ -62,12 +64,18 @@ public class DataFetcherService {
                 newData.removeAll(previousData);
 
                 if (!newData.isEmpty()) {
-                    for (CharacterInfoResponse character : newData) {
-                        log.info("Character: {}", character);
+                    List<UserSettings> matchedLfgs = discordService.getAllUserSettings();
+                    for (UserSettings settings : matchedLfgs) {
+                        List<CharacterInfoResponse> filteredData = newData.stream()
+                                .filter(character -> characterMatchesSettings(character, settings))
+                                .toList();
 
-                        EmbedBuilder embedBuilder = getEmbedBuilder(character);
-                        discordBotService.sendEmbedMessageToChannel(embedBuilder);
-                        Thread.sleep(100);
+                        for (CharacterInfoResponse character : filteredData) {
+                            log.info("Character: {}", character);
+
+                            EmbedBuilder embedBuilder = getEmbedBuilder(character);
+                            discordBotService.sendEmbedMessageToChannel(settings.getChannel().getChannelId(), embedBuilder);
+                        }
                     }
                     previousData = new HashSet<>(data); // Update the previous data
                 } else {
@@ -79,6 +87,12 @@ public class DataFetcherService {
         } catch (Exception e) {
             log.error("Error fetching data from WoW API", e);
         }
+    }
+
+    private boolean characterMatchesSettings(CharacterInfoResponse character, UserSettings settings) {
+        return character.getLanguages().contains(settings.getLanguage())
+                && character.getRealm().equalsIgnoreCase(settings.getRealm())
+                && character.getRegion().equalsIgnoreCase(settings.getRegion());
     }
 
     private static @NotNull EmbedBuilder getEmbedBuilder(CharacterInfoResponse character) {
