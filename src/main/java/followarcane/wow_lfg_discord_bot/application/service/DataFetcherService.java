@@ -1,8 +1,8 @@
 package followarcane.wow_lfg_discord_bot.application.service;
 
 import followarcane.wow_lfg_discord_bot.application.response.CharacterInfoResponse;
+import followarcane.wow_lfg_discord_bot.application.util.ClassColorCodeHelper;
 import followarcane.wow_lfg_discord_bot.domain.model.UserSettings;
-import followarcane.wow_lfg_discord_bot.domain.repository.MessageRepository;
 import followarcane.wow_lfg_discord_bot.infrastructure.properties.ApiProperties;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -15,6 +15,7 @@ import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
@@ -30,15 +31,18 @@ public class DataFetcherService {
     private final ApiProperties apiProperties;
     private final DiscordService discordService;
 
+    private static ClassColorCodeHelper classColorCodeHelper;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final String wowApi = "http://localhost:8080/api/v1/wdc/latest-lfg";
     private Set<CharacterInfoResponse> previousData = new HashSet<>();
 
     @Autowired
-    public DataFetcherService(DiscordBotService discordBotService, MessageRepository messageRepository, ApiProperties apiProperties, DiscordService discordService) {
+    public DataFetcherService(DiscordBotService discordBotService, ApiProperties apiProperties, DiscordService discordService, ClassColorCodeHelper classColorCodeHelper) {
         this.discordBotService = discordBotService;
         this.apiProperties = apiProperties;
         this.discordService = discordService;
+        this.classColorCodeHelper = classColorCodeHelper;
 
         // Check if username and password are not null or empty
         Assert.notNull(apiProperties.getUsername(), "Username must not be null");
@@ -71,10 +75,14 @@ public class DataFetcherService {
                                 .toList();
 
                         for (CharacterInfoResponse character : filteredData) {
-                            log.info("Character: {}", character);
+                            if (!settings.getChannel().getLastSentCharacters().contains(character.getName())) {
+                                log.info("Character: {}", character);
 
-                            EmbedBuilder embedBuilder = getEmbedBuilder(character);
-                            discordBotService.sendEmbedMessageToChannel(settings.getChannel().getChannelId(), embedBuilder);
+                                EmbedBuilder embedBuilder = getEmbedBuilder(character);
+                                discordBotService.sendEmbedMessageToChannel(settings.getChannel().getChannelId(), embedBuilder);
+
+                                discordService.updateLastSentCharacters(settings.getChannel(), character.getName());
+                            }
                         }
                     }
                     previousData = new HashSet<>(data); // Update the previous data
@@ -91,7 +99,7 @@ public class DataFetcherService {
 
     private boolean characterMatchesSettings(CharacterInfoResponse character, UserSettings settings) {
         return character.getLanguages().contains(settings.getLanguage())
-                && character.getRealm().equalsIgnoreCase(settings.getRealm())
+                && (character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("all"))
                 && character.getRegion().equalsIgnoreCase(settings.getRegion());
     }
 
@@ -104,8 +112,8 @@ public class DataFetcherService {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(character.getName() + " | " + character.getRealm() + " | " + character.getRaiderIOData().getClassType() + " | " + character.getRaiderIOData().getActiveSpecRole() + " | " + character.getRaiderIOData().getActiveSpecName(), raiderIOLink);
         embedBuilder.addField("Languages", character.getLanguages(), true);
-        embedBuilder.addField("Item Level", character.getILevel(), true);
-        embedBuilder.addField("Faction", character.getRaiderIOData().getFaction(), true);
+        embedBuilder.addField("Item Level", StringUtils.hasText(character.getILevel()) ? character.getILevel() : "No Info", true);
+        embedBuilder.addField("Faction", StringUtils.hasText(character.getRaiderIOData().getFaction()) ? character.getRaiderIOData().getFaction() : "No Info", true);
 
         for (var raidProgression : character.getRaidProgressions()) {
             embedBuilder.addField(raidProgression.getRaidName(), raidProgression.getSummary(), false);
@@ -121,7 +129,7 @@ public class DataFetcherService {
         embedBuilder.setFooter("Donate -> https://www.patreon.com/Shadlynn/membership");
         embedBuilder.setThumbnail(character.getRaiderIOData().getThumbnailUrl());
 
-        embedBuilder.setColor(Color.BLUE);
+        embedBuilder.setColor(Color.decode(classColorCodeHelper.getClassColorCode(character.getRaiderIOData().getClassType())));
         return embedBuilder;
     }
 }

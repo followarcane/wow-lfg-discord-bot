@@ -15,7 +15,10 @@ import followarcane.wow_lfg_discord_bot.domain.repository.UserRepository;
 import followarcane.wow_lfg_discord_bot.domain.repository.UserSettingsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -84,5 +87,21 @@ public class DiscordService {
 
     public List<UserSettings> getAllUserSettings() {
         return userSettingsRepository.findAll();
+    }
+
+    @Transactional
+    public void updateLastSentCharacters(DiscordChannel channel, String characterName) {
+        DiscordChannel persistentChannel = discordChannelRepository.findById(channel.getId()).orElseThrow(() -> new RuntimeException("Channel not found"));
+
+        LinkedList<String> lastSentCharacters = new LinkedList<>(persistentChannel.getLastSentCharacters());
+        if (lastSentCharacters.contains(characterName)) {
+            lastSentCharacters.remove(characterName);
+        } else if (lastSentCharacters.size() >= 5) {
+            lastSentCharacters.removeFirst();
+        }
+        lastSentCharacters.addLast(characterName);
+
+        persistentChannel.setLastSentCharacters(new ArrayList<>(lastSentCharacters));
+        discordChannelRepository.save(persistentChannel);
     }
 }

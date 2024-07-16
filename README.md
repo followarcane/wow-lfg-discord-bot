@@ -1,6 +1,8 @@
 # WoW LFG Discord Bot
 
-This project is a Discord bot that automatically posts World of Warcraft players' LFG (Looking for Group) listings to specific Discord channels. The bot fetches data from another project called [WowProgressDataCrawler](https://github.com/followarcane/WowProgressDataCrawler). This data includes the latest LFG listings of players, and the bot posts these listings to a specified Discord channel. The data is scraped from wowprogress.com and supplemented with additional information from raider.io and warcraftlogs.com.
+## Introduction
+
+This project is a Discord bot that automatically posts World of Warcraft players' LFG (Looking for Group) listings to specific Discord channels. The bot fetches data from another project called WowProgressDataCrawler. This data includes the latest LFG listings of players, and the bot posts these listings to a specified Discord channel. The data is scraped from wowprogress.com and supplemented with additional information from raider.io and warcraftlogs.com.
 
 ## Features
 
@@ -9,6 +11,7 @@ This project is a Discord bot that automatically posts World of Warcraft players
 - Update data every 30 seconds
 - Post messages as embeds
 - Compare with previous data and only post new listings
+- Track the last 5 characters posted to each Discord channel to avoid duplicates
 
 ## Data From
 
@@ -44,40 +47,42 @@ Open the `src/main/resources/application.yml` file and configure the necessary s
 
 ```yaml
 server:
-  port: 8081
+port: 8081
 
 wow-api:
-  username: your_wow_api_username
-  password: your_wow_api_password
+username: your_wow_api_username
+password: your_wow_api_password
 
 discord:
-  bot:
-    token: ${DISCORD_BOT_TOKEN}
+bot:
+token: ${DISCORD_BOT_TOKEN}
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/wowdiscordbot
-    username: postgres
-    password: pass
-  jpa:
-    hibernate:
-      ddl-auto: create
-  flyway:
-    enabled: true
-    clean-disabled: true
+datasource:
+url: jdbc:postgresql://localhost:5432/wowdiscordbot
+username: postgres
+password: pass
+jpa:
+hibernate:
+ddl-auto: create
+flyway:
+enabled: true
+clean-disabled: true
 ```
 
 ### Step 4: Set Environment Variables
 
 Set your Discord bot token as an environment variable.
 
-Linux/MacOS:
+**Linux/MacOS:**
+
 ```bash
 export DISCORD_BOT_TOKEN=your_discord_bot_token
 ```
 
-Windows:
-```cmd
+**Windows:**
+
+```bash
 set DISCORD_BOT_TOKEN=your_discord_bot_token
 ```
 
@@ -97,4 +102,10 @@ CREATE DATABASE wowdiscordbot;
 
 ## Usage
 
-Once the bot is running, it will make a request to the [WowProgressDataCrawler](https://github.com/followarcane/WowProgressDataCrawler) API every 30 seconds and fetch the latest LFG listings. These listings are then posted to a specific Discord channel. The data is collected from wowprogress.com and enhanced with additional information from raider.io and warcraftlogs.com.
+Once the bot is running, it will make a request to the WowProgressDataCrawler API every 30 seconds and fetch the latest LFG listings. These listings are then posted to a specific Discord channel. The data is collected from wowprogress.com and enhanced with additional information from raider.io and warcraftlogs.com.
+
+The bot tracks the last 5 characters posted to each Discord channel to avoid posting duplicate entries. When new data is fetched, it is compared with the previously posted data, and only new listings are posted.
+
+## Future Plans
+
+We are continuously working to add more features, enhance the existing ones, and rectify any bugs.
