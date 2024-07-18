@@ -104,4 +104,13 @@ public class DiscordService {
         persistentChannel.setLastSentCharacters(new ArrayList<>(lastSentCharacters));
         discordChannelRepository.save(persistentChannel);
     }
+
+    public User getUserByDiscordId(String discordId) {
+        return userRepository.findUserByDiscordId(discordId);
+    }
+
+    public List<DiscordServer> getServersByUserDiscordId(String userDiscordId) {
+        User user = getUserByDiscordId(userDiscordId);
+        return serverRepository.findServersByUser(user);
+    }
 }

@@ -32,6 +32,12 @@ public class RequestConverter {
         User user = new User();
         user.setDiscordId(userRequest.getDiscordId());
         user.setUsername(userRequest.getUsername());
+        user.setGlobalName(userRequest.getGlobalName());
+        user.setDiscriminator(userRequest.getDiscriminator());
+        user.setAvatar(userRequest.getAvatar());
+        user.setBanner(userRequest.getBanner());
+        user.setBannerColor(userRequest.getBannerColor());
+        user.setLocale(userRequest.getLocale());
         return user;
     }
 
