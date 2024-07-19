@@ -16,6 +16,7 @@ public class DiscordServer {
     private String icon;
     private String banner;
     private String description;
+    boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

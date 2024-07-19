@@ -19,9 +19,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,7 +53,7 @@ public class DataFetcherService {
         this.restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(apiProperties.getUsername(), apiProperties.getPassword()));
     }
 
-    //@Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 30000)
     public void fetchData() {
         log.info("Fetching data from WoW API...");
 
@@ -98,10 +100,18 @@ public class DataFetcherService {
     }
 
     private boolean characterMatchesSettings(CharacterInfoResponse character, UserSettings settings) {
-        return character.getLanguages().toLowerCase().contains(settings.getLanguage())
-                && (character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("all"))
-                && character.getRegion().equalsIgnoreCase(settings.getRegion());
+        List<String> settingLanguages = Arrays.stream(settings.getLanguage().replaceAll("\\s+", "").toLowerCase().split(","))
+                .toList();
+        List<String> characterLanguages = Arrays.stream(character.getLanguages().replaceAll("\\s+", "").toLowerCase().split(","))
+                .toList();
+
+        boolean languageMatch = settingLanguages.stream().anyMatch(characterLanguages::contains);
+        boolean realmMatch = character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("all");
+        boolean regionMatch = character.getRegion().equalsIgnoreCase(settings.getRegion());
+
+        return languageMatch && realmMatch && regionMatch;
     }
+
 
     private static @NotNull EmbedBuilder getEmbedBuilder(CharacterInfoResponse character) {
         String raiderIOLink = ("https://raider.io/characters/" + character.getRegion() + "/" + character.getRealm().replace(' ', '-') + "/" + character.getName()).toLowerCase();

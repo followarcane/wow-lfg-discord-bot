@@ -11,5 +11,6 @@ import java.util.List;
 public interface DiscordServerRepository extends JpaRepository<DiscordServer, Long> {
     boolean existsByServerId(String serverId);
     DiscordServer findServerByServerId(String serverId);
-    List<DiscordServer> findServersByUser(User user);
+    List<DiscordServer> findByUserAndActiveTrue(User user);
+
 }

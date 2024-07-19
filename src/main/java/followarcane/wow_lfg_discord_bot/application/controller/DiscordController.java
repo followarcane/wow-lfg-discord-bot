@@ -58,7 +58,7 @@ public class DiscordController {
     @GetMapping("/getUserSettings/{serverId}")
     public ResponseEntity<?> getSettings(@PathVariable String serverId, @RequestHeader("Authorization") String token) {
         String userId = getUserIdFromToken(token);
-        UserSettings userSettings = discordService.getSettingsByServerIdAndUserId(serverId, Long.valueOf(userId));
+        UserSettings userSettings = discordService.getSettingsByServerIdAndUserId(serverId, userId);
         return ResponseEntity.ok(requestConverter.convertToUserSettingsDTO(userSettings));
     }
 

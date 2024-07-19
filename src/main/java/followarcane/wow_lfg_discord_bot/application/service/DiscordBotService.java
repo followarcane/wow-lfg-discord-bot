@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -85,9 +86,15 @@ public class DiscordBotService extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onGuildLeave(GuildLeaveEvent event) {
+        discordService.deActiveGuild(event.getGuild().getId());
+    }
+
     public void addGuildToRepository(String serverId, String serverName, String ownerId, User user, String systemChannelId, String prefix, String icon, String banner, String description) {
-        if (!discordServerRepository.existsByServerId(serverId)) {
-            DiscordServer discordServer = new DiscordServer();
+        DiscordServer discordServer = discordServerRepository.findServerByServerId(serverId);
+        if (discordServer == null) {
+            discordServer = new DiscordServer();
             discordServer.setServerId(serverId);
             discordServer.setServerName(serverName);
             discordServer.setOwnerId(ownerId);
@@ -98,11 +105,12 @@ public class DiscordBotService extends ListenerAdapter {
             discordServer.setBanner(banner);
             discordServer.setDescription(description);
 
-            discordServerRepository.save(discordServer);
             log.info("New server joined: {}", serverName);
         } else {
-            log.info("Server {} already exists in the repository", serverName);
+            log.info("Server {} already exists in the repository. Changing status to Active", serverName);
+            discordServer.setActive(true);
         }
+        discordServerRepository.save(discordServer);
     }
 
 
@@ -185,7 +193,7 @@ public class DiscordBotService extends ListenerAdapter {
         }
     }
 
-    public void handleServerInvite(String tokenResponse) {
+    public User handleServerInvite(String tokenResponse) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(tokenResponse);
@@ -201,11 +209,12 @@ public class DiscordBotService extends ListenerAdapter {
 
                 User user = discordService.getUserByDiscordId(ownerId);
                 addGuildToRepository(discordId, serverName, ownerId, user, systemChannelId, prefix, icon, banner, description);
+                return user;
             }
         } catch (Exception e) {
             log.error("Error processing server invite", e);
+            return null;
         }
+        return null;
     }
-
-
 }

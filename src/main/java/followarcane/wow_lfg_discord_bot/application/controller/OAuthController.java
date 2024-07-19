@@ -4,6 +4,7 @@ import followarcane.wow_lfg_discord_bot.application.request.CodeRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
 import followarcane.wow_lfg_discord_bot.application.service.AuthService;
 import followarcane.wow_lfg_discord_bot.application.service.DiscordBotService;
+import followarcane.wow_lfg_discord_bot.application.service.RequestConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,12 @@ public class OAuthController {
 
     private final DiscordBotService discordBotService;
     private final AuthService authService;
+    private final RequestConverter requestConverter;
 
-    public OAuthController(DiscordBotService discordBotService, AuthService authService) {
+    public OAuthController(DiscordBotService discordBotService, AuthService authService, RequestConverter requestConverter) {
         this.discordBotService = discordBotService;
         this.authService = authService;
+        this.requestConverter = requestConverter;
     }
 
     @PostMapping("/login")
@@ -45,8 +48,8 @@ public class OAuthController {
 
         String tokenResponse = discordBotService.exchangeCodeForToken(codeRequest.getCode(), false);
         if (tokenResponse != null) {
-            discordBotService.handleServerInvite(tokenResponse);
-            return ResponseEntity.ok("Bot invited successfully!");
+            UserRequest userRequest = requestConverter.convertToUserRequest(discordBotService.handleServerInvite(tokenResponse));
+            return ResponseEntity.ok(Map.of("user", userRequest));
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while inviting the bot!");
         }

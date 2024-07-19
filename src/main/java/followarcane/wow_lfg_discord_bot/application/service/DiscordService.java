@@ -63,9 +63,13 @@ public class DiscordService {
     }
 
     public void addUserSettings(UserSettingsRequest userSettingsRequest) {
-        UserSettings userSettings = getSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), Long.valueOf(userSettingsRequest.getUserDiscordId()));
+        UserSettings userSettings = getSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), userSettingsRequest.getUserDiscordId());
         if (userSettings != null) {
-            //Update existing settings
+            userSettings.setRealm(userSettingsRequest.getRealm());
+            userSettings.setRegion(userSettingsRequest.getRegion());
+            userSettings.setLanguage(userSettingsRequest.getLanguage());
+
+            userSettingsRepository.save(userSettings);
         } else {
             DiscordServer discordServer = serverRepository.findServerByServerId(userSettingsRequest.getServerId());
             if (discordServer == null) {
@@ -118,14 +122,20 @@ public class DiscordService {
 
     public List<DiscordServer> getServersByUserDiscordId(String userDiscordId) {
         User user = getUserByDiscordId(userDiscordId);
-        return serverRepository.findServersByUser(user);
+        return serverRepository.findByUserAndActiveTrue(user);
     }
 
     public User findUserByDiscordId(String discordId) {
         return userRepository.findUserByDiscordId(discordId);
     }
 
-    public UserSettings getSettingsByServerIdAndUserId(String serverId, Long userId) {
-        return userSettingsRepository.findByServer_ServerIdAndUser_Id(serverId, userId);
+    public UserSettings getSettingsByServerIdAndUserId(String serverId, String userId) {
+        return userSettingsRepository.findByServer_ServerIdAndUser_DiscordId(serverId, userId);
+    }
+
+    public void deActiveGuild(String id) {
+        DiscordServer discordServer = serverRepository.findServerByServerId(id);
+        discordServer.setActive(false);
+        serverRepository.save(discordServer);
     }
 }
