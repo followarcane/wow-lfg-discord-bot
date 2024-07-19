@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserSettingsRepository extends JpaRepository<UserSettings, Long> {
+    UserSettings findByServer_ServerIdAndUser_Id(String serverId, Long userId);
 }

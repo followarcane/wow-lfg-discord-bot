@@ -63,28 +63,33 @@ public class DiscordService {
     }
 
     public void addUserSettings(UserSettingsRequest userSettingsRequest) {
-        DiscordServer discordServer = serverRepository.findServerByServerId(userSettingsRequest.getServerId());
-        if (discordServer == null) {
-            throw new RuntimeException("Server not found");
-        }
-        DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByChannelId(userSettingsRequest.getChannelId());
-        if (discordChannel == null) {
-            discordChannel = new DiscordChannel();
-            discordChannel.setChannelId(userSettingsRequest.getChannelId());
-            discordChannel.setServer(discordServer);
-            discordChannelRepository.save(discordChannel);
-        }
-        User user = userRepository.findUserByDiscordId(userSettingsRequest.getUserDiscordId());
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        UserSettings userSettings = getSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), Long.valueOf(userSettingsRequest.getUserDiscordId()));
+        if (userSettings != null) {
+            //Update existing settings
+        } else {
+            DiscordServer discordServer = serverRepository.findServerByServerId(userSettingsRequest.getServerId());
+            if (discordServer == null) {
+                throw new RuntimeException("Server not found");
+            }
+            DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByChannelId(userSettingsRequest.getChannelId());
+            if (discordChannel == null) {
+                discordChannel = new DiscordChannel();
+                discordChannel.setChannelId(userSettingsRequest.getChannelId());
+                discordChannel.setServer(discordServer);
+                discordChannelRepository.save(discordChannel);
+            }
+            User user = userRepository.findUserByDiscordId(userSettingsRequest.getUserDiscordId());
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
 
-        UserSettings userSettings = requestConverter.convertToUserSettings(userSettingsRequest);
-        userSettings.setServer(discordServer);
-        userSettings.setChannel(discordChannel);
-        userSettings.setUser(user);
+            userSettings = requestConverter.convertToUserSettings(userSettingsRequest);
+            userSettings.setServer(discordServer);
+            userSettings.setChannel(discordChannel);
+            userSettings.setUser(user);
 
-        userSettingsRepository.save(userSettings);
+            userSettingsRepository.save(userSettings);
+        }
     }
 
     public List<UserSettings> getAllUserSettings() {
@@ -118,5 +123,9 @@ public class DiscordService {
 
     public User findUserByDiscordId(String discordId) {
         return userRepository.findUserByDiscordId(discordId);
+    }
+
+    public UserSettings getSettingsByServerIdAndUserId(String serverId, Long userId) {
+        return userSettingsRepository.findByServer_ServerIdAndUser_Id(serverId, userId);
     }
 }

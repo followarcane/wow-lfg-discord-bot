@@ -51,7 +51,7 @@ public class DataFetcherService {
         this.restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(apiProperties.getUsername(), apiProperties.getPassword()));
     }
 
-    @Scheduled(fixedRate = 30000)
+    //@Scheduled(fixedRate = 30000)
     public void fetchData() {
         log.info("Fetching data from WoW API...");
 
@@ -111,7 +111,7 @@ public class DataFetcherService {
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(character.getName() + " | " + character.getRealm() + " | " + character.getRaiderIOData().getClassType() + " | " + character.getRaiderIOData().getActiveSpecRole() + " | " + character.getRaiderIOData().getActiveSpecName(), raiderIOLink);
-        embedBuilder.addField("Languages", character.getLanguages(), true);
+        embedBuilder.addField("Language", character.getLanguages(), true);
         embedBuilder.addField("Item Level", StringUtils.hasText(character.getILevel()) ? character.getILevel() : "No Info", true);
         embedBuilder.addField("Faction", StringUtils.hasText(character.getRaiderIOData().getFaction()) ? character.getRaiderIOData().getFaction() : "No Info", true);
 

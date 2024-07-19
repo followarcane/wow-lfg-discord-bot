@@ -61,4 +61,13 @@ public class RequestConverter {
         userRequest.setLocale(user.getLocale());
         return userRequest;
     }
+
+    public UserSettingsRequest convertToUserSettingsDTO(UserSettings userSettings) {
+        UserSettingsRequest userSettingsRequest = new UserSettingsRequest();
+        userSettingsRequest.setRealm(userSettings.getRealm());
+        userSettingsRequest.setRegion(userSettings.getRegion());
+        userSettingsRequest.setLanguage(userSettings.getLanguage());
+        userSettingsRequest.setChannelId(userSettings.getChannel().getChannelId());
+        return userSettingsRequest;
+    }
 }

@@ -2,8 +2,8 @@ package followarcane.wow_lfg_discord_bot.application.controller;
 
 import followarcane.wow_lfg_discord_bot.application.request.CodeRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
+import followarcane.wow_lfg_discord_bot.application.service.AuthService;
 import followarcane.wow_lfg_discord_bot.application.service.DiscordBotService;
-import followarcane.wow_lfg_discord_bot.application.service.DiscordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +17,11 @@ import java.util.Map;
 public class OAuthController {
 
     private final DiscordBotService discordBotService;
-    private final DiscordService discordService;
+    private final AuthService authService;
 
-    public OAuthController(DiscordBotService discordBotService, DiscordService discordService) {
+    public OAuthController(DiscordBotService discordBotService, AuthService authService) {
         this.discordBotService = discordBotService;
-        this.discordService = discordService;
+        this.authService = authService;
     }
 
     @PostMapping("/login")
@@ -29,14 +29,20 @@ public class OAuthController {
         String tokenResponse = discordBotService.exchangeCodeForToken(codeRequest.getCode(), true);
         if (tokenResponse != null) {
             UserRequest userRequest = discordBotService.getUserDetails(tokenResponse);
-            return ResponseEntity.ok(userRequest);
+            String jwtToken = authService.generateToken(userRequest.getDiscordId());
+            return ResponseEntity.ok(Map.of("user", userRequest, "token", jwtToken));
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the bot!");
         }
     }
 
     @PostMapping("/inviteBot")
-    public ResponseEntity<?> inviteBot(@RequestBody CodeRequest codeRequest) {
+    public ResponseEntity<?> inviteBot(@RequestBody CodeRequest codeRequest, @RequestHeader("Authorization") String jwtToken) {
+        String userDiscordId = authService.getUserDiscordIdFromToken(jwtToken.replace("Bearer ", ""));
+        if (userDiscordId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token!");
+        }
+
         String tokenResponse = discordBotService.exchangeCodeForToken(codeRequest.getCode(), false);
         if (tokenResponse != null) {
             discordBotService.handleServerInvite(tokenResponse);
@@ -45,11 +51,4 @@ public class OAuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while inviting the bot!");
         }
     }
-
-
-    @GetMapping("/getServers")
-    public ResponseEntity<?> getServers(@RequestParam("userId") String userId) {
-        return ResponseEntity.ok(discordService.getServersByUserDiscordId(userId));
-    }
-
 }
