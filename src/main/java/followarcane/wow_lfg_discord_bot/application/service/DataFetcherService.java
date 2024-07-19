@@ -90,7 +90,7 @@ public class DataFetcherService {
     }
 
     private boolean characterMatchesSettings(CharacterInfoResponse character, UserSettings settings) {
-        return character.getLanguages().contains(settings.getLanguage())
+        return character.getLanguages().toLowerCase().contains(settings.getLanguage())
                 && (character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("all"))
                 && character.getRegion().equalsIgnoreCase(settings.getRegion());
     }
