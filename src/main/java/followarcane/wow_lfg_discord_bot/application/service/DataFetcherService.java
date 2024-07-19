@@ -18,6 +18,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -90,9 +91,16 @@ public class DataFetcherService {
     }
 
     private boolean characterMatchesSettings(CharacterInfoResponse character, UserSettings settings) {
-        return character.getLanguages().toLowerCase().contains(settings.getLanguage())
-                && (character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("all"))
-                && character.getRegion().equalsIgnoreCase(settings.getRegion());
+        List<String> settingLanguages = Arrays.stream(settings.getLanguage().replaceAll("\\s+", "").toLowerCase().split(","))
+                .toList();
+        List<String> characterLanguages = Arrays.stream(character.getLanguages().replaceAll("\\s+", "").toLowerCase().split(","))
+                .toList();
+
+        boolean languageMatch = settingLanguages.stream().anyMatch(characterLanguages::contains);
+        boolean realmMatch = character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("all");
+        boolean regionMatch = character.getRegion().equalsIgnoreCase(settings.getRegion());
+
+        return languageMatch && realmMatch && regionMatch;
     }
 
     private static @NotNull EmbedBuilder getEmbedBuilder(CharacterInfoResponse character) {
