@@ -1,4 +1,4 @@
-package followarcane.wow_lfg_discord_bot.application;
+package followarcane.wow_lfg_discord_bot.application.service;
 
 import followarcane.wow_lfg_discord_bot.application.request.DiscordChannelRequest;
 import followarcane.wow_lfg_discord_bot.application.request.DiscordServerRequest;
@@ -47,5 +47,18 @@ public class RequestConverter {
         userSettings.setRegion(userSettingsRequest.getRegion());
         userSettings.setLanguage(userSettingsRequest.getLanguage());
         return userSettings;
+    }
+
+    public UserRequest convertToUserRequest(User user) {
+        UserRequest userRequest = new UserRequest();
+        userRequest.setDiscordId(user.getDiscordId());
+        userRequest.setUsername(user.getUsername());
+        userRequest.setGlobalName(user.getGlobalName());
+        userRequest.setDiscriminator(user.getDiscriminator());
+        userRequest.setAvatar(user.getAvatar());
+        userRequest.setBanner(user.getBanner());
+        userRequest.setBannerColor(user.getBannerColor());
+        userRequest.setLocale(user.getLocale());
+        return userRequest;
     }
 }

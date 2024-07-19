@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 public class ClassColorCodeHelper {
 
     public String getClassColorCode(String className) {
+        if (className == null) {
+            return "#FFFFF1";
+        }
         return switch (className) {
             case "Death Knight" -> "#C41E3A";
             case "Demon Hunter" -> "#A330C9";

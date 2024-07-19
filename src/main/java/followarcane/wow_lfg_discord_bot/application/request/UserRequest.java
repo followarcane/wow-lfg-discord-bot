@@ -12,5 +12,4 @@ public class UserRequest {
     private String banner;
     private String bannerColor;
     private String locale;
-    private String discordToken;
 }

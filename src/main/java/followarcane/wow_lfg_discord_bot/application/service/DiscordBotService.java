@@ -23,8 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.LoginException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -54,10 +52,13 @@ public class DiscordBotService extends ListenerAdapter {
 
     private final DiscordService discordService;
 
-    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService) {
+    private final RequestConverter requestConverter;
+
+    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter) {
         this.messageRepository = messageRepository;
         this.discordServerRepository = discordServerRepository;
         this.discordService = discordService;
+        this.requestConverter = requestConverter;
     }
 
     @PostConstruct
@@ -84,13 +85,18 @@ public class DiscordBotService extends ListenerAdapter {
         }
     }
 
-    public void addGuildToRepository(String serverId, String serverName, String ownerId, User user) {
+    public void addGuildToRepository(String serverId, String serverName, String ownerId, User user, String systemChannelId, String prefix, String icon, String banner, String description) {
         if (!discordServerRepository.existsByServerId(serverId)) {
             DiscordServer discordServer = new DiscordServer();
             discordServer.setServerId(serverId);
             discordServer.setServerName(serverName);
             discordServer.setOwnerId(ownerId);
             discordServer.setUser(user);
+            discordServer.setSystemChannelId(systemChannelId);
+            discordServer.setPrefix(prefix);
+            discordServer.setIcon(icon);
+            discordServer.setBanner(banner);
+            discordServer.setDescription(description);
 
             discordServerRepository.save(discordServer);
             log.info("New server joined: {}", serverName);
@@ -141,7 +147,7 @@ public class DiscordBotService extends ListenerAdapter {
         }
     }
 
-    public Map<String, Object> getUserDetails(String tokenResponse) {
+    public UserRequest getUserDetails(String tokenResponse) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(tokenResponse);
@@ -161,16 +167,18 @@ public class DiscordBotService extends ListenerAdapter {
             userRequest.setUsername(userInfo.get("username").asText());
             userRequest.setGlobalName(userInfo.get("global_name").asText());
             userRequest.setDiscriminator(userInfo.get("discriminator").asText());
-            userRequest.setAvatar(userInfo.get("avatar").asText(null));
-            userRequest.setBanner(userInfo.get("banner").asText(null));
-            userRequest.setBannerColor(userInfo.get("banner_color").asText(null));
+            userRequest.setAvatar(userInfo.get("avatar").asText());
+            userRequest.setBanner(userInfo.get("banner").asText());
+            userRequest.setBannerColor(userInfo.get("banner_color").asText());
             userRequest.setLocale(userInfo.get("locale").asText());
-            userRequest.setDiscordToken(accessToken);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("user", userRequest);
-
-            return response;
+            User user = discordService.findUserByDiscordId(userRequest.getDiscordId());
+            if (user != null) {
+                log.info("User already exists in the repository");
+                return requestConverter.convertToUserRequest(user);
+            }
+            discordService.addUser(userRequest);
+            return userRequest;
         } catch (Exception e) {
             log.error("Error processing token response", e);
             return null;
@@ -181,26 +189,23 @@ public class DiscordBotService extends ListenerAdapter {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(tokenResponse);
-            String accessToken = jsonNode.get("access_token").asText();
+            if (jsonNode.get("guild") != null) {
+                String discordId = jsonNode.get("guild").get("id").asText();
+                String serverName = jsonNode.get("guild").get("name").asText();
+                String ownerId = jsonNode.get("guild").get("owner_id").asText();
+                String systemChannelId = jsonNode.get("guild").get("system_channel_id").asText();
+                String prefix = "!";
+                String icon = jsonNode.get("guild").get("icon").asText();
+                String banner = jsonNode.get("guild").get("banner").asText();
+                String description = jsonNode.get("guild").get("description").asText();
 
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(accessToken);
-
-            ResponseEntity<String> guildInfoResponse = restTemplate.exchange(
-                    "https://discord.com/api/users/@me/guilds", HttpMethod.GET, new HttpEntity<>(headers), String.class);
-            JsonNode guildInfo = objectMapper.readTree(guildInfoResponse.getBody()).get(0);
-
-            String serverId = guildInfo.get("id").asText();
-            String serverName = guildInfo.get("name").asText();
-            String ownerId = guildInfo.get("owner_id").asText();
-
-            User user = discordService.getUserByDiscordId(guildInfo.get("owner_id").asText());
-
-            addGuildToRepository(serverId, serverName, ownerId, user);
+                User user = discordService.getUserByDiscordId(ownerId);
+                addGuildToRepository(discordId, serverName, ownerId, user, systemChannelId, prefix, icon, banner, description);
+            }
         } catch (Exception e) {
             log.error("Error processing server invite", e);
         }
     }
+
 
 }

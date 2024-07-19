@@ -98,7 +98,7 @@ public class DataFetcherService {
     }
 
     private boolean characterMatchesSettings(CharacterInfoResponse character, UserSettings settings) {
-        return character.getLanguages().contains(settings.getLanguage())
+        return character.getLanguages().toLowerCase().contains(settings.getLanguage())
                 && (character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("all"))
                 && character.getRegion().equalsIgnoreCase(settings.getRegion());
     }
@@ -118,7 +118,7 @@ public class DataFetcherService {
         for (var raidProgression : character.getRaidProgressions()) {
             embedBuilder.addField(raidProgression.getRaidName(), raidProgression.getSummary(), false);
         }
-        embedBuilder.addField("Bio", character.getCommentary().length() > 1020 ?
+        embedBuilder.addField("Information About Player", character.getCommentary().length() > 1020 ?
                 character.getCommentary().substring(0, 1020) + "..." : character.getCommentary(), false);
         embedBuilder.addField("External Links",
                 "[Armory]" + "(" + armoryLink + ")" +
@@ -126,7 +126,7 @@ public class DataFetcherService {
                         " | [WowProgress]" + "(" + wowProgressLink + ")" +
                         " | [Warcraftlogs]" + "(" + warcraftLogsLink + ")"
                 , false);
-        embedBuilder.setFooter("Donate -> https://www.patreon.com/Shadlynn/membership");
+        embedBuilder.setFooter("Donate -> https://www.patreon.com/Shadlynn/membership","https://imgur.com/iZpMxz0.jpg");
         embedBuilder.setThumbnail(character.getRaiderIOData().getThumbnailUrl());
 
         embedBuilder.setColor(Color.decode(classColorCodeHelper.getClassColorCode(character.getRaiderIOData().getClassType())));

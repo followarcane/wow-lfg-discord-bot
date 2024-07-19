@@ -28,11 +28,7 @@ public class OAuthController {
     public ResponseEntity<?> login(@RequestBody CodeRequest codeRequest) {
         String tokenResponse = discordBotService.exchangeCodeForToken(codeRequest.getCode(), true);
         if (tokenResponse != null) {
-            Map<String, Object> response = discordBotService.getUserDetails(tokenResponse);
-            UserRequest userRequest = (UserRequest) response.get("user");
-
-            discordService.addUser(userRequest);
-
+            UserRequest userRequest = discordBotService.getUserDetails(tokenResponse);
             return ResponseEntity.ok(userRequest);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the bot!");

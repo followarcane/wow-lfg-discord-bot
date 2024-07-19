@@ -11,6 +11,11 @@ public class DiscordServer {
     private String serverId;
     private String serverName;
     private String ownerId;
+    private String systemChannelId;
+    private String prefix;
+    private String icon;
+    private String banner;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

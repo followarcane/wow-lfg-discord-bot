@@ -1,6 +1,5 @@
 package followarcane.wow_lfg_discord_bot.application.service;
 
-import followarcane.wow_lfg_discord_bot.application.RequestConverter;
 import followarcane.wow_lfg_discord_bot.application.request.DiscordChannelRequest;
 import followarcane.wow_lfg_discord_bot.application.request.DiscordServerRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
@@ -70,7 +69,10 @@ public class DiscordService {
         }
         DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByChannelId(userSettingsRequest.getChannelId());
         if (discordChannel == null) {
-            throw new RuntimeException("Channel not found");
+            discordChannel = new DiscordChannel();
+            discordChannel.setChannelId(userSettingsRequest.getChannelId());
+            discordChannel.setServer(discordServer);
+            discordChannelRepository.save(discordChannel);
         }
         User user = userRepository.findUserByDiscordId(userSettingsRequest.getUserDiscordId());
         if (user == null) {
@@ -112,5 +114,9 @@ public class DiscordService {
     public List<DiscordServer> getServersByUserDiscordId(String userDiscordId) {
         User user = getUserByDiscordId(userDiscordId);
         return serverRepository.findServersByUser(user);
+    }
+
+    public User findUserByDiscordId(String discordId) {
+        return userRepository.findUserByDiscordId(discordId);
     }
 }
