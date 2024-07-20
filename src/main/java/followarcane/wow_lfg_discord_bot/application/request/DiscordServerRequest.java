@@ -7,4 +7,5 @@ public class DiscordServerRequest {
     private String serverId;
     private String serverName;
     private String ownerId;
+    private String icon;
 }

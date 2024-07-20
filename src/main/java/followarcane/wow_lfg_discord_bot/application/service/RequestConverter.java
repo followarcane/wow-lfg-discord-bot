@@ -70,4 +70,13 @@ public class RequestConverter {
         userSettingsRequest.setChannelId(userSettings.getChannel().getChannelId());
         return userSettingsRequest;
     }
+
+    public DiscordServer convertToDiscordServerRequest(DiscordServer discordServer) {
+        DiscordServerRequest discordServerRequest = new DiscordServerRequest();
+        discordServerRequest.setServerId(discordServer.getServerId());
+        discordServerRequest.setServerName(discordServer.getServerName());
+        discordServerRequest.setOwnerId(discordServer.getOwnerId());
+        discordServerRequest.setIcon(discordServer.getIcon());
+        return discordServer;
+    }
 }

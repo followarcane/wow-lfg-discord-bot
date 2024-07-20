@@ -24,6 +24,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.LoginException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -91,7 +93,7 @@ public class DiscordBotService extends ListenerAdapter {
         discordService.deActiveGuild(event.getGuild().getId());
     }
 
-    public void addGuildToRepository(String serverId, String serverName, String ownerId, User user, String systemChannelId, String prefix, String icon, String banner, String description) {
+    public DiscordServer addGuildToRepository(String serverId, String serverName, String ownerId, User user, String systemChannelId, String prefix, String icon, String banner, String description) {
         DiscordServer discordServer = discordServerRepository.findServerByServerId(serverId);
         if (discordServer == null) {
             discordServer = new DiscordServer();
@@ -108,9 +110,10 @@ public class DiscordBotService extends ListenerAdapter {
             log.info("New server joined: {}", serverName);
         } else {
             log.info("Server {} already exists in the repository. Changing status to Active", serverName);
+            discordServer.setIcon(icon);
             discordServer.setActive(true);
         }
-        discordServerRepository.save(discordServer);
+        return discordServerRepository.save(discordServer);
     }
 
 
@@ -193,7 +196,8 @@ public class DiscordBotService extends ListenerAdapter {
         }
     }
 
-    public User handleServerInvite(String tokenResponse) {
+    public Map<String, Object> handleServerInvite(String tokenResponse) {
+        Map<String, Object> responseMap = new HashMap<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(tokenResponse);
@@ -203,17 +207,19 @@ public class DiscordBotService extends ListenerAdapter {
                 String ownerId = jsonNode.get("guild").get("owner_id").asText();
                 String systemChannelId = jsonNode.get("guild").get("system_channel_id").asText();
                 String prefix = "!";
-                String icon = jsonNode.get("guild").get("icon").asText();
+                String icon = "https://cdn.discordapp.com/icons/" + discordId + "/guild_icon.png";
                 String banner = jsonNode.get("guild").get("banner").asText();
                 String description = jsonNode.get("guild").get("description").asText();
 
                 User user = discordService.getUserByDiscordId(ownerId);
-                addGuildToRepository(discordId, serverName, ownerId, user, systemChannelId, prefix, icon, banner, description);
-                return user;
+                DiscordServer server = addGuildToRepository(discordId, serverName, ownerId, user, systemChannelId, prefix, icon, banner, description);
+
+                responseMap.put("user", user);
+                responseMap.put("server", server);
+                return responseMap;
             }
         } catch (Exception e) {
             log.error("Error processing server invite", e);
-            return null;
         }
         return null;
     }
