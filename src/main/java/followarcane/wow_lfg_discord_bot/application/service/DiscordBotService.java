@@ -8,6 +8,7 @@ import followarcane.wow_lfg_discord_bot.domain.model.Message;
 import followarcane.wow_lfg_discord_bot.domain.model.User;
 import followarcane.wow_lfg_discord_bot.domain.repository.DiscordServerRepository;
 import followarcane.wow_lfg_discord_bot.domain.repository.MessageRepository;
+import followarcane.wow_lfg_discord_bot.security.util.TokenValidationUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,9 +25,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.LoginException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -50,18 +50,21 @@ public class DiscordBotService extends ListenerAdapter {
     @Value("${discord.redirect.uriCallback}")
     private String redirectUriCallback;
 
-    @Value("${discord.redirect.uriDashboard}")
-    private String redirectUriDashboard;
+    @Value("${discord.redirect.uriInvite}")
+    private String redirectUriInvite;
 
     private final DiscordService discordService;
 
     private final RequestConverter requestConverter;
 
-    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter) {
+    private final RestTemplate restTemplate;
+
+    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate) {
         this.messageRepository = messageRepository;
         this.discordServerRepository = discordServerRepository;
         this.discordService = discordService;
         this.requestConverter = requestConverter;
+        this.restTemplate = restTemplate;
     }
 
     @PostConstruct
@@ -141,7 +144,7 @@ public class DiscordBotService extends ListenerAdapter {
                     "&client_secret=" + clientSecret +
                     "&grant_type=authorization_code" +
                     "&code=" + code +
-                    "&redirect_uri=" + (isCallback ? redirectUriCallback : redirectUriDashboard);
+                    "&redirect_uri=" + (isCallback ? redirectUriCallback : redirectUriInvite);
 
             HttpEntity<String> entity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
@@ -158,7 +161,7 @@ public class DiscordBotService extends ListenerAdapter {
         }
     }
 
-    public UserRequest getUserDetails(String tokenResponse) {
+    public HashMap<String, Object> getUserDetails(String tokenResponse) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(tokenResponse);
@@ -173,6 +176,14 @@ public class DiscordBotService extends ListenerAdapter {
                     "https://discord.com/api/users/@me", HttpMethod.GET, new HttpEntity<>(headers), String.class);
             JsonNode userInfo = objectMapper.readTree(userInfoResponse.getBody());
 
+
+            HashMap<String, Object> loginDetails = new HashMap<>();
+            loginDetails.put("access_token", jsonNode.get("access_token").asText());
+            loginDetails.put("refresh_token", jsonNode.get("refresh_token").asText());
+            loginDetails.put("scope", jsonNode.get("scope").asText());
+            loginDetails.put("token_type", jsonNode.get("token_type").asText());
+            loginDetails.put("expires_in", 604800);
+
             UserRequest userRequest = new UserRequest();
             userRequest.setDiscordId(userInfo.get("id").asText());
             userRequest.setUsername(userInfo.get("username").asText());
@@ -182,14 +193,19 @@ public class DiscordBotService extends ListenerAdapter {
             userRequest.setBanner(userInfo.get("banner").asText());
             userRequest.setBannerColor(userInfo.get("banner_color").asText());
             userRequest.setLocale(userInfo.get("locale").asText());
+            userRequest.setAccessToken(accessToken);
+            userRequest.setRefreshToken(jsonNode.get("refresh_token").asText());
 
             User user = discordService.findUserByDiscordId(userRequest.getDiscordId());
             if (user != null) {
                 log.info("User already exists in the repository");
-                return requestConverter.convertToUserRequest(user);
+                userRequest = requestConverter.convertToUserRequest(user);
+                userRequest.setRefreshToken(jsonNode.get("refresh_token").asText());
+                userRequest.setAccessToken(accessToken);
+                return loginDetails;
             }
             discordService.addUser(userRequest);
-            return userRequest;
+            return loginDetails;
         } catch (Exception e) {
             log.error("Error processing token response", e);
             return null;
@@ -216,11 +232,63 @@ public class DiscordBotService extends ListenerAdapter {
 
                 responseMap.put("user", user);
                 responseMap.put("server", server);
+                responseMap.put("tokenResponse", tokenResponse);
                 return responseMap;
             }
         } catch (Exception e) {
             log.error("Error processing server invite", e);
         }
         return null;
+    }
+
+    public Map<String, Object> getGuildDetails(String token, String guildId) {
+        try {
+            Thread.sleep(500);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", token);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://discord.com/api/v9/users/@me/guilds",
+                    HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                    String.class
+            );
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode guildsArray = objectMapper.readTree(response.getBody());
+
+                Optional<JsonNode> matchedGuild = StreamSupport.stream(guildsArray.spliterator(), false)
+                        .filter(guildNode -> guildId.equals(guildNode.get("id").asText()))
+                        .findFirst();
+
+                DiscordServer discordServer = discordService.getServerByServerId(guildId);
+                Map<String, Object> responses = new HashMap<>();
+
+                if (matchedGuild.isPresent() && discordServer != null) {
+                    responses.put("id", matchedGuild.get().get("id").asText());
+                    responses.put("name", matchedGuild.get().get("name").asText());
+                    responses.put("icon", matchedGuild.get().get("icon").asText());
+                    responses.put("banner", matchedGuild.get().get("banner").asText());
+                    responses.put("owner", matchedGuild.get().get("owner"));
+                    responses.put("permissions", matchedGuild.get().get("permissions").asText());
+                    responses.put("features", matchedGuild.get().get("features"));
+                    responses.put("enabledFeatures", matchedGuild.get().get("enabledFeatures") == null ? new ArrayList<>() : matchedGuild.get().get("enabledFeatures"));
+                    return responses;
+                }
+                return null;
+            }
+        } catch (Exception e) {
+            System.err.println("Error getting guild details: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public ResponseEntity<String> validateAndGetUserId(String token) {
+        String userId = TokenValidationUtils.validateAccessToken(token.substring(7), restTemplate);
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+        return new ResponseEntity<>(userId, HttpStatus.OK);
     }
 }

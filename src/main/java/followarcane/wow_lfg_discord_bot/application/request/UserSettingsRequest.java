@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserSettingsRequest {
-    private String language;
+    private String languages;
     private String realm;
     private String region;
     private String serverId;

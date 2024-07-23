@@ -45,7 +45,7 @@ public class RequestConverter {
         UserSettings userSettings = new UserSettings();
         userSettings.setRealm(userSettingsRequest.getRealm());
         userSettings.setRegion(userSettingsRequest.getRegion());
-        userSettings.setLanguage(userSettingsRequest.getLanguage());
+        userSettings.setLanguage(userSettingsRequest.getLanguages());
         return userSettings;
     }
 
@@ -66,7 +66,7 @@ public class RequestConverter {
         UserSettingsRequest userSettingsRequest = new UserSettingsRequest();
         userSettingsRequest.setRealm(userSettings.getRealm());
         userSettingsRequest.setRegion(userSettings.getRegion());
-        userSettingsRequest.setLanguage(userSettings.getLanguage());
+        userSettingsRequest.setLanguages(userSettings.getLanguage());
         userSettingsRequest.setChannelId(userSettings.getChannel().getChannelId());
         return userSettingsRequest;
     }

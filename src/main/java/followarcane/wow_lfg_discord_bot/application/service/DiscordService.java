@@ -62,12 +62,13 @@ public class DiscordService {
         userRepository.save(user);
     }
 
-    public void addUserSettings(UserSettingsRequest userSettingsRequest) {
+    public void addUserSettings(UserSettingsRequest userSettingsRequest, String userId) {
+        userSettingsRequest.setUserDiscordId(userId);
         UserSettings userSettings = getSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), userSettingsRequest.getUserDiscordId());
         if (userSettings != null) {
             userSettings.setRealm(userSettingsRequest.getRealm());
             userSettings.setRegion(userSettingsRequest.getRegion());
-            userSettings.setLanguage(userSettingsRequest.getLanguage());
+            userSettings.setLanguage(userSettingsRequest.getLanguages());
 
             userSettingsRepository.save(userSettings);
         } else {
@@ -137,5 +138,9 @@ public class DiscordService {
         DiscordServer discordServer = serverRepository.findServerByServerId(id);
         discordServer.setActive(false);
         serverRepository.save(discordServer);
+    }
+
+    public DiscordServer getServerByServerId(String serverId) {
+        return serverRepository.findServerByServerId(serverId);
     }
 }
