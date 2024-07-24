@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/discord")
+@RequestMapping("/v1/discord")
 public class DiscordController {
 
     private final DiscordService discordService;
@@ -32,7 +32,8 @@ public class DiscordController {
     @PostMapping("/addServer")
     public ResponseEntity<?> addServer(@RequestBody DiscordServerRequest discordServerRequest, @RequestHeader("Authorization") String token) {
         ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
-        if (validationResponse != null) return validationResponse;
+        if (validationResponse != null)
+            return validationResponse;
         discordService.addServer(discordServerRequest);
         return ResponseEntity.ok("Server added successfully.");
     }
@@ -40,7 +41,8 @@ public class DiscordController {
     @PostMapping("/addChannel")
     public ResponseEntity<?> addChannel(@RequestBody DiscordChannelRequest discordChannelRequest, @RequestHeader("Authorization") String token) {
         ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
-        if (validationResponse != null) return validationResponse;
+        if (validationResponse != null)
+            return validationResponse;
         discordService.addChannel(discordChannelRequest);
         return ResponseEntity.ok("Channel added successfully.");
     }
@@ -48,7 +50,8 @@ public class DiscordController {
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody UserRequest userRequest, @RequestHeader("Authorization") String token) {
         ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
-        if (validationResponse != null) return validationResponse;
+        if (validationResponse != null)
+            return validationResponse;
         discordService.addUser(userRequest);
         return ResponseEntity.ok("User added successfully.");
     }
@@ -56,7 +59,8 @@ public class DiscordController {
     @PostMapping("/addUserSettings")
     public ResponseEntity<?> addUserSettings(@RequestBody UserSettingsRequest userSettingsRequest, @RequestHeader("Authorization") String token) {
         ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
-        if (validationResponse != null) return validationResponse;
+        if (validationResponse != null)
+            return validationResponse;
         String userId = validationResponse.getBody();
         discordService.addUserSettings(userSettingsRequest, userId);
         return ResponseEntity.ok("Settings added successfully.");
@@ -65,7 +69,8 @@ public class DiscordController {
     @GetMapping("{guild}/settings/{featureId}")
     public ResponseEntity<?> getSettings(@PathVariable String guild, @PathVariable String featureId, @RequestHeader("Authorization") String token) {
         ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
-        if (validationResponse != null) return validationResponse;
+        if (validationResponse != null)
+            return validationResponse;
         String userId = validationResponse.getBody();
         UserSettings userSettings = discordService.getSettingsByServerIdAndUserId(guild, userId);
         if (userSettings == null) {
@@ -77,7 +82,8 @@ public class DiscordController {
     @GetMapping("/getGuild/{guild}")
     public ResponseEntity<?> getGuild(@PathVariable String guild, @RequestHeader("Authorization") String token) {
         ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
-        if (validationResponse != null) return validationResponse;
+        if (validationResponse != null)
+            return validationResponse;
         Map<String, Object> response = discordBotService.getGuildDetails(token, guild);
         return response != null ? ResponseEntity.ok(response) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Guild not found");
     }
@@ -85,7 +91,8 @@ public class DiscordController {
     @GetMapping("/getServers")
     public ResponseEntity<?> getServers(@RequestHeader("Authorization") String token) {
         ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
-        if (validationResponse != null) return validationResponse;
+        if (validationResponse != null)
+            return validationResponse;
         String userId = validationResponse.getBody();
         return ResponseEntity.ok(discordService.getServersByUserDiscordId(userId));
     }
