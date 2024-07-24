@@ -53,7 +53,7 @@ public class DataFetcherService {
         this.restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(apiProperties.getUsername(), apiProperties.getPassword()));
     }
 
-    //@Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 30000)
     public void fetchData() {
         log.info("Fetching data from WoW API...");
 
