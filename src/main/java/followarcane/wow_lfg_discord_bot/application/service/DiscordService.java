@@ -139,12 +139,12 @@ public class DiscordService {
     }
 
     public void deActiveGuild(String id) {
-        DiscordServer discordServer = serverRepository.findServerByServerId(id);
+        DiscordServer discordServer = serverRepository.findServerByServerIdAndActiveTrue(id);
         discordServer.setActive(false);
         serverRepository.save(discordServer);
     }
 
     public DiscordServer getServerByServerId(String serverId) {
-        return serverRepository.findServerByServerId(serverId);
+        return serverRepository.findServerByServerIdAndActiveTrue(serverId);
     }
 }
