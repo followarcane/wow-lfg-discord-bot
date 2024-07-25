@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface DiscordChannelRepository extends JpaRepository<DiscordChannel, Long> {
     boolean existsByServer(DiscordServer discordServer);
     DiscordChannel findDiscordChannelByChannelId(String channelId);
+    DiscordChannel findDiscordChannelByServer_ServerId(String discordServer);
 }

@@ -15,16 +15,17 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.security.auth.login.LoginException;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -67,21 +68,24 @@ public class DiscordBotService extends ListenerAdapter {
         this.restTemplate = restTemplate;
     }
 
-    @PostConstruct
-    public void startBot() throws LoginException {
+    @EventListener(ApplicationReadyEvent.class)
+    public void startBot() {
         try {
+            log.info("Starting Discord bot...");
             if (token == null || token.isEmpty()) {
-                throw new LoginException("Discord bot token is not provided!");
+                throw new RuntimeException("Discord bot token is not provided!");
             }
             jda = JDABuilder.createDefault(token)
                     .addEventListeners(this)
-                    .setActivity(Activity.playing("WoW LFG"))
+                    .setActivity(Activity.customStatus("https://azerite.app"))
                     .build();
             botAlreadyLoggedIn = true;
-        } catch (LoginException e) {
-            throw new LoginException();
+            log.info("Discord bot started successfully.");
+        } catch (Exception e) {
+            log.error("Error starting Discord bot", e);
         }
     }
+
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
@@ -119,17 +123,27 @@ public class DiscordBotService extends ListenerAdapter {
         return discordServerRepository.save(discordServer);
     }
 
+    public List<TextChannel> getGuildChannelList(String guildId){
+        List<TextChannel> channels = jda.getGuildById(guildId).getTextChannels();
+        return channels;
+    }
 
     public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed) {
-        Objects.requireNonNull(jda.getTextChannelById(channelId)).sendMessageEmbeds(embed.build()).queue();
+        try {
+            log.info("Sending message to channel: {}", channelId);
+            Objects.requireNonNull(jda.getTextChannelById(channelId)).sendMessageEmbeds(embed.build()).queue();
+            log.info("Message sent");
+            Message message = new Message();
+            message.setMessageGuildId("guildIdHere");
+            message.setMessageChannelId(channelId);
+            message.setMessageContent(embed.build().getTitle());
+            message.setTimestamp(System.currentTimeMillis());
 
-        Message message = new Message();
-        message.setMessageGuildId("guildIdHere");
-        message.setMessageChannelId(channelId);
-        message.setMessageContent(embed.build().getTitle());
-        message.setTimestamp(System.currentTimeMillis());
+            messageRepository.save(message);
+        } catch (RuntimeException e) {
+            log.error("Error sending message to channel", e);
+        }
 
-        messageRepository.save(message);
     }
 
     public String exchangeCodeForToken(String code, boolean isCallback) {

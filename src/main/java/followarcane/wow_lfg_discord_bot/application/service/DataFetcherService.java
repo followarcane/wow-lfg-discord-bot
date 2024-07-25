@@ -106,7 +106,7 @@ public class DataFetcherService {
                 .toList();
 
         boolean languageMatch = settingLanguages.stream().anyMatch(characterLanguages::contains);
-        boolean realmMatch = character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("all");
+        boolean realmMatch = character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("All Realms");
         boolean regionMatch = character.getRegion().equalsIgnoreCase(settings.getRegion());
 
         return languageMatch && realmMatch && regionMatch;
@@ -136,7 +136,7 @@ public class DataFetcherService {
                         " | [WowProgress]" + "(" + wowProgressLink + ")" +
                         " | [Warcraftlogs]" + "(" + warcraftLogsLink + ")"
                 , false);
-        embedBuilder.setFooter("Donate -> https://www.patreon.com/Shadlynn/membership","https://imgur.com/iZpMxz0.jpg");
+        embedBuilder.setFooter("Donate -> https://www.patreon.com/Shadlynn/membership","https://imgur.com/kk6VClj.png");
         embedBuilder.setThumbnail(character.getRaiderIOData().getThumbnailUrl());
 
         embedBuilder.setColor(Color.decode(classColorCodeHelper.getClassColorCode(character.getRaiderIOData().getClassType())));

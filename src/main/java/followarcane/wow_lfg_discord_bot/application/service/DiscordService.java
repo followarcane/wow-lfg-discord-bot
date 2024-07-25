@@ -65,18 +65,22 @@ public class DiscordService {
     public void addUserSettings(UserSettingsRequest userSettingsRequest, String userId) {
         userSettingsRequest.setUserDiscordId(userId);
         UserSettings userSettings = getSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), userSettingsRequest.getUserDiscordId());
+        DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByServer_ServerId(userSettingsRequest.getServerId());
+
         if (userSettings != null) {
             userSettings.setRealm(userSettingsRequest.getRealm());
             userSettings.setRegion(userSettingsRequest.getRegion());
             userSettings.setLanguage(userSettingsRequest.getLanguages());
 
             userSettingsRepository.save(userSettings);
+
+            discordChannel.setChannelId(userSettingsRequest.getChannelId());
+            discordChannelRepository.save(discordChannel);
         } else {
             DiscordServer discordServer = serverRepository.findServerByServerId(userSettingsRequest.getServerId());
             if (discordServer == null) {
                 throw new RuntimeException("Server not found");
             }
-            DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByChannelId(userSettingsRequest.getChannelId());
             if (discordChannel == null) {
                 discordChannel = new DiscordChannel();
                 discordChannel.setChannelId(userSettingsRequest.getChannelId());

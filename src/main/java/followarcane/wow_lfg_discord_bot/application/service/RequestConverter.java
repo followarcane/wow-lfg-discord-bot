@@ -1,5 +1,6 @@
 package followarcane.wow_lfg_discord_bot.application.service;
 
+import followarcane.wow_lfg_discord_bot.application.dto.TextChannelDTO;
 import followarcane.wow_lfg_discord_bot.application.request.DiscordChannelRequest;
 import followarcane.wow_lfg_discord_bot.application.request.DiscordServerRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
@@ -8,7 +9,11 @@ import followarcane.wow_lfg_discord_bot.domain.model.DiscordChannel;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
 import followarcane.wow_lfg_discord_bot.domain.model.User;
 import followarcane.wow_lfg_discord_bot.domain.model.UserSettings;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RequestConverter {
@@ -78,5 +83,11 @@ public class RequestConverter {
         discordServerRequest.setOwnerId(discordServer.getOwnerId());
         discordServerRequest.setIcon(discordServer.getIcon());
         return discordServer;
+    }
+
+    public List<TextChannelDTO> convertToDTO(List<TextChannel> channels) {
+        return channels.stream()
+                .map(channel -> new TextChannelDTO(channel.getId(), channel.getName()))
+                .collect(Collectors.toList());
     }
 }
