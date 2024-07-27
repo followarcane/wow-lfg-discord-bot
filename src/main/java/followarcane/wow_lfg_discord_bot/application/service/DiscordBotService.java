@@ -3,6 +3,7 @@ package followarcane.wow_lfg_discord_bot.application.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
+import followarcane.wow_lfg_discord_bot.application.response.CharacterInfoResponse;
 import followarcane.wow_lfg_discord_bot.application.response.StatisticsResponse;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
 import followarcane.wow_lfg_discord_bot.domain.model.Message;
@@ -15,20 +16,28 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -79,6 +88,7 @@ public class DiscordBotService extends ListenerAdapter {
             }
             jda = JDABuilder.createDefault(token)
                     .addEventListeners(this)
+                    .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                     .setActivity(Activity.customStatus("https://azerite.app"))
                     .build();
             botAlreadyLoggedIn = true;
@@ -94,6 +104,48 @@ public class DiscordBotService extends ListenerAdapter {
         // Send a welcome message
         if (event.getGuild().getDefaultChannel() != null) {
             //event.getGuild().getDefaultChannel().sen("Thanks for adding WoW LFG Bot!").queue();
+        }
+    }
+
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        String[] prefixes = {"!", "?", "/"};
+        String message = event.getMessage().getContentRaw().trim();
+
+        if (event.getAuthor().isBot())
+            return;
+
+        Member member = event.getGuild().getMember(event.getAuthor());
+
+        if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
+            return;
+        }
+
+        for (String prefix : prefixes) {
+            if (message.startsWith(prefix)) {
+                String command = message.substring(prefix.length()).trim();
+
+                if (command.equalsIgnoreCase("example")) {
+                    Objects.requireNonNull(jda.getTextChannelById(event.getChannel().getId()))
+                            .sendMessageEmbeds(sendExampleEmbedMessage().build())
+                            .queue();
+                }
+                if (command.equalsIgnoreCase("help")) {
+                    String helpMessage = new StringBuilder().append("To set up Azerite and start searching for players, please visit https://azerite.app and invite the bot to your channel again.\n")
+                            .append("Then, go to the 'Looking For Player?' configuration in the features section to adjust your settings and join us!\n")
+                            .append("Feel free to ask any question in our official discord.\n\n")
+                            .append("You can have an invite link with command !discord.").toString();
+                    Objects.requireNonNull(jda.getTextChannelById(event.getChannel().getId()))
+                            .sendMessage(helpMessage)
+                            .queue();
+                }
+                if (command.equalsIgnoreCase("discord")) {
+                    Objects.requireNonNull(jda.getTextChannelById(event.getChannel().getId()))
+                            .sendMessage("https://discord.gg/pzqKX97vbF")
+                            .queue();
+                }
+                break;
+            }
         }
     }
 
@@ -125,7 +177,7 @@ public class DiscordBotService extends ListenerAdapter {
         return discordServerRepository.save(discordServer);
     }
 
-    public List<TextChannel> getGuildChannelList(String guildId){
+    public List<TextChannel> getGuildChannelList(String guildId) {
         List<TextChannel> channels = jda.getGuildById(guildId).getTextChannels();
         return channels;
     }
@@ -317,5 +369,37 @@ public class DiscordBotService extends ListenerAdapter {
         statisticsResponse.setTotalMessages(lastMessageId != null ? String.valueOf(lastMessageId) : "0");
 
         return statisticsResponse;
+    }
+
+
+    private static @NotNull EmbedBuilder sendExampleEmbedMessage() {
+        String raiderIOLink = ("https://raider.io/characters/eu/twisting-nether/Shadlynn");
+        String wowProgressLink = ("https://www.wowprogress.com/character/eu/twisting-nether/Shadlynn");
+        String warcraftLogsLink = ("https://www.warcraftlogs.com/character/eu/twisting-nether/shadlynn?zone=29#zone=26");
+        String armoryLink = ("https://worldofwarcraft.blizzard.com/en-gb/character/eu/twisting-nether/shadlynn");
+
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("Shadlynn | Twisting Nether | Priest | Dps | Shadow", raiderIOLink);
+        embedBuilder.addField("Language", "Turkish, English", true);
+        embedBuilder.addField("Item Level", "560", true);
+        embedBuilder.addField("Faction", "Horde", true);
+
+        embedBuilder.addField("Awakened Amirdrassil The Dreams Hope", "9/9 Mythic", false);
+        embedBuilder.addField("Amirdrassil The Dreams Hope", "9/9 Mythic", false);
+
+
+        embedBuilder.addField("Information About Player", "Azerite Bot is designed to simplify and enhance the guild recruitment process for World of Warcraft players by providing integrated data from popular WoW community sites.\n\nPlease review the customizable features and automatic sharing functionalities that set Azerite Bot apart in terms of utility and efficiency.", false);
+        embedBuilder.addField("External Links",
+                "[Armory]" + "(" + armoryLink + ")" +
+                        " | [Raider IO]" + "(" + raiderIOLink + ")" +
+                        " | [WowProgress]" + "(" + wowProgressLink + ")" +
+                        " | [Warcraftlogs]" + "(" + warcraftLogsLink + ")"
+                , false);
+        //embedBuilder.setFooter("Donate -> https://www.patreon.com/Shadlynn/membership", "https://imgur.com/kk6VClj.png");
+        embedBuilder.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://imgur.com/kk6VClj.png");
+        embedBuilder.setThumbnail("https://render.worldofwarcraft.com/eu/character/tw…atar.jpg?alt=/wow/static/images/2d/avatar/9-1.jpg");
+
+        embedBuilder.setColor(Color.white);
+        return embedBuilder;
     }
 }
