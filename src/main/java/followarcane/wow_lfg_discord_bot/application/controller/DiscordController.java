@@ -5,21 +5,16 @@ import followarcane.wow_lfg_discord_bot.application.request.DiscordChannelReques
 import followarcane.wow_lfg_discord_bot.application.request.DiscordServerRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserSettingsRequest;
-import followarcane.wow_lfg_discord_bot.application.service.AuthService;
 import followarcane.wow_lfg_discord_bot.application.service.DiscordBotService;
 import followarcane.wow_lfg_discord_bot.application.service.DiscordService;
 import followarcane.wow_lfg_discord_bot.application.service.RequestConverter;
 import followarcane.wow_lfg_discord_bot.domain.model.UserSettings;
-import followarcane.wow_lfg_discord_bot.security.util.TokenValidationUtils;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

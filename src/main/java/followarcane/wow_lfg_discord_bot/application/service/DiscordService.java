@@ -112,7 +112,7 @@ public class DiscordService {
         LinkedList<String> lastSentCharacters = new LinkedList<>(persistentChannel.getLastSentCharacters());
         if (lastSentCharacters.contains(characterName)) {
             lastSentCharacters.remove(characterName);
-        } else if (lastSentCharacters.size() >= 5) {
+        } else if (lastSentCharacters.size() >= 3) {
             lastSentCharacters.removeFirst();
         }
         lastSentCharacters.addLast(characterName);

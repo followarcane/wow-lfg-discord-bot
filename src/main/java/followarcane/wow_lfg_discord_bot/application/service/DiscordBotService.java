@@ -3,6 +3,7 @@ package followarcane.wow_lfg_discord_bot.application.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
+import followarcane.wow_lfg_discord_bot.application.response.StatisticsResponse;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
 import followarcane.wow_lfg_discord_bot.domain.model.Message;
 import followarcane.wow_lfg_discord_bot.domain.model.User;
@@ -24,6 +25,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -304,5 +306,16 @@ public class DiscordBotService extends ListenerAdapter {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
         }
         return new ResponseEntity<>(userId, HttpStatus.OK);
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsResponse getStatistics() {
+        StatisticsResponse statisticsResponse = new StatisticsResponse();
+        statisticsResponse.setTotalServers(String.valueOf(discordServerRepository.count()));
+
+        Long lastMessageId = messageRepository.findMaxId();
+        statisticsResponse.setTotalMessages(lastMessageId != null ? String.valueOf(lastMessageId) : "0");
+
+        return statisticsResponse;
     }
 }
