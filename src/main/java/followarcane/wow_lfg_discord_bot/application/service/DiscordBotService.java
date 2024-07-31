@@ -141,7 +141,7 @@ public class DiscordBotService extends ListenerAdapter {
                 }
                 if (command.equalsIgnoreCase("discord")) {
                     Objects.requireNonNull(jda.getTextChannelById(event.getChannel().getId()))
-                            .sendMessage("https://discord.gg/pzqKX97vbF")
+                            .sendMessage("https://discord.gg/FVR9e3X6xx")
                             .queue();
                 }
                 break;
