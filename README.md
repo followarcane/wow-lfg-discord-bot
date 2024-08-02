@@ -1,5 +1,7 @@
 # WoW LFG Discord Bot
 
+**This project is an open-source service designed for use by [Azerite.app](https://azerite.app).**
+
 This project is a Discord bot that automatically posts World of Warcraft players' LFG (Looking for Group) listings to specific Discord channels. The bot fetches data from another project called [WowProgressDataCrawler](https://github.com/followarcane/WowProgressDataCrawler). This data includes the latest LFG listings of players, and the bot posts these listings to a specified Discord channel. The data is scraped from wowprogress.com and supplemented with additional information from raider.io and warcraftlogs.com.
 
 ## Features
