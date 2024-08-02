@@ -125,9 +125,12 @@ public class DataFetcherService {
         embedBuilder.addField("Item Level", StringUtils.hasText(character.getILevel()) ? character.getILevel() : "No Info", true);
         embedBuilder.addField("Faction", StringUtils.hasText(character.getRaiderIOData().getFaction()) ? character.getRaiderIOData().getFaction() : "No Info", true);
 
+        StringBuilder progression = new StringBuilder();
         for (var raidProgression : character.getRaidProgressions()) {
-            embedBuilder.addField(raidProgression.getRaidName(), raidProgression.getSummary(), false);
+            progression.append(raidProgression.getRaidName()).append(" : ").append(raidProgression.getSummary()).append("\n");
         }
+
+        embedBuilder.addField("Raid Progression", progression.toString(), false);
         embedBuilder.addField("Information About Player", character.getCommentary().length() > 1020 ?
                 character.getCommentary().substring(0, 1020) + "..." : character.getCommentary(), false);
         embedBuilder.addField("External Links",
