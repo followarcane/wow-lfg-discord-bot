@@ -119,15 +119,26 @@ public class DataFetcherService {
         String warcraftLogsLink = ("https://www.warcraftlogs.com/character/" + character.getRegion() + "/" + character.getRealm().replace(' ', '-') + "/" + character.getName()).toLowerCase();
         String armoryLink = ("https://worldofwarcraft.blizzard.com/en-gb/character/" + character.getRegion() + "/" + character.getRealm().replace(' ', '-') + "/" + character.getName()).toLowerCase();
 
+        String title = "";
+        if (character.getRaiderIOData().getClassType() == null) {
+            title = character.getName() + " | " + character.getRealm();
+        } else {
+            title = character.getName() + " | " + character.getRealm() + " | " + character.getRaiderIOData().getClassType() + " | " + character.getRaiderIOData().getActiveSpecRole() + " | " + character.getRaiderIOData().getActiveSpecName();
+        }
+
+
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(character.getName() + " | " + character.getRealm() + " | " + character.getRaiderIOData().getClassType() + " | " + character.getRaiderIOData().getActiveSpecRole() + " | " + character.getRaiderIOData().getActiveSpecName(), raiderIOLink);
+        embedBuilder.setTitle(title, warcraftLogsLink);
         embedBuilder.addField("Language", character.getLanguages(), true);
         embedBuilder.addField("Item Level", StringUtils.hasText(character.getILevel()) ? character.getILevel() : "No Info", true);
         embedBuilder.addField("Faction", StringUtils.hasText(character.getRaiderIOData().getFaction()) ? character.getRaiderIOData().getFaction() : "No Info", true);
 
         StringBuilder progression = new StringBuilder();
         for (var raidProgression : character.getRaidProgressions()) {
-            progression.append(raidProgression.getRaidName()).append(" : ").append(raidProgression.getSummary()).append("\n");
+            progression.append(raidProgression.getRaidName()).append("\n").append(raidProgression.getSummary()).append("\n\n");
+        }
+        if (progression.isEmpty()) {
+            progression.append("Use the links below to check the progression.");
         }
 
         embedBuilder.addField("Raid Progression", progression.toString(), false);
