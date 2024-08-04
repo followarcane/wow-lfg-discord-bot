@@ -128,7 +128,7 @@ public class DataFetcherService {
 
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(title, warcraftLogsLink);
+        embedBuilder.setTitle(title, wowProgressLink);
         embedBuilder.addField("Language", character.getLanguages(), true);
         embedBuilder.addField("Item Level", StringUtils.hasText(character.getILevel()) ? character.getILevel() : "No Info", true);
         embedBuilder.addField("Faction", StringUtils.hasText(character.getRaiderIOData().getFaction()) ? character.getRaiderIOData().getFaction() : "No Info", true);
