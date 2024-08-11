@@ -117,17 +117,14 @@ public class DataFetcherService {
 
 
     private static @NotNull EmbedBuilder getEmbedBuilder(CharacterInfoResponse character) {
-        String raiderIOLink = encodeURL("https://raider.io/characters/" + character.getRegion() + "/" + character.getRealm().replace(' ', '-') + "/" + character.getName());
-        String wowProgressLink = encodeURL("https://www.wowprogress.com/character/" + character.getRegion() + "/" + character.getRealm().replace(' ', '-') + "/" + character.getName());
-        String warcraftLogsLink = encodeURL("https://www.warcraftlogs.com/character/" + character.getRegion() + "/" + character.getRealm().replace(' ', '-') + "/" + character.getName());
-        String armoryLink = encodeURL("https://worldofwarcraft.blizzard.com/en-gb/character/" + character.getRegion() + "/" + character.getRealm().replace(' ', '-') + "/" + character.getName());
+        String raiderIOLink = "https://raider.io/characters/" + encodeURL(character.getRegion()) + "/" + encodeURL(character.getRealm().replace(' ', '-')) + "/" + encodeURL(character.getName());
+        String wowProgressLink = "https://www.wowprogress.com/character/" + encodeURL(character.getRegion()) + "/" + encodeURL(character.getRealm().replace(' ', '-')) + "/" + encodeURL(character.getName());
+        String warcraftLogsLink = "https://www.warcraftlogs.com/character/" + encodeURL(character.getRegion()) + "/" + encodeURL(character.getRealm().replace(' ', '-')) + "/" + encodeURL(character.getName());
+        String armoryLink = "https://worldofwarcraft.blizzard.com/en-gb/character/" + encodeURL(character.getRegion()) + "/" + encodeURL(character.getRealm().replace(' ', '-')) + "/" + encodeURL(character.getName());
 
-        String title = "";
-        if (character.getRaiderIOData().getClassType() == null) {
-            title = character.getName() + " | " + character.getRealm();
-        } else {
-            title = character.getName() + " | " + character.getRealm() + " | " + character.getRaiderIOData().getClassType() + " | " + character.getRaiderIOData().getActiveSpecRole() + " | " + character.getRaiderIOData().getActiveSpecName();
-        }
+        String title = character.getRaiderIOData().getClassType() == null
+                ? character.getName() + " | " + character.getRealm()
+                : character.getName() + " | " + character.getRealm() + " | " + character.getRaiderIOData().getClassType() + " | " + character.getRaiderIOData().getActiveSpecRole() + " | " + character.getRaiderIOData().getActiveSpecName();
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(title, wowProgressLink);
@@ -144,8 +141,9 @@ public class DataFetcherService {
         }
 
         embedBuilder.addField("Raid Progression", progression.toString(), false);
-        embedBuilder.addField("Information About Player", character.getCommentary().length() > 1020 ?
-                character.getCommentary().substring(0, 1020) + "..." : character.getCommentary(), false);
+        embedBuilder.addField("Information About Player", character.getCommentary().length() > 1020
+                ? character.getCommentary().substring(0, 1020) + "..."
+                : character.getCommentary(), false);
         embedBuilder.addField("External Links",
                 "[Armory]" + "(" + armoryLink + ")" +
                         " | [Raider IO]" + "(" + raiderIOLink + ")" +
@@ -159,7 +157,7 @@ public class DataFetcherService {
         return embedBuilder;
     }
 
-    private static String encodeURL(String url) {
-        return URLEncoder.encode(url, StandardCharsets.UTF_8);
+    private static String encodeURL(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 }
