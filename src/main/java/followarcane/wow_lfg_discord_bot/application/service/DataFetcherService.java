@@ -1,5 +1,6 @@
 package followarcane.wow_lfg_discord_bot.application.service;
 
+import followarcane.wow_lfg_discord_bot.application.response.BossRankResponse;
 import followarcane.wow_lfg_discord_bot.application.response.CharacterInfoResponse;
 import followarcane.wow_lfg_discord_bot.application.util.ClassColorCodeHelper;
 import followarcane.wow_lfg_discord_bot.domain.model.UserSettings;
@@ -136,8 +137,13 @@ public class DataFetcherService {
         for (var raidProgression : character.getRaidProgressions()) {
             progression.append(raidProgression.getRaidName()).append("\n").append(raidProgression.getSummary()).append("\n\n");
         }
+
         if (progression.isEmpty()) {
             progression.append("Use the links below to check the progression.");
+        }
+
+        if (character.getWarcraftLogsData().getBestPerformanceAverage() != 0) {
+            embedBuilder.addField("WarcraftLogs", "Overall Performance : " + character.getWarcraftLogsData().getBestPerformanceAverage() + "\n----------\n" + prepareLogs(character.getBossRanks()), false);
         }
 
         embedBuilder.addField("Raid Progression", progression.toString(), false);
@@ -160,4 +166,11 @@ public class DataFetcherService {
     private static String encodeURL(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
+
+    private static String prepareLogs(List<BossRankResponse> responses) {
+        return responses.stream()
+                .map(response -> response.getEncounterName() + " : " + response.getRankPercent())
+                .collect(Collectors.joining("\n"));
+    }
+
 }
