@@ -57,7 +57,7 @@ public class DataFetcherService {
         this.restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(apiProperties.getUsername(), apiProperties.getPassword()));
     }
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 60000)
     public void fetchData() {
         log.info("Fetching data from WoW API...");
 
@@ -68,13 +68,15 @@ public class DataFetcherService {
             List<CharacterInfoResponse> data = response.getBody();
 
             if (data != null && !data.isEmpty()) {
-                log.info("Data fetched successfully: {}", data);
+                //log.info("Data fetched successfully: {}", data);
 
                 Set<CharacterInfoResponse> newData = new HashSet<>(data);
                 newData.removeAll(previousData);
 
                 if (!newData.isEmpty()) {
-                    List<UserSettings> matchedLfgs = discordService.getAllUserSettings();
+                    List<UserSettings> matchedLfgs = discordService.getAllUserSettings().stream()
+                            .filter(settings -> settings.getChannel().getServer().isActive()) // Check if server is active.
+                            .toList();
                     for (UserSettings settings : matchedLfgs) {
                         List<CharacterInfoResponse> filteredData = newData.stream()
                                 .filter(character -> characterMatchesSettings(character, settings))
@@ -82,7 +84,7 @@ public class DataFetcherService {
 
                         for (CharacterInfoResponse character : filteredData) {
                             if (!settings.getChannel().getLastSentCharacters().contains(character.getName())) {
-                                log.info("Character: {}", character);
+                                //log.info("Character: {}", character);
 
                                 EmbedBuilder embedBuilder = getEmbedBuilder(character);
                                 discordBotService.sendEmbedMessageToChannel(settings.getChannel().getChannelId(), embedBuilder);
@@ -142,11 +144,12 @@ public class DataFetcherService {
             progression.append("Use the links below to check the progression.");
         }
 
+        embedBuilder.addField("Raid Progression", progression.toString(), false);
+
         if (character.getWarcraftLogsData().getBestPerformanceAverage() != 0) {
-            embedBuilder.addField("WarcraftLogs", "Overall Performance : " + character.getWarcraftLogsData().getBestPerformanceAverage() + "\n----------\n" + prepareLogs(character.getBossRanks()), false);
+            embedBuilder.addField("WarcraftLogs", "Overall Performance\n" + String.format("%.2f", character.getWarcraftLogsData().getBestPerformanceAverage()) + "\n----------\n" + prepareLogs(character.getBossRanks()), false);
         }
 
-        embedBuilder.addField("Raid Progression", progression.toString(), false);
         embedBuilder.addField("Information About Player", character.getCommentary().length() > 1020
                 ? character.getCommentary().substring(0, 1020) + "..."
                 : character.getCommentary(), false);
@@ -169,7 +172,7 @@ public class DataFetcherService {
 
     private static String prepareLogs(List<BossRankResponse> responses) {
         return responses.stream()
-                .map(response -> response.getEncounterName() + " : " + response.getRankPercent())
+                .map(response -> response.getEncounterName() + "\n" + String.format("%.2f", response.getRankPercent()))
                 .collect(Collectors.joining("\n"));
     }
 

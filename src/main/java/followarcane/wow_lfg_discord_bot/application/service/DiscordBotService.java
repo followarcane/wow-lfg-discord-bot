@@ -184,9 +184,12 @@ public class DiscordBotService extends ListenerAdapter {
 
     public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed) {
         try {
-            log.info("Sending message to channel: {}", channelId);
+            if (jda.getTextChannelById(channelId) == null) {
+                log.info("Channel not found : {}", channelId);
+                return;
+            }
             Objects.requireNonNull(jda.getTextChannelById(channelId)).sendMessageEmbeds(embed.build()).queue();
-            log.info("Message sent");
+            log.info("Sending message to channel: {}", channelId);
             Message message = new Message();
             message.setMessageGuildId("guildIdHere");
             message.setMessageChannelId(channelId);
