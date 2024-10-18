@@ -10,6 +10,7 @@ import followarcane.wow_lfg_discord_bot.application.service.DiscordService;
 import followarcane.wow_lfg_discord_bot.application.service.RequestConverter;
 import followarcane.wow_lfg_discord_bot.domain.model.UserSettings;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/v1/discord")
+@Slf4j
 public class DiscordController {
 
     private final DiscordService discordService;
@@ -66,6 +68,7 @@ public class DiscordController {
     @PostMapping("/addUserSettings")
     public ResponseEntity<?> addUserSettings(@RequestBody UserSettingsRequest userSettingsRequest, @RequestHeader("Authorization") String token) {
         ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
+        log.info("UserSettingsRequest : {}", userSettingsRequest);
 
         if (validationResponse.getStatusCode() == HttpStatus.UNAUTHORIZED) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");

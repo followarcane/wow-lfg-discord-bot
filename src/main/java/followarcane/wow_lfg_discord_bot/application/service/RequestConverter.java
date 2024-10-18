@@ -51,6 +51,10 @@ public class RequestConverter {
         userSettings.setRealm(userSettingsRequest.getRealm());
         userSettings.setRegion(userSettingsRequest.getRegion());
         userSettings.setLanguage(userSettingsRequest.getLanguages());
+        userSettings.setRanks(userSettingsRequest.isWarcraftlogsRanks());
+        userSettings.setPlayerInfo(userSettingsRequest.isInformationAboutPlayer());
+        userSettings.setProgress(userSettingsRequest.isRecentRaidProgression());
+        userSettings.setFaction(userSettingsRequest.isFaction());
         return userSettings;
     }
 
@@ -73,6 +77,10 @@ public class RequestConverter {
         userSettingsRequest.setRegion(userSettings.getRegion());
         userSettingsRequest.setLanguages(userSettings.getLanguage());
         userSettingsRequest.setChannelId(userSettings.getChannel().getChannelId());
+        userSettingsRequest.setWarcraftlogsRanks(userSettings.isRanks());
+        userSettingsRequest.setInformationAboutPlayer(userSettings.isPlayerInfo());
+        userSettingsRequest.setRecentRaidProgression(userSettings.isProgress());
+        userSettingsRequest.setFaction(userSettings.isFaction());
         return userSettingsRequest;
     }
 

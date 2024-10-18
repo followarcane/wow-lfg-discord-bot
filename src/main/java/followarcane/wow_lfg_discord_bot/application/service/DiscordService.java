@@ -13,6 +13,7 @@ import followarcane.wow_lfg_discord_bot.domain.repository.DiscordServerRepositor
 import followarcane.wow_lfg_discord_bot.domain.repository.UserRepository;
 import followarcane.wow_lfg_discord_bot.domain.repository.UserSettingsRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class DiscordService {
 
     private final DiscordServerRepository serverRepository;
@@ -66,13 +68,18 @@ public class DiscordService {
         userSettingsRequest.setUserDiscordId(userId);
         UserSettings userSettings = getSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), userSettingsRequest.getUserDiscordId());
         DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByServer_ServerId(userSettingsRequest.getServerId());
-
         if (userSettings != null) {
             userSettings.setRealm(userSettingsRequest.getRealm());
             userSettings.setRegion(userSettingsRequest.getRegion());
             userSettings.setLanguage(userSettingsRequest.getLanguages());
+            userSettings.setPlayerInfo(userSettingsRequest.isInformationAboutPlayer());
+            userSettings.setRanks(userSettingsRequest.isWarcraftlogsRanks());
+            userSettings.setFaction(userSettingsRequest.isFaction());
+            userSettings.setProgress(userSettingsRequest.isRecentRaidProgression());
+
 
             userSettingsRepository.save(userSettings);
+            log.info("User settings updated: pInfo : {} - faction : {} - rank : {} - progress : {}", userSettings.isPlayerInfo(), userSettings.isFaction(), userSettings.isRanks(), userSettings.isProgress());
 
             discordChannel.setChannelId(userSettingsRequest.getChannelId());
             discordChannelRepository.save(discordChannel);

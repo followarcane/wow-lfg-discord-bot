@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -84,9 +83,8 @@ public class DataFetcherService {
 
                         for (CharacterInfoResponse character : filteredData) {
                             if (!settings.getChannel().getLastSentCharacters().contains(character.getName())) {
-                                //log.info("Character: {}", character);
 
-                                EmbedBuilder embedBuilder = getEmbedBuilder(character);
+                                EmbedBuilder embedBuilder = getEmbedBuilder(character, settings);
                                 discordBotService.sendEmbedMessageToChannel(settings.getChannel().getChannelId(), embedBuilder);
 
                                 discordService.updateLastSentCharacters(settings.getChannel(), character.getName());
@@ -119,7 +117,7 @@ public class DataFetcherService {
     }
 
 
-    private static @NotNull EmbedBuilder getEmbedBuilder(CharacterInfoResponse character) {
+    private static @NotNull EmbedBuilder getEmbedBuilder(CharacterInfoResponse character, UserSettings settings) {
         String raiderIOLink = "https://raider.io/characters/" + encodeURL(character.getRegion()) + "/" + encodeURL(character.getRealm().replace(' ', '-')) + "/" + encodeURL(character.getName());
         String wowProgressLink = "https://www.wowprogress.com/character/" + encodeURL(character.getRegion()) + "/" + encodeURL(character.getRealm().replace(' ', '-')) + "/" + encodeURL(character.getName());
         String warcraftLogsLink = "https://www.warcraftlogs.com/character/" + encodeURL(character.getRegion()) + "/" + encodeURL(character.getRealm().replace(' ', '-')) + "/" + encodeURL(character.getName());
@@ -133,26 +131,34 @@ public class DataFetcherService {
         embedBuilder.setTitle(title, wowProgressLink);
         embedBuilder.addField("Language", character.getLanguages(), true);
         embedBuilder.addField("Item Level", StringUtils.hasText(character.getILevel()) ? character.getILevel() : "No Info", true);
-        embedBuilder.addField("Faction", StringUtils.hasText(character.getRaiderIOData().getFaction()) ? character.getRaiderIOData().getFaction() : "No Info", true);
 
-        StringBuilder progression = new StringBuilder();
-        for (var raidProgression : character.getRaidProgressions()) {
-            progression.append(raidProgression.getRaidName()).append("\n").append(raidProgression.getSummary()).append("\n\n");
+        if (settings.isFaction()) {
+            embedBuilder.addField("Faction", StringUtils.hasText(character.getRaiderIOData().getFaction()) ? character.getRaiderIOData().getFaction() : "No Info", true);
         }
 
-        if (progression.isEmpty()) {
-            progression.append("Use the links below to check the progression.");
+        if (settings.isProgress()) {
+            StringBuilder progression = new StringBuilder();
+            for (var raidProgression : character.getRaidProgressions()) {
+                progression.append(raidProgression.getRaidName()).append("\n").append(raidProgression.getSummary()).append("\n\n");
+            }
+
+            if (progression.isEmpty()) {
+                progression.append("Use the links below to check the progression.");
+            }
+
+            embedBuilder.addField("Raid Progression", progression.toString(), false);
         }
 
-        embedBuilder.addField("Raid Progression", progression.toString(), false);
-
-        if (character.getWarcraftLogsData().getBestPerformanceAverage() != 0) {
+        if (settings.isRanks() && character.getWarcraftLogsData().getBestPerformanceAverage() != 0) {
             embedBuilder.addField("WarcraftLogs", "Overall Performance\n" + String.format("%.2f", character.getWarcraftLogsData().getBestPerformanceAverage()) + "\n----------\n" + prepareLogs(character.getBossRanks()), false);
         }
 
-        embedBuilder.addField("Information About Player", character.getCommentary().length() > 1020
-                ? character.getCommentary().substring(0, 1020) + "..."
-                : character.getCommentary(), false);
+        if (settings.isPlayerInfo()) {
+            embedBuilder.addField("Information About Player", character.getCommentary().length() > 1020
+                    ? character.getCommentary().substring(0, 1020) + "..."
+                    : character.getCommentary(), false);
+        }
+
         embedBuilder.addField("External Links",
                 "[Armory]" + "(" + armoryLink + ")" +
                         " | [Raider IO]" + "(" + raiderIOLink + ")" +
