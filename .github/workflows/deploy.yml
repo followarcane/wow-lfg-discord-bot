@@ -40,3 +40,56 @@ jobs:
       - name: Verify Java version
         run: |
           java -version
+
+      # 6. Gradle'ı kur ve build işlemi yap
+      - name: Set up Gradle
+        uses: gradle/wrapper-validation-action@v2
+        with:
+          gradle-version: '8.0.1'  # İhtiyacınıza göre Gradle versiyonunu seçebilirsiniz
+
+      # 7. Gradle wrapper dosyasına çalıştırılabilir izin ver
+      - name: Give execute permissions to gradlew
+        run: chmod +x ./gradlew
+
+      # 8. Gradle ile build al
+      - name: Build with Gradle
+        run: ./gradlew clean build  # Bu komut ile .jar dosyasını build ediyoruz
+
+      # 9. SSH Kurulumu
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VPS_IP: ${{ secrets.VPS_IP }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
+          echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+
+      # 10. .jar dosyasını VPS'ye kopyala
+      - name: Copy .jar file to VPS
+        run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
+
+      # 11. VPS üzerinde eski container'ı durdur
+      - name: Stop existing application on VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
+            # Daha önce çalışıyorsa eski süreci sonlandır
+            pkill -f 'java -jar' || true
+            echo "Eski süreç sonlandırıldı."
+          EOF
+
+      # 12. VPS üzerinde uygulamayı başlat
+      - name: Run .jar on VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
+            # Yeni .jar dosyasını çalıştır
+            java -jar /root/projects/wowdiscordbot/test/*.jar &
+            echo "Uygulama başarıyla başlatıldı!"
+          EOF
+
+      # 13. Başarılı Deployment İle İlgili Mesaj
+      - name: Success Message
+        run: echo "Deployment başarıyla tamamlandı!"
