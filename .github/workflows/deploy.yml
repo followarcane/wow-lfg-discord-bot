@@ -21,19 +21,19 @@ jobs:
           sudo apt-get install -y openjdk-17-jdk
           java -version  # Java'nın doğru şekilde kurulduğunu doğrula
 
-      # 3. Gradle'ı kur
-      - name: Set up Gradle
+      # 3. Gradle Wrapper Doğrulaması
+      - name: Set up Gradle Wrapper
         uses: gradle/wrapper-validation-action@v2
         with:
           gradle-version: '8.0.1'  # İhtiyacınıza göre Gradle versiyonunu seçebilirsiniz
 
-      # 4. Gradle wrapper dosyasına çalıştırılabilir izin ver
+      # 4. Gradle Wrapper dosyasına çalıştırılabilir izin ver
       - name: Give execute permissions to gradlew
         run: chmod +x ./gradlew
 
-      # 5. Gradle ile build al
+      # 5. Gradle ile Build Al
       - name: Build with Gradle
-        run: ./gradlew clean build  # Bu komut ile .jar dosyasını build ediyoruz
+        run: ./gradlew clean build  # .jar dosyasını build ediyoruz
 
       # 6. SSH Kurulumu
       - name: Setup SSH
@@ -48,11 +48,11 @@ jobs:
           ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-      # 7. .jar dosyasını VPS'ye kopyala
+      # 7. .jar Dosyasını VPS'ye Kopyala
       - name: Copy .jar file to VPS
         run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
 
-      # 8. VPS üzerinde eski container'ı durdur
+      # 8. VPS Üzerinde Eski Container'ı Durdur
       - name: Stop existing application on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
@@ -61,7 +61,7 @@ jobs:
             echo "Eski süreç sonlandırıldı."
           EOF
 
-      # 9. VPS üzerinde uygulamayı başlat
+      # 9. VPS Üzerinde Yeni Uygulamayı Başlat
       - name: Run .jar on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
@@ -70,6 +70,6 @@ jobs:
             echo "Uygulama başarıyla başlatıldı!"
           EOF
 
-      # 10. Başarılı Deployment İle İlgili Mesaj
+      # 10. Başarılı Deployment Mesajı
       - name: Success Message
         run: echo "Deployment başarıyla tamamlandı!"
