@@ -14,7 +14,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. SSH Kurulumu
+      # 2. Gradle'ı kur
+      - name: Set up Gradle
+        uses: gradle/wrapper-validation-action@v2
+        with:
+          gradle-version: '8.0.1'  # İhtiyacınıza göre Gradle versiyonunu seçebilirsiniz
+
+      # 3. Gradle ile build al
+      - name: Build with Gradle
+        run: ./gradlew clean build  # Bu komut ile .jar dosyasını build ediyoruz
+
+      # 4. SSH Kurulumu
       - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -27,58 +37,18 @@ jobs:
           ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-      # 3. VPS'ye Bağlan ve Deploy Et
-      - name: Deploy to VPS
-        env:  # Ortam değişkenlerini Secrets'ten al
-          PROD_DB_URL: ${{ secrets.PROD_DB_URL }}
-          PROD_DB_USERNAME: ${{ secrets.PROD_DB_USERNAME }}
-          PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
-          PROD_JWT_SECRET: ${{ secrets.PROD_JWT_SECRET }}
-          PROD_DISCORD_WEBHOOK_URL: ${{ secrets.PROD_DISCORD_WEBHOOK_URL }}
-          PROD_WOW_API_USERNAME: ${{ secrets.PROD_WOW_API_USERNAME }}
-          PROD_WOW_API_PASSWORD: ${{ secrets.PROD_WOW_API_PASSWORD }}
-          PROD_DISCORD_BOT_TOKEN: ${{ secrets.PROD_DISCORD_BOT_TOKEN }}
-          PROD_DISCORD_CLIENT_ID: ${{ secrets.PROD_DISCORD_CLIENT_ID }}
-          PROD_DISCORD_CLIENT_SECRET: ${{ secrets.PROD_DISCORD_CLIENT_SECRET }}
-          PROD_DISCORD_CALLBACK_URL: ${{ secrets.PROD_DISCORD_CALLBACK_URL }}
-          PROD_DISCORD_INVITE_URL: ${{ secrets.PROD_DISCORD_INVITE_URL }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          VPS_IP: ${{ secrets.VPS_IP }}
-          VPS_USER: ${{ secrets.VPS_USER }}
+      # 5. .jar dosyasını VPS'ye kopyala
+      - name: Copy .jar file to VPS
+        run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
+
+      # 6. VPS üzerinde uygulamayı çalıştır
+      - name: Run .jar on VPS
         run: |
-          echo "Starting deployment process..."
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            set -e  # Hata durumunda işlemi durdur
+            # Daha önce çalışıyorsa eski süreci sonlandır
+            pkill -f 'java -jar' || true
 
-            echo "SSH bağlantısı başarıyla kuruldu."
-
-            # Uygulama dizinine git
-            cd /root/projects/wowdiscordbot || exit 1
-            echo "Proje dizinine gidildi."
-
-            # Son güncellemeleri al
-            git pull origin main || exit 1
-            echo "Son güncellemeler başarıyla alındı."
-
-            # Docker Compose ile eski container'ları durdur ve yeniden başlat
-            export PROD_DB_URL=$PROD_DB_URL
-            export PROD_DB_USERNAME=$PROD_DB_USERNAME
-            export PROD_DB_PASSWORD=$PROD_DB_PASSWORD
-            export PROD_JWT_SECRET=$PROD_JWT_SECRET
-            export PROD_DISCORD_WEBHOOK_URL=$PROD_DISCORD_WEBHOOK_URL
-            export PROD_WOW_API_USERNAME=$PROD_WOW_API_USERNAME
-            export PROD_WOW_API_PASSWORD=$PROD_WOW_API_PASSWORD
-            export PROD_DISCORD_BOT_TOKEN=$PROD_DISCORD_BOT_TOKEN
-            export PROD_DISCORD_CLIENT_ID=$PROD_DISCORD_CLIENT_ID
-            export PROD_DISCORD_CLIENT_SECRET=$PROD_DISCORD_CLIENT_SECRET
-            export PROD_DISCORD_CALLBACK_URL=$PROD_DISCORD_CALLBACK_URL
-            export PROD_DISCORD_INVITE_URL=$PROD_DISCORD_INVITE_URL
-
-            docker-compose down || exit 1
-            echo "Eski container'lar durduruldu."
-
-            docker-compose up -d --build || exit 1
-            echo "Yeni container'lar başarıyla başlatıldı."
-
-            echo "Deployment işlemi tamamlandı!"
+            # Yeni .jar dosyasını çalıştır
+            java -jar /root/projects/wowdiscordbot/*.jar &
+            echo "Uygulama başarıyla başlatıldı!"
           EOF
