@@ -41,14 +41,24 @@ jobs:
       - name: Copy .jar file to VPS
         run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
 
-      # 6. VPS üzerinde uygulamayı çalıştır
-      - name: Run .jar on VPS
+      # 6. VPS üzerinde eski container'ı durdur
+      - name: Stop existing application on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             # Daha önce çalışıyorsa eski süreci sonlandır
             pkill -f 'java -jar' || true
+            echo "Eski süreç sonlandırıldı."
+          EOF
 
+      # 7. VPS üzerinde uygulamayı başlat
+      - name: Run .jar on VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             # Yeni .jar dosyasını çalıştır
-            java -jar /root/projects/wowdiscordbot/*.jar &
+            java -jar /root/projects/wowdiscordbot/test/*.jar &
             echo "Uygulama başarıyla başlatıldı!"
           EOF
+
+      # 8. Başarılı Deployment İle İlgili Mesaj
+      - name: Success Message
+        run: echo "Deployment başarıyla tamamlandı!"
