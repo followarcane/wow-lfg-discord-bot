@@ -14,16 +14,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. OpenJDK 17'yi kur
+      # 2. Mevcut Java sürümlerini temizle ve Java 17'yi kur
       - name: Install OpenJDK 17
         run: |
-          # Önce mevcut Java sürümünü kaldır
+          # Mevcut Java sürümlerini kaldır
           sudo apt-get remove --purge openjdk-11-*
           sudo apt-get remove --purge openjdk-8-*
-          
-          # OpenJDK 17'yi kur
+
+          # Java 17'yi kur
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
-          
+
+          # Varsayılan Java sürümünü ayarla
+          sudo update-alternatives --config java
+          sudo update-alternatives --config javac
+
           # Java sürümünü doğrula
           java -version
