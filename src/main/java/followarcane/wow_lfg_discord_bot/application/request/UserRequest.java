@@ -6,4 +6,12 @@ import lombok.Data;
 public class UserRequest {
     private String discordId;
     private String username;
+    private String globalName;
+    private String discriminator;
+    private String avatar;
+    private String banner;
+    private String bannerColor;
+    private String locale;
+    private String accessToken;
+    private String refreshToken;
 }

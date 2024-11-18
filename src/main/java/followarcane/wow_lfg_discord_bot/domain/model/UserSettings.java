@@ -13,6 +13,10 @@ public class UserSettings {
     private String language;
     private String realm;
     private String region;
+    private boolean faction;
+    private boolean progress;
+    private boolean ranks;
+    private boolean playerInfo;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
