@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Spring Boot application
+  app:
+    image: openjdk:11-jre-slim
+    container_name: wowdiscordbot
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=${PROD_DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${PROD_DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${PROD_DB_PASSWORD}
+      - JWT_SECRET=${PROD_JWT_SECRET}
+      - DISCORD_WEBHOOK_URL=${PROD_DISCORD_WEBHOOK_URL}
+      - WOW_API_USERNAME=${PROD_WOW_API_USERNAME}
+      - WOW_API_PASSWORD=${PROD_WOW_API_PASSWORD}
+      - DISCORD_BOT_TOKEN=${PROD_DISCORD_BOT_TOKEN}
+      - DISCORD_CLIENT_ID=${PROD_DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${PROD_DISCORD_CLIENT_SECRET}
+      - DISCORD_CALLBACK_URL=${PROD_DISCORD_CALLBACK_URL}
+      - DISCORD_INVITE_URL=${PROD_DISCORD_INVITE_URL}
+    ports:
+      - "1905:1905"
+    volumes:
+      - ./target:/app
+    command: "java -jar /app/app.jar"
+    depends_on:
+      - db
+
+  # Database service (PostgreSQL example)
+  db:
+    image: postgres:13
+    container_name: wowdiscordbot
+    environment:
+      - POSTGRES_USER=${PROD_DB_USERNAME}
+      - POSTGRES_PASSWORD=${PROD_DB_PASSWORD}
+      - POSTGRES_DB=wowdiscordbot
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Flyway Migration service
+  flyway:
+    image: flyway/flyway:7.10
+    container_name: wowdiscordbot-flyway
+    command: -url=${PROD_DB_URL} -user=${PROD_DB_USERNAME} -password=${PROD_DB_PASSWORD} migrate
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+
