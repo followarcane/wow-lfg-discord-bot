@@ -23,5 +23,5 @@ public class DiscordChannel {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "last_sent_characters", joinColumns = @JoinColumn(name = "channel_id"))
     @Column(name = "character_name")
-    private List<String> lastSentCharacters = new ArrayList<>();
+    private final List<String> lastSentCharacters = new ArrayList<>();
 }

@@ -33,21 +33,18 @@ import java.util.stream.Collectors;
 public class DataFetcherService {
 
     private final DiscordBotService discordBotService;
-    private final ApiProperties apiProperties;
     private final DiscordService discordService;
 
     private static ClassColorCodeHelper classColorCodeHelper;
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String wowApi = "http://localhost:8080/api/v1/wdc/latest-lfg";
     private Set<CharacterInfoResponse> previousData = new HashSet<>();
 
     @Autowired
     public DataFetcherService(DiscordBotService discordBotService, ApiProperties apiProperties, DiscordService discordService, ClassColorCodeHelper classColorCodeHelper) {
         this.discordBotService = discordBotService;
-        this.apiProperties = apiProperties;
         this.discordService = discordService;
-        this.classColorCodeHelper = classColorCodeHelper;
+        DataFetcherService.classColorCodeHelper = classColorCodeHelper;
 
         // Check if username and password are not null or empty
         Assert.notNull(apiProperties.getUsername(), "Username must not be null");
@@ -61,6 +58,7 @@ public class DataFetcherService {
         log.info("Fetching data from WoW API...");
 
         try {
+            String wowApi = "http://localhost:8080/api/v1/wdc/latest-lfg";
             ResponseEntity<List<CharacterInfoResponse>> response = restTemplate.exchange(
                     wowApi, HttpMethod.GET, null, new ParameterizedTypeReference<List<CharacterInfoResponse>>() {
                     });

@@ -47,8 +47,6 @@ public class DiscordBotService extends ListenerAdapter {
     private final DiscordServerRepository discordServerRepository;
 
     private JDA jda;
-    @Getter
-    private boolean botAlreadyLoggedIn = false;
 
     @Value("${discord.bot.token}")
     private String token;
@@ -91,7 +89,7 @@ public class DiscordBotService extends ListenerAdapter {
                     .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                     .setActivity(Activity.customStatus("https://azerite.app"))
                     .build();
-            botAlreadyLoggedIn = true;
+            boolean botAlreadyLoggedIn = true;
             log.info("Discord bot started successfully.");
         } catch (Exception e) {
             log.error("Error starting Discord bot", e);
@@ -122,10 +120,10 @@ public class DiscordBotService extends ListenerAdapter {
                             .queue();
                 }
                 if (command.equalsIgnoreCase("help")) {
-                    String helpMessage = new StringBuilder().append("To set up Azerite and start searching for players, please visit https://azerite.app and invite the bot to your channel again.\n")
-                            .append("Then, go to the 'Looking For Player?' configuration in the features section to adjust your settings and join us!\n")
-                            .append("Feel free to ask any question in our official discord.\n\n")
-                            .append("You can have an invite link with command !discord.").toString();
+                    String helpMessage = "To set up Azerite and start searching for players, please visit https://azerite.app and invite the bot to your channel again.\n" +
+                            "Then, go to the 'Looking For Player?' configuration in the features section to adjust your settings and join us!\n" +
+                            "Feel free to ask any question in our official discord.\n\n" +
+                            "You can have an invite link with command !discord.";
                     Objects.requireNonNull(jda.getTextChannelById(event.getChannel().getId()))
                             .sendMessage(helpMessage)
                             .queue();
@@ -169,8 +167,7 @@ public class DiscordBotService extends ListenerAdapter {
     }
 
     public List<TextChannel> getGuildChannelList(String guildId) {
-        List<TextChannel> channels = jda.getGuildById(guildId).getTextChannels();
-        return channels;
+        return jda.getGuildById(guildId).getTextChannels();
     }
 
     public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed) {
