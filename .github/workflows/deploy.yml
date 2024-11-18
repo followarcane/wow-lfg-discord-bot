@@ -44,7 +44,7 @@ jobs:
           PROD_DISCORD_INVITE_URL: ${{ secrets.PROD_DISCORD_INVITE_URL }}
         run: |
           echo "Starting deployment process..."
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa VPS_USER@VPS_IP << 'EOF'
             set -e  # Hata durumunda işlemi durdur
 
             echo "SSH bağlantısı başarıyla kuruldu."
