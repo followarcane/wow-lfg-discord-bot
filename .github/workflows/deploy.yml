@@ -17,6 +17,7 @@ jobs:
       # 2. Java 11'i tamamen kaldır
       - name: Remove existing Java version
         run: |
-          sudo apt-get remove -y openjdk-11-jdk openjdk-11-jre
-          sudo apt-get autoremove -y
+          sudo apt-get remove --purge openjdk-11-*
+          sudo apt-get autoremove --purge
+          sudo apt-get clean
           java -version
