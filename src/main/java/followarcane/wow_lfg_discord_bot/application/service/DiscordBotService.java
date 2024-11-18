@@ -98,15 +98,6 @@ public class DiscordBotService extends ListenerAdapter {
         }
     }
 
-
-    @Override
-    public void onGuildJoin(GuildJoinEvent event) {
-        // Send a welcome message
-        if (event.getGuild().getDefaultChannel() != null) {
-            //event.getGuild().getDefaultChannel().sen("Thanks for adding WoW LFG Bot!").queue();
-        }
-    }
-
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String[] prefixes = {"!", "?", "/"};
