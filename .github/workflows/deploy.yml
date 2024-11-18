@@ -14,30 +14,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. OpenJDK 17 Kurulumu
+      # 2. Java 11'i tamamen kaldır
+      - name: Remove existing Java version
+        run: |
+          sudo apt-get update
+          sudo apt-get remove -y openjdk-11-jdk openjdk-11-jre
+          sudo apt-get autoremove -y
+
+      # 3. OpenJDK 17'yi kur
       - name: Install OpenJDK 17
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
-          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-17-openjdk-amd64/bin/java 1
-          sudo update-alternatives --config java
-          java -version  # Java'nın doğru şekilde kurulduğunu doğrula
+          java -version  # Java 17'nin doğru şekilde kurulduğunu doğrulamak için
 
-      # 3. Gradle Wrapper Doğrulaması
-      - name: Set up Gradle Wrapper
+      # 4. Gradle'ı kur
+      - name: Set up Gradle
         uses: gradle/wrapper-validation-action@v2
         with:
           gradle-version: '8.0.1'  # İhtiyacınıza göre Gradle versiyonunu seçebilirsiniz
 
-      # 4. Gradle Wrapper dosyasına çalıştırılabilir izin ver
+      # 5. Gradle wrapper dosyasına çalıştırılabilir izin ver
       - name: Give execute permissions to gradlew
         run: chmod +x ./gradlew
 
-      # 5. Gradle ile Build Al
+      # 6. Gradle ile build al
       - name: Build with Gradle
-        run: ./gradlew clean build  # .jar dosyasını build ediyoruz
+        run: ./gradlew clean build  # Bu komut ile .jar dosyasını build ediyoruz
 
-      # 6. SSH Kurulumu
+      # 7. SSH Kurulumu
       - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -50,11 +55,11 @@ jobs:
           ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-      # 7. .jar Dosyasını VPS'ye Kopyala
+      # 8. .jar dosyasını VPS'ye kopyala
       - name: Copy .jar file to VPS
         run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
 
-      # 8. VPS Üzerinde Eski Container'ı Durdur
+      # 9. VPS üzerinde eski container'ı durdur
       - name: Stop existing application on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
@@ -63,7 +68,7 @@ jobs:
             echo "Eski süreç sonlandırıldı."
           EOF
 
-      # 9. VPS Üzerinde Yeni Uygulamayı Başlat
+      # 10. VPS üzerinde uygulamayı başlat
       - name: Run .jar on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
@@ -72,6 +77,6 @@ jobs:
             echo "Uygulama başarıyla başlatıldı!"
           EOF
 
-      # 10. Başarılı Deployment Mesajı
+      # 11. Başarılı Deployment İle İlgili Mesaj
       - name: Success Message
         run: echo "Deployment başarıyla tamamlandı!"
