@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main
+      - main  # Bu, yalnızca main branch'ine push yapıldığında çalışacak.
 
 jobs:
   deploy:
@@ -11,26 +11,32 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Kodunuzu çekmek için checkout action'ı
 
       - name: Setup SSH
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          VPS_IP: ${{ secrets.VPS_IP }}
-          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # GitHub Secrets'ten özel anahtarı alıyoruz
+          VPS_IP: ${{ secrets.VPS_IP }}  # GitHub Secrets'ten VPS IP adresini alıyoruz
+          VPS_USER: ${{ secrets.VPS_USER }}  # GitHub Secrets'ten VPS kullanıcı adını alıyoruz
         run: |
           mkdir -p ~/.ssh
-          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
-          echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa  # SSH anahtarını kaydediyoruz
+          chmod 600 ~/.ssh/id_rsa  # Anahtarın izinlerini ayarlıyoruz
+          ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts  # VPS IP adresinin anahtarını ekliyoruz
+          echo "StrictHostKeyChecking=no" >> ~/.ssh/config  # Güvenlik uyarılarını kapatıyoruz
 
       - name: Deploy to VPS
         run: |
-          ssh ${VPS_USER}@${VPS_IP} << 'EOF'
+          echo "Starting deployment process"
+          ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_IP} << 'EOF'
+            echo "SSH bağlantısı başarıyla kuruldu."
             cd ${{ secrets.DISCORD_BOT_PATH }}
+            echo "Bot dizinine gidiliyor..."
             git pull origin main
+            echo "Son güncellemeler alındı."
             docker-compose down
+            echo "Eski container'lar durduruldu."
             docker-compose up -d --build
-            docker-compose logs -f
+            echo "Yeni container'lar başlatıldı."
+            docker-compose logs -f  # Docker loglarını takip et
           EOF
