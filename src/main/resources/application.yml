@@ -1,25 +1,40 @@
 server:
   port: 1905
 
+app:
+  version: 1.0.6  # App Version
+  version-file-path: /root/projects/wowdiscordbot/version.txt
+  discord:
+    webhook-url: "${{ secrets.PROD_DISCORD_WEBHOOK_URL }}"
 
 wow-api:
-  username: pyro
-  password: pyro
-
+  username: "${{ secrets.PROD_WOW_API_USERNAME }}"
+  password: "${{ secrets.PROD_WOW_API_PASSWORD }}"
 
 discord:
+  api:
+    url: https://discord.com/api/v10
   bot:
-    token: ${DISCORD_BOT_TOKEN}
-    
+    token: "${{ secrets.PROD_DISCORD_BOT_TOKEN }}"
+  client:
+    id: "${{ secrets.PROD_DISCORD_CLIENT_ID }}"
+    secret: "${{ secrets.PROD_DISCORD_CLIENT_SECRET }}"
+  redirect:
+    uriCallback: "${{ secrets.PROD_DISCORD_CALLBACK_URL }}"
+    uriInvite: "${{ secrets.PROD_DISCORD_INVITE_URL }}"
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/wowdiscordbot
-    username: postgres
-    password: pass
+    url: "${{ secrets.PROD_DB_URL }}"
+    username: "${{ secrets.PROD_DB_USERNAME }}"
+    password: "${{ secrets.PROD_DB_PASSWORD }}"
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   flyway:
     enabled: true
     clean-disabled: true
+
+jwt:
+  secret: "${{ secrets.PROD_JWT_SECRET }}"
+  expiration: 86400000  # 24 hours in milliseconds

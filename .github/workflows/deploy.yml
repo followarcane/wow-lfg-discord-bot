@@ -1,0 +1,34 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main  # Bu, yalnızca main branch'ine push yapıldığında çalışacak.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3  # Kodunuzu çekmek için checkout action'ı
+
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # GitHub Secrets'ten özel anahtarı alıyoruz
+          VPS_IP: ${{ secrets.VPS_IP }}  # GitHub Secrets'ten VPS IP adresini alıyoruz
+          VPS_USER: ${{ secrets.VPS_USER }}  # GitHub Secrets'ten VPS kullanıcı adını alıyoruz
+        run: |
+          mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        run: |
+          ssh ${VPS_USER}@${VPS_IP} << 'EOF'
+            cd ${{ secrets.DISCORD_BOT_PATH }}
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
+          EOF

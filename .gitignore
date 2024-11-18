@@ -79,3 +79,4 @@
 /.idea/sonarlint.xml
 /.idea/uiDesigner.xml
 /.idea/modules/WoW-Lfg-Discord-Bot.main.iml
+/src/main/resources/application-local.yml
