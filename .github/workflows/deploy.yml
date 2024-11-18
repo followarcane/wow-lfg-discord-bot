@@ -28,7 +28,7 @@ jobs:
       - name: Deploy to VPS
         run: |
           echo "Starting deployment process"
-          ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_IP} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << EOF
             echo "SSH bağlantısı başarıyla kuruldu."
             cd ${{ secrets.DISCORD_BOT_PATH }}
             echo "Bot dizinine gidiliyor..."
