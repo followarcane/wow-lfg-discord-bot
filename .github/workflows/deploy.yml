@@ -15,10 +15,12 @@ jobs:
         uses: actions/checkout@v3
 
       # 2. OpenJDK 17 Kurulumu
-      - name: Set up OpenJDK 17
+      - name: Install OpenJDK 17
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
+          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-17-openjdk-amd64/bin/java 1
+          sudo update-alternatives --config java
           java -version  # Java'nın doğru şekilde kurulduğunu doğrula
 
       # 3. Gradle Wrapper Doğrulaması
