@@ -30,7 +30,7 @@ services:
   # Database service (PostgreSQL example)
   db:
     image: postgres:13
-    container_name: wowdiscordbot
+    container_name: wowdiscordbot_db
     environment:
       - POSTGRES_USER=${PROD_DB_USERNAME}
       - POSTGRES_PASSWORD=${PROD_DB_PASSWORD}
