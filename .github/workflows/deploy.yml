@@ -39,7 +39,7 @@ jobs:
 
       # 5. .jar dosyasını VPS'ye kopyala
       - name: Copy .jar file to VPS
-        run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/
+        run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
 
       # 6. VPS üzerinde uygulamayı çalıştır
       - name: Run .jar on VPS
