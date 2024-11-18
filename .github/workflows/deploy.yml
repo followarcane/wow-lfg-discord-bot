@@ -20,11 +20,15 @@ jobs:
         with:
           gradle-version: '8.0.1'  # İhtiyacınıza göre Gradle versiyonunu seçebilirsiniz
 
-      # 3. Gradle ile build al
+      # 3. Gradle wrapper dosyasına çalıştırılabilir izin ver
+      - name: Give execute permissions to gradlew
+        run: chmod +x ./gradlew
+
+      # 4. Gradle ile build al
       - name: Build with Gradle
         run: ./gradlew clean build  # Bu komut ile .jar dosyasını build ediyoruz
 
-      # 4. SSH Kurulumu
+      # 5. SSH Kurulumu
       - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -37,11 +41,11 @@ jobs:
           ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-      # 5. .jar dosyasını VPS'ye kopyala
+      # 6. .jar dosyasını VPS'ye kopyala
       - name: Copy .jar file to VPS
         run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
 
-      # 6. VPS üzerinde eski container'ı durdur
+      # 7. VPS üzerinde eski container'ı durdur
       - name: Stop existing application on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
@@ -50,7 +54,7 @@ jobs:
             echo "Eski süreç sonlandırıldı."
           EOF
 
-      # 7. VPS üzerinde uygulamayı başlat
+      # 8. VPS üzerinde uygulamayı başlat
       - name: Run .jar on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
@@ -59,6 +63,6 @@ jobs:
             echo "Uygulama başarıyla başlatıldı!"
           EOF
 
-      # 8. Başarılı Deployment İle İlgili Mesaj
+      # 9. Başarılı Deployment İle İlgili Mesaj
       - name: Success Message
         run: echo "Deployment başarıyla tamamlandı!"
