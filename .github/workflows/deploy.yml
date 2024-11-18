@@ -14,14 +14,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. JBR-17 (JetBrains Runtime 17) Kurulumu
-      - name: Set up JBR 17
-        run: |
-          wget https://github.com/JetBrains/JetBrainsRuntime/releases/download/jbr-17.0.4.1/JBR-17.0.4.1-linux-x64-b2500.tar.gz
-          tar -xzf JBR-17.0.4.1-linux-x64-b2500.tar.gz
-          sudo mv jbr-17.0.4.1-linux-x64 /opt/jbr
-          sudo update-alternatives --install /usr/bin/java java /opt/jbr/bin/java 1
-          sudo update-alternatives --set java /opt/jbr/bin/java
+      # 2. Java 17'yi kur
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'  # Java 17 kullanılıyor
+          distribution: 'temurin'  # Temurin JDK'yı kullanıyoruz
 
       # 3. Gradle'ı kur
       - name: Set up Gradle
