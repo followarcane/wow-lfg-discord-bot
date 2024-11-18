@@ -42,9 +42,12 @@ jobs:
           PROD_DISCORD_CLIENT_SECRET: ${{ secrets.PROD_DISCORD_CLIENT_SECRET }}
           PROD_DISCORD_CALLBACK_URL: ${{ secrets.PROD_DISCORD_CALLBACK_URL }}
           PROD_DISCORD_INVITE_URL: ${{ secrets.PROD_DISCORD_INVITE_URL }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VPS_IP: ${{ secrets.VPS_IP }}
+          VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           echo "Starting deployment process..."
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa VPS_USER@VPS_IP << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             set -e  # Hata durumunda işlemi durdur
 
             echo "SSH bağlantısı başarıyla kuruldu."
