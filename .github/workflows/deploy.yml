@@ -14,25 +14,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. JetBrains Runtime (JBR) Java 17'yi kur
-      - name: Install JetBrains Runtime (JBR) Java 17
+      # 2. OpenJDK 17'yi kur
+      - name: Install OpenJDK 17
         run: |
           # Önce mevcut Java sürümünü kaldır
           sudo apt-get remove --purge openjdk-11-*
           sudo apt-get remove --purge openjdk-8-*
-
-          # JetBrains Runtime (JBR) Java 17'yi indir ve kur
-          wget https://github.com/JetBrains/JetBrainsRuntime/releases/download/jbr-17.0.4.1/JBR-17.0.4.1-linux-x64-b2500.tar.gz
-          tar -xzf JBR-17.0.4.1-linux-x64-b2500.tar.gz
-          sudo mv jbr-17.0.4.1-linux-x64 /opt/jbr
-
-          # Java'yı sistemde kullanılır hale getir
-          sudo update-alternatives --install /usr/bin/java java /opt/jbr/bin/java 1
-          sudo update-alternatives --install /usr/bin/javac javac /opt/jbr/bin/javac 1
-
-          # Varsayılan olarak Java 17'yi seç
-          sudo update-alternatives --set java /opt/jbr/bin/java
-          sudo update-alternatives --set javac /opt/jbr/bin/javac
-
+          
+          # OpenJDK 17'yi kur
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk
+          
           # Java sürümünü doğrula
           java -version
