@@ -114,19 +114,19 @@ jobs:
       - name: Set Environment Variables and Start Service
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            # Ortam değişkenlerini set et
-            export PROD_DB_URL=${PROD_DB_URL}
-            export PROD_DB_USERNAME=${PROD_DB_USERNAME}
-            export PROD_DB_PASSWORD=${PROD_DB_PASSWORD}
-            export PROD_DISCORD_WEBHOOK_URL=${PROD_DISCORD_WEBHOOK_URL}
-            export PROD_WOW_API_USERNAME=${PROD_WOW_API_USERNAME}
-            export PROD_WOW_API_PASSWORD=${PROD_WOW_API_PASSWORD}
-            export PROD_DISCORD_BOT_TOKEN=${PROD_DISCORD_BOT_TOKEN}
-            export PROD_DISCORD_CLIENT_ID=${PROD_DISCORD_CLIENT_ID}
-            export PROD_DISCORD_CLIENT_SECRET=${PROD_DISCORD_CLIENT_SECRET}
-            export PROD_DISCORD_CALLBACK_URL=${PROD_DISCORD_CALLBACK_URL}
-            export PROD_DISCORD_INVITE_URL=${PROD_DISCORD_INVITE_URL}
-            export PROD_JWT_SECRET=${PROD_JWT_SECRET}
+            # Ortam değişkenlerini .env dosyasına yaz
+            echo "PROD_DB_URL=${PROD_DB_URL}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_DB_USERNAME=${PROD_DB_USERNAME}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_DB_PASSWORD=${PROD_DB_PASSWORD}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_DISCORD_WEBHOOK_URL=${PROD_DISCORD_WEBHOOK_URL}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_WOW_API_USERNAME=${PROD_WOW_API_USERNAME}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_WOW_API_PASSWORD=${PROD_WOW_API_PASSWORD}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_DISCORD_BOT_TOKEN=${PROD_DISCORD_BOT_TOKEN}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_DISCORD_CLIENT_ID=${PROD_DISCORD_CLIENT_ID}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_DISCORD_CLIENT_SECRET=${PROD_DISCORD_CLIENT_SECRET}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_DISCORD_CALLBACK_URL=${PROD_DISCORD_CALLBACK_URL}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_DISCORD_INVITE_URL=${PROD_DISCORD_INVITE_URL}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
+            echo "PROD_JWT_SECRET=${PROD_JWT_SECRET}" | sudo tee -a /root/projects/wowdiscordbot/.env > /dev/null
 
             # Servisi başlat
             sudo systemctl enable testdiscordbot.service
