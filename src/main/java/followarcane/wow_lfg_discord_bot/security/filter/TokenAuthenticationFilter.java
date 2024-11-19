@@ -69,6 +69,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Map<String, Object> userData = response.getBody();
+            assert userData != null;
             return (String) userData.get("id");
         }
 
