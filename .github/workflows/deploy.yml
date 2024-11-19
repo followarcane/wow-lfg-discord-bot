@@ -21,6 +21,9 @@ jobs:
       PROD_DISCORD_CALLBACK_URL: ${{ secrets.PROD_DISCORD_CALLBACK_URL }}
       PROD_DISCORD_INVITE_URL: ${{ secrets.PROD_DISCORD_INVITE_URL }}
       PROD_JWT_SECRET: ${{ secrets.PROD_JWT_SECRET }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      VPS_IP: ${{ secrets.VPS_IP }}
+      VPS_USER: ${{ secrets.VPS_USER }}
 
     steps:
       # 1. Kodu Checkout Et
