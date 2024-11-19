@@ -94,6 +94,7 @@ jobs:
           echo "PROD_DISCORD_CALLBACK_URL=${{ secrets.PROD_DISCORD_CALLBACK_URL }}" | sudo tee -a /root/.env > /dev/null
           echo "PROD_DISCORD_INVITE_URL=${{ secrets.PROD_DISCORD_INVITE_URL }}" | sudo tee -a /root/.env > /dev/null
           echo "PROD_JWT_SECRET=${{ secrets.PROD_JWT_SECRET }}" | sudo tee -a /root/.env > /dev/null
+    
       
 
       # 10. Eski wowdiscordbot servisini durdur
