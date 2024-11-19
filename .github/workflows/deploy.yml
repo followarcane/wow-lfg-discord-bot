@@ -101,23 +101,19 @@ jobs:
       # 12. Set environment variables on the server and start the service
       - name: Set Environment Variables and Write to .env
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << EOF
-            # Clear the .env file
-            > /root/projects/wowdiscordbot/.env
-          
-            # Write the new values to the .env file
-            echo "PROD_DB_URL=${PROD_DB_URL}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_DB_USERNAME=${PROD_DB_USERNAME}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_DB_PASSWORD=${PROD_DB_PASSWORD}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_DISCORD_WEBHOOK_URL=${PROD_DISCORD_WEBHOOK_URL}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_WOW_API_USERNAME=${PROD_WOW_API_USERNAME}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_WOW_API_PASSWORD=${PROD_WOW_API_PASSWORD}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_DISCORD_BOT_TOKEN=${PROD_DISCORD_BOT_TOKEN}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_DISCORD_CLIENT_ID=${PROD_DISCORD_CLIENT_ID}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_DISCORD_CLIENT_SECRET=${PROD_DISCORD_CLIENT_SECRET}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_DISCORD_CALLBACK_URL=${PROD_DISCORD_CALLBACK_URL}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_DISCORD_INVITE_URL=${PROD_DISCORD_INVITE_URL}" >> /root/projects/wowdiscordbot/.env
-            echo "PROD_JWT_SECRET=${PROD_JWT_SECRET}" >> /root/projects/wowdiscordbot/.env
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << EOF
+              echo "PROD_DB_URL=${PROD_DB_URL}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_DB_USERNAME=${PROD_DB_USERNAME}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_DB_PASSWORD=${PROD_DB_PASSWORD}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_DISCORD_WEBHOOK_URL=${PROD_DISCORD_WEBHOOK_URL}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_WOW_API_USERNAME=${PROD_WOW_API_USERNAME}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_WOW_API_PASSWORD=${PROD_WOW_API_PASSWORD}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_DISCORD_BOT_TOKEN=${PROD_DISCORD_BOT_TOKEN}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_DISCORD_CLIENT_ID=${PROD_DISCORD_CLIENT_ID}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_DISCORD_CLIENT_SECRET=${PROD_DISCORD_CLIENT_SECRET}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_DISCORD_CALLBACK_URL=${PROD_DISCORD_CALLBACK_URL}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_DISCORD_INVITE_URL=${PROD_DISCORD_INVITE_URL}" >> /root/projects/wowdiscordbot/.env
+              echo "PROD_JWT_SECRET=${PROD_JWT_SECRET}" >> /root/projects/wowdiscordbot/.env
           
             # Start the service
             sudo systemctl enable testdiscordbot.service
