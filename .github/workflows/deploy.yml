@@ -112,6 +112,10 @@ jobs:
 
       # 12. Ortam Değişkenlerini Sunucuda Set Et ve Servisi Başlat
       - name: Set Environment Variables and Write to .env
+        env:
+          PROD_DISCORD_INVITE_URL: ${{ secrets.PROD_DISCORD_INVITE_URL }}
+          PROD_JWT_SECRET: ${{ secrets.PROD_JWT_SECRET }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             echo "PROD_DB_URL=${PROD_DB_URL}" | tee -a /root/projects/wowdiscordbot/.env
