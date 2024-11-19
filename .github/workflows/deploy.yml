@@ -26,15 +26,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
 
-      # 4. JAVA_HOME çevre değişkenini Java 17 olarak ayarla
-      - name: Set JAVA_HOME to Java 17
+      # 4. JAVA_HOME ve PATH değişkenlerini ayarla
+      - name: Configure JAVA_HOME and PATH
         run: |
           echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
-          echo "PATH=\$JAVA_HOME/bin:\$PATH" >> $GITHUB_ENV
+          echo "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH" >> $GITHUB_ENV
+        shell: bash
+
+      # 5. Sistem PATH'ine Java'yı ekle
+      - name: Add Java to PATH
+        run: |
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
+          echo "JAVA_HOME ve PATH ayarlandı."
 
       # 6. Java sürümünü doğrula
       - name: Verify Java version
-        run: java -version
+        run: |
+          echo "JAVA_HOME: $JAVA_HOME"
+          echo "PATH: $PATH"
+          java -version
 
       # 7. Gradle wrapper dosyasına çalıştırılabilir izin ver
       - name: Give execute permissions to gradlew
