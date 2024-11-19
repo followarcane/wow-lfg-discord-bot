@@ -116,14 +116,15 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             cat <<EOF > /etc/systemd/system/testdiscordbot.service
             [Unit]
-            Description=Test Discord Bot Service
+            Description=WoW Discord Bot Backend
             After=network.target
-      
+            
             [Service]
-            ExecStart=/usr/bin/java -jar /root/projects/wowdiscordbot/test/discordBot.jar
-            Restart=always
+            Type=simple
             User=root
-      
+            ExecStart=/usr/bin/java -jar /root/projects/wowdiscordbot/test/discordBot.jar.jar
+            Restart=on-failure
+            
             [Install]
             WantedBy=multi-user.target
             EOF
