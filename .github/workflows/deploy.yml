@@ -114,27 +114,30 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            cat <<EOF > /etc/systemd/system/testdiscordbot.service
+            # systemd servis dosyasını oluştur
+            cat <<'SERVICE' > /etc/systemd/system/testdiscordbot.service
             [Unit]
             Description=WoW Discord Bot Backend
             After=network.target
-            
+
             [Service]
             Type=simple
             User=root
-            ExecStart=/usr/bin/java -jar /root/projects/wowdiscordbot/test/discordBot.jar.jar
+            ExecStart=/usr/bin/java -jar /root/projects/wowdiscordbot/test/discordBot.jar
             Restart=on-failure
-            
+
             [Install]
             WantedBy=multi-user.target
-            EOF
-      
+            SERVICE
+
+            # systemctl komutlarını ayrı olarak çalıştır
             sudo systemctl daemon-reload
             sudo systemctl enable testdiscordbot.service
             sudo systemctl start testdiscordbot.service
+
             echo "Yeni testdiscordbot servisi oluşturuldu ve başlatıldı."
           EOF
-
+      
 
       # 14. Başarılı Deployment İle İlgili Mesaj
       - name: Success Message
