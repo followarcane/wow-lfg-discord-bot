@@ -163,7 +163,7 @@ public class DiscordBotService extends ListenerAdapter {
     }
 
     public List<TextChannel> getGuildChannelList(String guildId) {
-        return jda.getGuildById(guildId).getTextChannels();
+        return Objects.requireNonNull(jda.getGuildById(guildId)).getTextChannels();
     }
 
     public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed) {
