@@ -32,14 +32,6 @@ jobs:
           echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
           echo "PATH=\$JAVA_HOME/bin:\$PATH" >> $GITHUB_ENV
 
-      # 5. Varsayılan olarak Java 17'yi ayarla
-      - name: Set Java 17 as default
-        run: |
-          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-17-openjdk-amd64/bin/java 1711
-          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac 1711
-          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-          sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
-
       # 6. Java sürümünü doğrula
       - name: Verify Java version
         run: java -version
