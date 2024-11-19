@@ -9,6 +9,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
+      PROD_DB_URL: ${{ secrets.PROD_DB_URL }}
+      PROD_DB_USERNAME: ${{ secrets.PROD_DB_USERNAME }}
+      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+      PROD_DISCORD_WEBHOOK_URL: ${{ secrets.PROD_DISCORD_WEBHOOK_URL }}
+      PROD_WOW_API_USERNAME: ${{ secrets.PROD_WOW_API_USERNAME }}
+      PROD_WOW_API_PASSWORD: ${{ secrets.PROD_WOW_API_PASSWORD }}
+      PROD_DISCORD_BOT_TOKEN: ${{ secrets.PROD_DISCORD_BOT_TOKEN }}
+      PROD_DISCORD_CLIENT_ID: ${{ secrets.PROD_DISCORD_CLIENT_ID }}
+      PROD_DISCORD_CLIENT_SECRET: ${{ secrets.PROD_DISCORD_CLIENT_SECRET }}
+      PROD_DISCORD_CALLBACK_URL: ${{ secrets.PROD_DISCORD_CALLBACK_URL }}
+      PROD_DISCORD_INVITE_URL: ${{ secrets.PROD_DISCORD_INVITE_URL }}
+      PROD_JWT_SECRET: ${{ secrets.PROD_JWT_SECRET }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       VPS_IP: ${{ secrets.VPS_IP }}
       VPS_USER: ${{ secrets.VPS_USER }}
