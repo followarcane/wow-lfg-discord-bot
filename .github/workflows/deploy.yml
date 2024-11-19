@@ -51,9 +51,11 @@ jobs:
       - name: Give execute permissions to gradlew
         run: chmod +x ./gradlew
 
-      # 8. Gradle ile build al
-      - name: Build with Gradle
-        run: ./gradlew clean build
+      # 8. Gradle ile build al ve çıktıyı "discordBot.jar" olarak adlandır
+      - name: Build and Rename JAR
+        run: |
+          ./gradlew clean build
+          cp build/libs/*.jar build/libs/discordBot.jar
 
       # 9. SSH Kurulumu
       - name: Setup SSH
@@ -68,50 +70,59 @@ jobs:
           ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-      # 10. .jar dosyasını VPS'ye kopyala
-      - name: Ensure Target Directory Exists and Copy .jar file to VPS
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          VPS_IP: ${{ secrets.VPS_IP }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          # Hedef dizin var mı kontrol et, yoksa oluştur
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            if [ ! -d "/root/projects/wowdiscordbot/test" ]; then
-              mkdir -p /root/projects/wowdiscordbot/test
-              echo "Hedef dizin oluşturuldu: /root/projects/wowdiscordbot/test"
-            else
-              echo "Hedef dizin zaten mevcut: /root/projects/wowdiscordbot/test"
-            fi
-          EOF
-          # .jar dosyasını kopyala
-          scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
-          
-          
-        # 11. VPS üzerinde eski container'ı durdur
-      - name: Stop existing application on VPS
-        env:
-            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-            VPS_IP: ${{ secrets.VPS_IP }}
-            VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-              ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-                pkill -f 'java -jar' || true
-                echo "Eski süreç sonlandırıldı."
-              EOF
-
-      # 12. VPS üzerinde uygulamayı başlat
-      - name: Run .jar on VPS
+      # 10. Eski wowdiscordbot servisini durdur
+      - name: Stop Existing Service
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           VPS_IP: ${{ secrets.VPS_IP }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            nohup java -jar /root/projects/wowdiscordbot/test/*.jar > /dev/null 2>&1 &
-            echo "Uygulama başarıyla başlatıldı!"
+            sudo systemctl stop testdiscordbot.service
+            echo "Eski wowdiscordbot servisi durduruldu."
           EOF
 
-      # 13. Başarılı Deployment İle İlgili Mesaj
+      # 11. Test klasöründeki eski dosyaları temizle ve yeni jar dosyasını kopyala
+      - name: Clear Test Directory and Copy New JAR
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VPS_IP: ${{ secrets.VPS_IP }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
+            rm -rf /root/projects/wowdiscordbot/test/*
+            echo "Test klasörü temizlendi."
+          EOF
+          scp -o StrictHostKeyChecking=no build/libs/discordBot.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test/
+
+      # 12. Yeni bir systemd servisi oluştur ve başlat
+      - name: Create and Start New Service
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VPS_IP: ${{ secrets.VPS_IP }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
+            cat <<SERVICE > /etc/systemd/system/testdiscordbot.service
+            [Unit]
+            Description=Test Discord Bot Service
+            After=network.target
+
+            [Service]
+            ExecStart=/usr/bin/java -jar /root/projects/wowdiscordbot/test/discordBot.jar
+            Restart=always
+            User=root
+
+            [Install]
+            WantedBy=multi-user.target
+            SERVICE
+
+            sudo systemctl daemon-reload
+            sudo systemctl enable testdiscordbot.service
+            sudo systemctl start testdiscordbot.service
+            echo "Yeni testdiscordbot servisi oluşturuldu ve başlatıldı."
+          EOF
+
+      # 14. Başarılı Deployment İle İlgili Mesaj
       - name: Success Message
         run: echo "Deployment başarıyla tamamlandı!"
