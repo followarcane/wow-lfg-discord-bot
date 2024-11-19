@@ -23,7 +23,6 @@ jobs:
       # 3. Java 17'yi kur
       - name: Install OpenJDK 17
         run: |
-          # Java 17'yi yükle
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
 
@@ -36,32 +35,24 @@ jobs:
       # 5. Varsayılan olarak Java 17'yi ayarla
       - name: Set Java 17 as default
         run: |
-          # Varsayılan Java 17'yi ayarla
-          update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-17-openjdk-amd64/bin/java 1711
-          update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac 1711
-          update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-          update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-17-openjdk-amd64/bin/java 1711
+          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac 1711
+          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+          sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
 
       # 6. Java sürümünü doğrula
       - name: Verify Java version
-        run: |
-          java -version
+        run: java -version
 
-      # 7. Gradle'ı kur ve build işlemi yap
-      - name: Set up Gradle
-        uses: gradle/wrapper-validation-action@v2
-        with:
-          gradle-version: '8.0.1'  # İhtiyacınıza göre Gradle versiyonunu seçebilirsiniz
-
-      # 8. Gradle wrapper dosyasına çalıştırılabilir izin ver
+      # 7. Gradle wrapper dosyasına çalıştırılabilir izin ver
       - name: Give execute permissions to gradlew
         run: chmod +x ./gradlew
 
-      # 9. Gradle ile build al
+      # 8. Gradle ile build al
       - name: Build with Gradle
-        run: ./gradlew clean build  # Bu komut ile .jar dosyasını build ediyoruz
+        run: ./gradlew clean build
 
-      # 10. SSH Kurulumu
+      # 9. SSH Kurulumu
       - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -74,28 +65,27 @@ jobs:
           ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-      # 11. .jar dosyasını VPS'ye kopyala
+      # 10. .jar dosyasını VPS'ye kopyala
       - name: Copy .jar file to VPS
-        run: scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
+        run: |
+          scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
 
-      # 12. VPS üzerinde eski container'ı durdur
+      # 11. VPS üzerinde eski container'ı durdur
       - name: Stop existing application on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            # Daha önce çalışıyorsa eski süreci sonlandır
             pkill -f 'java -jar' || true
             echo "Eski süreç sonlandırıldı."
           EOF
 
-      # 13. VPS üzerinde uygulamayı başlat
+      # 12. VPS üzerinde uygulamayı başlat
       - name: Run .jar on VPS
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            # Yeni .jar dosyasını çalıştır
-            java -jar /root/projects/wowdiscordbot/test/*.jar &
+            nohup java -jar /root/projects/wowdiscordbot/test/*.jar > /dev/null 2>&1 &
             echo "Uygulama başarıyla başlatıldı!"
           EOF
 
-      # 14. Başarılı Deployment İle İlgili Mesaj
+      # 13. Başarılı Deployment İle İlgili Mesaj
       - name: Success Message
         run: echo "Deployment başarıyla tamamlandı!"
