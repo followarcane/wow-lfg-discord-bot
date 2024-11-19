@@ -3,75 +3,63 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main  # Sadece 'main' dalına yapılan push'larda çalışır.
+      - main  # Only runs on pushes to the 'main' branch.
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      PROD_DB_URL: ${{ secrets.PROD_DB_URL }}
-      PROD_DB_USERNAME: ${{ secrets.PROD_DB_USERNAME }}
-      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
-      PROD_DISCORD_WEBHOOK_URL: ${{ secrets.PROD_DISCORD_WEBHOOK_URL }}
-      PROD_WOW_API_USERNAME: ${{ secrets.PROD_WOW_API_USERNAME }}
-      PROD_WOW_API_PASSWORD: ${{ secrets.PROD_WOW_API_PASSWORD }}
-      PROD_DISCORD_BOT_TOKEN: ${{ secrets.PROD_DISCORD_BOT_TOKEN }}
-      PROD_DISCORD_CLIENT_ID: ${{ secrets.PROD_DISCORD_CLIENT_ID }}
-      PROD_DISCORD_CLIENT_SECRET: ${{ secrets.PROD_DISCORD_CLIENT_SECRET }}
-      PROD_DISCORD_CALLBACK_URL: ${{ secrets.PROD_DISCORD_CALLBACK_URL }}
-      PROD_DISCORD_INVITE_URL: ${{ secrets.PROD_DISCORD_INVITE_URL }}
-      PROD_JWT_SECRET: ${{ secrets.PROD_JWT_SECRET }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       VPS_IP: ${{ secrets.VPS_IP }}
       VPS_USER: ${{ secrets.VPS_USER }}
 
     steps:
-      # 1. Kodu Checkout Et
+      # 1. Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Mevcut Java sürümlerini temizle
+      # 2. Clean up existing Java versions
       - name: Clean up existing Java versions
         run: |
           sudo apt-get remove --purge -y openjdk-11-* openjdk-8-* temurin-*
           sudo apt-get autoremove -y
 
-      # 3. Java 17'yi kur
+      # 3. Install OpenJDK 17
       - name: Install OpenJDK 17
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
 
-      # 4. JAVA_HOME ve PATH değişkenlerini ayarla
+      # 4. Configure JAVA_HOME and PATH
       - name: Configure JAVA_HOME and PATH
         run: |
           echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
           echo "PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH" >> $GITHUB_ENV
         shell: bash
 
-      # 5. Sistem PATH'ine Java'yı ekle
+      # 5. Add Java to system PATH
       - name: Add Java to PATH
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
           export PATH=$JAVA_HOME/bin:$PATH
-          echo "JAVA_HOME ve PATH ayarlandı."
+          echo "JAVA_HOME and PATH configured."
 
-      # 6. Java sürümünü doğrula
+      # 6. Verify Java version
       - name: Verify Java version
         run: |
           echo "JAVA_HOME: $JAVA_HOME"
           echo "PATH: $PATH"
           java -version
 
-      # 7. Gradle wrapper dosyasına çalıştırılabilir izin ver
+      # 7. Give execute permissions to gradlew
       - name: Give execute permissions to gradlew
         run: chmod +x ./gradlew
 
-      # 8. Gradle ile build al
+      # 8. Build the project using Gradle
       - name: Build the project
         run: ./gradlew clean build
 
-      # 9. SSH Kurulumu
+      # 9. Set up SSH
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -80,44 +68,44 @@ jobs:
           ssh-keyscan -H ${VPS_IP} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-      # 10. Eski wowdiscordbot servisini durdur
+      # 10. Stop the existing wowdiscordbot service
       - name: Stop Existing Service
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             sudo systemctl stop testdiscordbot.service
-            echo "Eski wowdiscordbot servisi durduruldu."
+            echo "Old wowdiscordbot service stopped."
           EOF
 
-      # 11. Test klasöründeki eski dosyaları temizle ve yeni jar dosyasını kopyala
+      # 11. Clean the test directory and copy the new JAR file
       - name: Clear Test Directory and Copy New JAR
         run: |
-          # Test dizinindeki eski dosyaları temizle
+          # Clean up old files in the test directory
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             rm -rf /root/projects/wowdiscordbot/test/*
-            echo "Test klasörü temizlendi."
+            echo "Test directory cleaned."
           EOF
           
-          # JAR dosyasını sunucuya kopyala
+          # Copy the JAR file to the server
           scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test/
           
-          # Sunucuda JAR dosyasının adını değiştirme
+          # Rename the JAR file on the server
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            # Eğer "-plain" eki içeren dosya varsa, onu sil
+            # If a file with "-plain" in the name exists, delete it
             rm -f /root/projects/wowdiscordbot/test/*-plain.jar
           
-            # Diğer JAR dosyasının adını değiştirme
+            # Rename the JAR file
             mv /root/projects/wowdiscordbot/test/*.jar /root/projects/wowdiscordbot/test/discordBot.jar
-            echo "JAR dosyasının adı başarıyla değiştirildi."
+            echo "JAR file renamed successfully."
           EOF
 
-      # 12. Ortam Değişkenlerini Sunucuda Set Et ve Servisi Başlat
+      # 12. Set environment variables on the server and start the service
       - name: Set Environment Variables and Write to .env
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << EOF
-            # .env dosyasını temizle
+            # Clear the .env file
             > /root/projects/wowdiscordbot/.env
           
-            # Yeni değerleri yaz
+            # Write the new values to the .env file
             echo "PROD_DB_URL=${PROD_DB_URL}" >> /root/projects/wowdiscordbot/.env
             echo "PROD_DB_USERNAME=${PROD_DB_USERNAME}" >> /root/projects/wowdiscordbot/.env
             echo "PROD_DB_PASSWORD=${PROD_DB_PASSWORD}" >> /root/projects/wowdiscordbot/.env
@@ -131,14 +119,14 @@ jobs:
             echo "PROD_DISCORD_INVITE_URL=${PROD_DISCORD_INVITE_URL}" >> /root/projects/wowdiscordbot/.env
             echo "PROD_JWT_SECRET=${PROD_JWT_SECRET}" >> /root/projects/wowdiscordbot/.env
           
-            # Servisi başlat
+            # Start the service
             sudo systemctl enable testdiscordbot.service
             sudo systemctl start testdiscordbot.service
           
-            echo "Yeni testdiscordbot servisi oluşturuldu ve başlatıldı."
+            echo "New testdiscordbot service created and started."
           EOF
       
 
-        # 13. Başarılı Deployment İle İlgili Mesaj
+      # 13. Success Message
       - name: Success Message
-        run: echo "Deployment başarıyla tamamlandı!"
+        run: echo "Deployment completed successfully!"
