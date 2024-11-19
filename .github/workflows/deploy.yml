@@ -107,7 +107,6 @@ jobs:
           EOF
       
 
-        # 12. Yeni bir systemd servisi oluştur ve başlat
       - name: Create and Start New Service
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -115,25 +114,26 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            cat <<SERVICE > /etc/systemd/system/testdiscordbot.service
+            cat <<EOF > /etc/systemd/system/testdiscordbot.service
             [Unit]
             Description=Test Discord Bot Service
             After=network.target
-
+      
             [Service]
             ExecStart=/usr/bin/java -jar /root/projects/wowdiscordbot/test/discordBot.jar
             Restart=always
             User=root
-
+      
             [Install]
             WantedBy=multi-user.target
-            SERVICE
-
+            EOF
+      
             sudo systemctl daemon-reload
             sudo systemctl enable testdiscordbot.service
             sudo systemctl start testdiscordbot.service
             echo "Yeni testdiscordbot servisi oluşturuldu ve başlatıldı."
           EOF
+
 
       # 14. Başarılı Deployment İle İlgili Mesaj
       - name: Success Message
