@@ -69,27 +69,36 @@ jobs:
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
       # 10. .jar dosyasını VPS'ye kopyala
-      - name: Copy .jar file to VPS
+      - name: Ensure Target Directory Exists and Copy .jar file to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           VPS_IP: ${{ secrets.VPS_IP }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          echo "VPS_USER: ${VPS_USER}"
-          echo "VPS_IP: ${VPS_IP}"
-          scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
-
-      # 11. VPS üzerinde eski container'ı durdur
-      - name: Stop existing application on VPS
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          VPS_IP: ${{ secrets.VPS_IP }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
+          # Hedef dizin var mı kontrol et, yoksa oluştur
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
-            pkill -f 'java -jar' || true
-            echo "Eski süreç sonlandırıldı."
+            if [ ! -d "/root/projects/wowdiscordbot/test" ]; then
+              mkdir -p /root/projects/wowdiscordbot/test
+              echo "Hedef dizin oluşturuldu: /root/projects/wowdiscordbot/test"
+            else
+              echo "Hedef dizin zaten mevcut: /root/projects/wowdiscordbot/test"
+            fi
           EOF
+          # .jar dosyasını kopyala
+          scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
+          
+          
+            # 11. VPS üzerinde eski container'ı durdur
+          - name: Stop existing application on VPS
+            env:
+              SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+              VPS_IP: ${{ secrets.VPS_IP }}
+              VPS_USER: ${{ secrets.VPS_USER }}
+            run: |
+              ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
+                pkill -f 'java -jar' || true
+                echo "Eski süreç sonlandırıldı."
+              EOF
 
       # 12. VPS üzerinde uygulamayı başlat
       - name: Run .jar on VPS
