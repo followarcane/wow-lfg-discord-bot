@@ -55,7 +55,7 @@ jobs:
       - name: Build and Rename JAR
         run: |
           ./gradlew clean build
-          cp build/libs/*.jar build/libs/discordBot.jar
+          mv build/libs/*.jar build/libs/discordBot.jar
 
       # 9. SSH Kurulumu
       - name: Setup SSH
