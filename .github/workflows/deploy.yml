@@ -75,6 +75,8 @@ jobs:
           VPS_IP: ${{ secrets.VPS_IP }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
+          echo "VPS_USER: ${VPS_USER}"
+          echo "VPS_IP: ${VPS_IP}"
           scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test
 
       # 11. VPS üzerinde eski container'ı durdur
@@ -84,8 +86,6 @@ jobs:
           VPS_IP: ${{ secrets.VPS_IP }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          echo "VPS_USER: ${VPS_USER}"
-          echo "VPS_IP: ${VPS_IP}"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             pkill -f 'java -jar' || true
             echo "Eski süreç sonlandırıldı."
