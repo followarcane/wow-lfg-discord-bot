@@ -107,7 +107,7 @@ jobs:
           EOF
       
 
-      - name: Create and Start New Service
+      - name: Create New Service
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           VPS_IP: ${{ secrets.VPS_IP }}
@@ -129,7 +129,15 @@ jobs:
             [Install]
             WantedBy=multi-user.target
             SERVICE
+          EOF
 
+      - name: Start Service
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VPS_IP: ${{ secrets.VPS_IP }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             # systemctl komutlarını ayrı olarak çalıştır
             sudo systemctl daemon-reload
             sudo systemctl enable testdiscordbot.service
