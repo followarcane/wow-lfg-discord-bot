@@ -94,7 +94,7 @@ jobs:
           EOF
           
           # JAR dosyasını sunucuya kopyala
-          scp -o StrictHostKeyChecking=no build/libs/discordBot.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test/
+          scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test/
           
           # Sunucuda JAR dosyasının adını değiştirme
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
