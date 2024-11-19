@@ -102,7 +102,7 @@ jobs:
             rm -f /root/projects/wowdiscordbot/test/*-plain.jar
           
             # Diğer JAR dosyasının adını değiştirme
-            mv /root/projects/wowdiscordbot/test/discordBot.jar /root/projects/wowdiscordbot/test/WoW-Lfg-Discord-Bot-0.0.1-SNAPSHOT.jar
+            mv /root/projects/wowdiscordbot/test/*.jar /root/projects/wowdiscordbot/test/discordBot.jar
             echo "JAR dosyasının adı başarıyla değiştirildi."
           EOF
       
