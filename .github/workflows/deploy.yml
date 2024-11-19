@@ -112,12 +112,12 @@ jobs:
 
       # 12. Ortam Değişkenlerini Sunucuda Set Et ve Servisi Başlat
       - name: Set Environment Variables and Write to .env
-        env:
-          PROD_DISCORD_INVITE_URL: ${{ secrets.PROD_DISCORD_INVITE_URL }}
-          PROD_JWT_SECRET: ${{ secrets.PROD_JWT_SECRET }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << EOF
+            # .env dosyasını temizle
+            > /root/projects/wowdiscordbot/.env
+          
+            # Yeni değerleri yaz
             echo "PROD_DB_URL=${PROD_DB_URL}" >> /root/projects/wowdiscordbot/.env
             echo "PROD_DB_USERNAME=${PROD_DB_USERNAME}" >> /root/projects/wowdiscordbot/.env
             echo "PROD_DB_PASSWORD=${PROD_DB_PASSWORD}" >> /root/projects/wowdiscordbot/.env
@@ -130,15 +130,15 @@ jobs:
             echo "PROD_DISCORD_CALLBACK_URL=${PROD_DISCORD_CALLBACK_URL}" >> /root/projects/wowdiscordbot/.env
             echo "PROD_DISCORD_INVITE_URL=${PROD_DISCORD_INVITE_URL}" >> /root/projects/wowdiscordbot/.env
             echo "PROD_JWT_SECRET=${PROD_JWT_SECRET}" >> /root/projects/wowdiscordbot/.env
-            echo "key=${SSH_PRIVATE_KEY}" >> /root/projects/wowdiscordbot/.env
-
+          
             # Servisi başlat
             sudo systemctl enable testdiscordbot.service
             sudo systemctl start testdiscordbot.service
-
+          
             echo "Yeni testdiscordbot servisi oluşturuldu ve başlatıldı."
           EOF
+      
 
-      # 13. Başarılı Deployment İle İlgili Mesaj
+        # 13. Başarılı Deployment İle İlgili Mesaj
       - name: Success Message
         run: echo "Deployment başarıyla tamamlandı!"
