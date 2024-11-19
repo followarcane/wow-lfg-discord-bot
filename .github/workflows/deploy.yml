@@ -51,11 +51,9 @@ jobs:
       - name: Give execute permissions to gradlew
         run: chmod +x ./gradlew
 
-      # 8. Gradle ile build al ve çıktıyı "discordBot.jar" olarak adlandır
-      - name: Build and Rename JAR
-        run: |
-          ./gradlew clean build
-          mv build/libs/*.jar build/libs/discordBot.jar
+      # 8. Gradle ile build al
+      - name: Build the project
+        run: ./gradlew clean build
 
       # 9. SSH Kurulumu
       - name: Setup SSH
@@ -89,11 +87,20 @@ jobs:
           VPS_IP: ${{ secrets.VPS_IP }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
+          # Test dizinindeki eski dosyaları temizle
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             rm -rf /root/projects/wowdiscordbot/test/*
             echo "Test klasörü temizlendi."
           EOF
-          scp -o StrictHostKeyChecking=no build/libs/discordBot.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test/
+
+          # JAR dosyasını sunucuya kopyala
+          scp -o StrictHostKeyChecking=no build/libs/*.jar ${VPS_USER}@${VPS_IP}:/root/projects/wowdiscordbot/test/
+
+          # Sunucuda JAR dosyasının adını değiştirme
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
+            mv /root/projects/wowdiscordbot/test/*.jar /root/projects/wowdiscordbot/test/discordBot.jar
+            echo "JAR dosyasının adı başarıyla değiştirildi."
+          EOF
 
       # 12. Yeni bir systemd servisi oluştur ve başlat
       - name: Create and Start New Service
