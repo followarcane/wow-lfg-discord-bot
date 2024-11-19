@@ -84,6 +84,8 @@ jobs:
           VPS_IP: ${{ secrets.VPS_IP }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
+          echo "VPS_USER: ${VPS_USER}"
+          echo "VPS_IP: ${VPS_IP}"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${VPS_USER}@${VPS_IP} << 'EOF'
             pkill -f 'java -jar' || true
             echo "Eski süreç sonlandırıldı."
