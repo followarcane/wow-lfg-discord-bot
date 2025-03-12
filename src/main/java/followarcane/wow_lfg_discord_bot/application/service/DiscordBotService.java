@@ -76,19 +76,17 @@ public class DiscordBotService extends ListenerAdapter {
     @EventListener(ApplicationReadyEvent.class)
     public void startBot() {
         try {
-            log.info("Starting Discord bot...");
+            log.info("[DISCORD_START] Starting Discord bot...");
             if (token == null || token.isEmpty()) {
                 throw new RuntimeException("Discord bot token is not provided!");
             }
             jda = JDABuilder.createDefault(token)
                     .addEventListeners(this)
-                    .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                     .setActivity(Activity.customStatus("https://azerite.app"))
                     .build();
-            boolean botAlreadyLoggedIn = true;
-            log.info("Discord bot started successfully.");
+            log.info("[DISCORD_SUCCESS] Discord bot started successfully.");
         } catch (Exception e) {
-            log.error("Error starting Discord bot", e);
+            log.error("[DISCORD_ERROR] Error starting Discord bot: {}", e.getMessage(), e);
         }
     }
 
@@ -168,23 +166,43 @@ public class DiscordBotService extends ListenerAdapter {
 
     public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed) {
         try {
-            if (jda.getTextChannelById(channelId) == null) {
-                log.info("Channel not found : {}", channelId);
+            TextChannel channel = jda.getTextChannelById(channelId);
+            if (channel == null) {
+                log.error("[DISCORD_ERROR] Channel not found. ChannelID: {}", channelId);
                 return;
             }
-            Objects.requireNonNull(jda.getTextChannelById(channelId)).sendMessageEmbeds(embed.build()).queue();
-            log.info("Sending message to channel: {}", channelId);
+            
+            if (!channel.canTalk()) {
+                log.error("[DISCORD_ERROR] Bot doesn't have permission. ChannelID: {}, GuildID: {}, GuildName: {}", 
+                    channelId, 
+                    channel.getGuild().getId(),
+                    channel.getGuild().getName());
+                return;
+            }
+
+            channel.sendMessageEmbeds(embed.build()).queue(
+                success -> log.info("[DISCORD_SUCCESS] Message sent. ChannelID: {}, GuildID: {}", 
+                    channelId, 
+                    channel.getGuild().getId()),
+                error -> log.error("[DISCORD_ERROR] Failed to send message. ChannelID: {}, Error: {}", 
+                    channelId, 
+                    error.getMessage())
+            );
+
             Message message = new Message();
-            message.setMessageGuildId("guildIdHere");
+            message.setMessageGuildId(channel.getGuild().getId());
             message.setMessageChannelId(channelId);
             message.setMessageContent(embed.build().getTitle());
             message.setTimestamp(System.currentTimeMillis());
 
             messageRepository.save(message);
-        } catch (RuntimeException e) {
-            log.error("Error sending message to channel", e);
-        }
 
+        } catch (Exception e) {
+            log.error("[DISCORD_ERROR] Unexpected error. ChannelID: {}, Error: {}, Stack: {}", 
+                channelId, 
+                e.getMessage(), 
+                Arrays.toString(e.getStackTrace()));
+        }
     }
 
     public String exchangeCodeForToken(String code, boolean isCallback) {

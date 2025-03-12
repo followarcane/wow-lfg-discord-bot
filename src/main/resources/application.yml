@@ -38,3 +38,11 @@ spring:
 jwt:
   secret: "${PROD_JWT_SECRET}"
   expiration: 86400000  # 24 hours in milliseconds
+
+logging:
+  file:
+    name: /root/projects/wowdiscordbot/logs/azerite-bot.log
+    max-size: 10MB
+    max-history: 7
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
