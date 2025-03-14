@@ -116,7 +116,7 @@ public class DataFetcherService {
         Map<String, String> playerInfo = new HashMap<>();
         playerInfo.put("class", character.getRaiderIOData().getClassType());
         playerInfo.put("role", character.getRaiderIOData().getActiveSpecRole());
-        playerInfo.put("ilevel", character.getILevel());
+        playerInfo.put("ilevel", character.getILevel() != null ? character.getILevel() : "0");
         
         String progress = character.getRaidProgressions().stream()
             .filter(raid -> raid.getRaidName().contains("Undermine"))
@@ -125,6 +125,8 @@ public class DataFetcherService {
             .orElse("0/8N");
 
         playerInfo.put("progress", progress);
+
+        log.info("[PLAYER_INFO] Created player info map: {}", playerInfo);
 
         return filterService.shouldSendMessage(settings.getChannel().getServer().getServerId(), playerInfo);
     }
@@ -136,7 +138,7 @@ public class DataFetcherService {
             Map<String, String> playerInfo = new HashMap<>();
             playerInfo.put("class", character.getRaiderIOData().getClassType());
             playerInfo.put("role", character.getRaiderIOData().getActiveSpecRole());
-            playerInfo.put("ilevel", character.getILevel());
+            playerInfo.put("ilevel", character.getILevel() != null ? character.getILevel() : "0");
             playerInfo.put("progress", character.getRaidProgressions().get(0).getSummary());
 
             discordBotService.sendEmbedMessageToChannel(
