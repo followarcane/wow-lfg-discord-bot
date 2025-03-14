@@ -4,6 +4,7 @@ import followarcane.wow_lfg_discord_bot.application.request.DiscordChannelReques
 import followarcane.wow_lfg_discord_bot.application.request.DiscordServerRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserSettingsRequest;
+import followarcane.wow_lfg_discord_bot.application.response.RecruitmentFilterResponse;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordChannel;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
 import followarcane.wow_lfg_discord_bot.domain.model.User;
@@ -31,6 +32,7 @@ public class DiscordService {
     private final UserSettingsRepository userSettingsRepository;
     private final DiscordChannelRepository discordChannelRepository;
     private final RequestConverter requestConverter;
+    private final RecruitmentFilterService filterService;
 
     public void addServer(DiscordServerRequest discordServerRequest) {
         DiscordServer discordServer = requestConverter.convertToDiscordServer(discordServerRequest);
@@ -66,7 +68,7 @@ public class DiscordService {
 
     public void addUserSettings(UserSettingsRequest userSettingsRequest, String userId) {
         userSettingsRequest.setUserDiscordId(userId);
-        UserSettings userSettings = getSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), userSettingsRequest.getUserDiscordId());
+        UserSettings userSettings = getPureSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), userSettingsRequest.getUserDiscordId());
         DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByServer_ServerId(userSettingsRequest.getServerId());
         if (userSettings != null) {
             userSettings.setRealm(userSettingsRequest.getRealm());
@@ -141,14 +143,32 @@ public class DiscordService {
         return userRepository.findUserByDiscordId(discordId);
     }
 
-    public UserSettings getSettingsByServerIdAndUserId(String serverId, String userId) {
-        return userSettingsRepository.findByServer_ServerIdAndUser_DiscordId(serverId, userId);
+    public UserSettingsRequest getSettingsByServerIdAndUserId(String serverId, String userId) {
+        UserSettings userSettings = userSettingsRepository.findByServer_ServerIdAndUser_DiscordId(serverId, userId);
+        if (userSettings == null) {
+            return null;
+        }
+
+        UserSettingsRequest dto = requestConverter.convertToUserSettingsDTO(userSettings);
+
+
+        RecruitmentFilterResponse filters = filterService.getFilters(serverId);
+        dto.setClassFilter(filters.getClassFilter());
+        dto.setRoleFilter(filters.getRoleFilter());
+        dto.setMinIlevel(filters.getMinIlevel());
+        dto.setRaidProgress(filters.getRaidProgress());
+
+        return dto;
     }
 
     public void deActiveGuild(String id) {
         DiscordServer discordServer = serverRepository.findServerByServerIdAndActiveTrue(id);
         discordServer.setActive(false);
         serverRepository.save(discordServer);
+    }
+
+    public UserSettings getPureSettingsByServerIdAndUserId(String serverId, String userId) {
+        return userSettingsRepository.findByServer_ServerIdAndUser_DiscordId(serverId, userId);
     }
 
     public DiscordServer getServerByServerId(String serverId) {

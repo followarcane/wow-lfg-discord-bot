@@ -41,6 +41,7 @@ import java.util.stream.StreamSupport;
 public class DiscordBotService extends ListenerAdapter {
     private final MessageRepository messageRepository;
     private final DiscordServerRepository discordServerRepository;
+    private final RecruitmentFilterService filterService;
 
     private JDA jda;
 
@@ -65,12 +66,13 @@ public class DiscordBotService extends ListenerAdapter {
 
     private final RestTemplate restTemplate;
 
-    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate) {
+    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService) {
         this.messageRepository = messageRepository;
         this.discordServerRepository = discordServerRepository;
         this.discordService = discordService;
         this.requestConverter = requestConverter;
         this.restTemplate = restTemplate;
+        this.filterService = filterService;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -164,19 +166,16 @@ public class DiscordBotService extends ListenerAdapter {
         return Objects.requireNonNull(jda.getGuildById(guildId)).getTextChannels();
     }
 
-    public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed) {
+    public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed, Map<String, String> playerInfo) {
         try {
             TextChannel channel = jda.getTextChannelById(channelId);
             if (channel == null) {
-                log.error("[DISCORD_ERROR] Channel not found. ChannelID: {}", channelId);
+                log.error("[DISCORD_ERROR] Channel not found: {}", channelId);
                 return;
             }
-            
+
             if (!channel.canTalk()) {
-                log.error("[DISCORD_ERROR] Bot doesn't have permission. ChannelID: {}, GuildID: {}, GuildName: {}", 
-                    channelId, 
-                    channel.getGuild().getId(),
-                    channel.getGuild().getName());
+                log.error("[DISCORD_ERROR] Bot doesn't have permission...");
                 return;
             }
 
@@ -198,10 +197,7 @@ public class DiscordBotService extends ListenerAdapter {
             messageRepository.save(message);
 
         } catch (Exception e) {
-            log.error("[DISCORD_ERROR] Unexpected error. ChannelID: {}, Error: {}, Stack: {}", 
-                channelId, 
-                e.getMessage(), 
-                Arrays.toString(e.getStackTrace()));
+            log.error("[DISCORD_ERROR] Error sending message", e);
         }
     }
 

@@ -18,6 +18,12 @@ import java.util.stream.Collectors;
 @Service
 public class RequestConverter {
 
+    private final RecruitmentFilterService filterService;
+
+    public RequestConverter(RecruitmentFilterService filterService) {
+        this.filterService = filterService;
+    }
+
     public DiscordServer convertToDiscordServer(DiscordServerRequest discordServerRequest) {
         DiscordServer discordServer = new DiscordServer();
         discordServer.setServerId(discordServerRequest.getServerId());
