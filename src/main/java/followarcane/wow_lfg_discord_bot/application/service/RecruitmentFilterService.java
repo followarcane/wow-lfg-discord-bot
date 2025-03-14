@@ -24,10 +24,38 @@ public class RecruitmentFilterService {
             .orElse(createDefaultFilter());
 
         try {
-            return checkClassFilter(filter, playerInfo.get("class")) &&
-                   checkRoleFilter(filter, playerInfo.get("role")) &&
-                   checkIlevelFilter(filter, playerInfo.get("ilevel")) &&
-                   checkProgressFilter(filter, playerInfo.get("progress"));
+            log.info("[FILTER_CHECK] Starting filter check for server: {}", serverId);
+            log.info("[FILTER_CHECK] Player Info: class={}, role={}, ilevel={}, progress={}", 
+                playerInfo.get("class"), 
+                playerInfo.get("role"), 
+                playerInfo.get("ilevel"), 
+                playerInfo.get("progress"));
+            log.info("[FILTER_CHECK] DB Filters: class={}, role={}, minIlevel={}, progress={}", 
+                filter.getClassFilter(), 
+                filter.getRoleFilter(), 
+                filter.getMinIlevel(), 
+                filter.getRaidProgress());
+
+            boolean classMatch = checkClassFilter(filter, playerInfo.get("class"));
+            log.info("[FILTER_CHECK] Class Match: {} (required: {}, got: {})", 
+                classMatch, filter.getClassFilter(), playerInfo.get("class"));
+
+            boolean roleMatch = checkRoleFilter(filter, playerInfo.get("role"));
+            log.info("[FILTER_CHECK] Role Match: {} (required: {}, got: {})", 
+                roleMatch, filter.getRoleFilter(), playerInfo.get("role"));
+
+            boolean ilevelMatch = checkIlevelFilter(filter, playerInfo.get("ilevel"));
+            log.info("[FILTER_CHECK] ILevel Match: {} (required: {}, got: {})", 
+                ilevelMatch, filter.getMinIlevel(), playerInfo.get("ilevel"));
+
+            boolean progressMatch = checkProgressFilter(filter, playerInfo.get("progress"));
+            log.info("[FILTER_CHECK] Progress Match: {} (required: {}, got: {})", 
+                progressMatch, filter.getRaidProgress(), playerInfo.get("progress"));
+
+            boolean finalResult = classMatch && roleMatch && ilevelMatch && progressMatch;
+            log.info("[FILTER_CHECK] Final Result: {} for server: {}", finalResult, serverId);
+
+            return finalResult;
         } catch (Exception e) {
             log.error("[FILTER_ERROR] Error checking filters for server {}: {}", serverId, e.getMessage());
             return true;
