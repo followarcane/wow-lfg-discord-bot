@@ -58,7 +58,7 @@ public class RecruitmentFilterService {
             return finalResult;
         } catch (Exception e) {
             log.error("[FILTER_ERROR] Error checking filters for server {}: {}", serverId, e.getMessage());
-            return true;
+            return false;
         }
     }
 
@@ -87,7 +87,19 @@ public class RecruitmentFilterService {
 
     private boolean checkIlevelFilter(RecruitmentFilter filter, String playerIlevel) {
         if (filter.getMinIlevel() == null) return true;
-        return Integer.parseInt(playerIlevel) >= filter.getMinIlevel();
+        
+        try {
+            // Decimal kısmını at
+            double ilevel = Double.parseDouble(playerIlevel);
+            int playerIlevelInt = (int) ilevel;
+            
+            log.info("[ILEVEL_CHECK] Parsed ilevel: {} -> {}", playerIlevel, playerIlevelInt);
+            
+            return playerIlevelInt >= filter.getMinIlevel();
+        } catch (NumberFormatException e) {
+            log.error("[ILEVEL_ERROR] Invalid ilevel format: {}, allowing message", playerIlevel);
+            return true;  // Parse hatası olursa mesajı göster
+        }
     }
 
     private boolean checkProgressFilter(RecruitmentFilter filter, String playerProgress) {
