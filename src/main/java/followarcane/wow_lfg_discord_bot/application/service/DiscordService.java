@@ -4,6 +4,7 @@ import followarcane.wow_lfg_discord_bot.application.request.DiscordChannelReques
 import followarcane.wow_lfg_discord_bot.application.request.DiscordServerRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserSettingsRequest;
+import followarcane.wow_lfg_discord_bot.application.request.RecruitmentFilterRequest;
 import followarcane.wow_lfg_discord_bot.application.response.RecruitmentFilterResponse;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordChannel;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
@@ -69,45 +70,60 @@ public class DiscordService {
     public void addUserSettings(UserSettingsRequest userSettingsRequest, String userId) {
         userSettingsRequest.setUserDiscordId(userId);
         UserSettings userSettings = getPureSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), userSettingsRequest.getUserDiscordId());
-        DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByServer_ServerId(userSettingsRequest.getServerId());
+
+        // 1. User Settings güncelleme
         if (userSettings != null) {
-            userSettings.setRealm(userSettingsRequest.getRealm());
-            userSettings.setRegion(userSettingsRequest.getRegion());
-            userSettings.setLanguage(userSettingsRequest.getLanguages());
-            userSettings.setPlayerInfo(userSettingsRequest.isInformationAboutPlayer());
-            userSettings.setRanks(userSettingsRequest.isWarcraftlogsRanks());
-            userSettings.setFaction(userSettingsRequest.isFaction());
-            userSettings.setProgress(userSettingsRequest.isRecentRaidProgression());
-
-
-            userSettingsRepository.save(userSettings);
-            log.info("User settings updated: pInfo : {} - faction : {} - rank : {} - progress : {}", userSettings.isPlayerInfo(), userSettings.isFaction(), userSettings.isRanks(), userSettings.isProgress());
-
-            discordChannel.setChannelId(userSettingsRequest.getChannelId());
-            discordChannelRepository.save(discordChannel);
+            updateExistingUserSettings(userSettings, userSettingsRequest);
         } else {
-            DiscordServer discordServer = serverRepository.findServerByServerId(userSettingsRequest.getServerId());
-            if (discordServer == null) {
-                throw new RuntimeException("Server not found");
-            }
-            if (discordChannel == null) {
-                discordChannel = new DiscordChannel();
-                discordChannel.setChannelId(userSettingsRequest.getChannelId());
-                discordChannel.setServer(discordServer);
-                discordChannelRepository.save(discordChannel);
-            }
-            User user = userRepository.findUserByDiscordId(userSettingsRequest.getUserDiscordId());
-            if (user == null) {
-                throw new RuntimeException("User not found");
-            }
-
-            userSettings = requestConverter.convertToUserSettings(userSettingsRequest);
-            userSettings.setServer(discordServer);
-            userSettings.setChannel(discordChannel);
-            userSettings.setUser(user);
-
-            userSettingsRepository.save(userSettings);
+            createNewUserSettings(userSettingsRequest);
         }
+
+        // 2. Recruitment Filter güncelleme
+        RecruitmentFilterRequest filterRequest = new RecruitmentFilterRequest();
+        filterRequest.setClassFilter(userSettingsRequest.getClassFilter());
+        filterRequest.setRoleFilter(userSettingsRequest.getRoleFilter());
+        filterRequest.setMinIlevel(userSettingsRequest.getMinIlevel());
+        filterRequest.setRaidProgress(userSettingsRequest.getRaidProgress());
+
+        filterService.updateFilters(userSettingsRequest.getServerId(), filterRequest);
+    }
+
+    private void updateExistingUserSettings(UserSettings userSettings, UserSettingsRequest request) {
+        userSettings.setRealm(request.getRealm());
+        userSettings.setRegion(request.getRegion());
+        userSettings.setLanguage(request.getLanguages());
+        userSettings.setPlayerInfo(request.isInformationAboutPlayer());
+        userSettings.setRanks(request.isWarcraftlogsRanks());
+        userSettings.setFaction(request.isFaction());
+        userSettings.setProgress(request.isRecentRaidProgression());
+        userSettingsRepository.save(userSettings);
+    }
+
+    private UserSettings createNewUserSettings(UserSettingsRequest request) {
+        DiscordServer discordServer = serverRepository.findServerByServerId(request.getServerId());
+        if (discordServer == null) {
+            throw new RuntimeException("Server not found");
+        }
+
+        DiscordChannel discordChannel = discordChannelRepository.findDiscordChannelByServer_ServerId(request.getServerId());
+        if (discordChannel == null) {
+            discordChannel = new DiscordChannel();
+            discordChannel.setChannelId(request.getChannelId());
+            discordChannel.setServer(discordServer);
+            discordChannelRepository.save(discordChannel);
+        }
+
+        User user = userRepository.findUserByDiscordId(request.getUserDiscordId());
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        UserSettings userSettings = requestConverter.convertToUserSettings(request);
+        userSettings.setServer(discordServer);
+        userSettings.setChannel(discordChannel);
+        userSettings.setUser(user);
+
+        return userSettingsRepository.save(userSettings);
     }
 
     public List<UserSettings> getAllUserSettings() {
