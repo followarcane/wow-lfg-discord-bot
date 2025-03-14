@@ -14,4 +14,10 @@ public class UserSettingsRequest {
     private boolean recentRaidProgression;
     private boolean warcraftlogsRanks;
     private boolean informationAboutPlayer;
+
+    // Recruitment filter alanları
+    private String classFilter = "ANY";
+    private String roleFilter = "ANY";
+    private Integer minIlevel;
+    private String raidProgress = "ANY";
 }

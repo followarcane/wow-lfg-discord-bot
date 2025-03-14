@@ -23,8 +23,10 @@ import java.awt.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,7 @@ public class DataFetcherService {
 
     private final DiscordBotService discordBotService;
     private final DiscordService discordService;
+    private final RecruitmentFilterService filterService;
 
     private static ClassColorCodeHelper classColorCodeHelper;
 
@@ -41,10 +44,11 @@ public class DataFetcherService {
     private Set<CharacterInfoResponse> previousData = new HashSet<>();
 
     @Autowired
-    public DataFetcherService(DiscordBotService discordBotService, ApiProperties apiProperties, DiscordService discordService, ClassColorCodeHelper classColorCodeHelper) {
+    public DataFetcherService(DiscordBotService discordBotService, ApiProperties apiProperties, DiscordService discordService, ClassColorCodeHelper classColorCodeHelper, RecruitmentFilterService filterService) {
         this.discordBotService = discordBotService;
         this.discordService = discordService;
         DataFetcherService.classColorCodeHelper = classColorCodeHelper;
+        this.filterService = filterService;
 
         // Check if username and password are not null or empty
         Assert.notNull(apiProperties.getUsername(), "Username must not be null");
@@ -65,8 +69,6 @@ public class DataFetcherService {
             List<CharacterInfoResponse> data = response.getBody();
 
             if (data != null && !data.isEmpty()) {
-                //log.info("Data fetched successfully: {}", data);
-
                 Set<CharacterInfoResponse> newData = new HashSet<>(data);
                 newData.removeAll(previousData);
 
@@ -81,11 +83,7 @@ public class DataFetcherService {
 
                         for (CharacterInfoResponse character : filteredData) {
                             if (!settings.getChannel().getLastSentCharacters().contains(character.getName())) {
-
-                                EmbedBuilder embedBuilder = getEmbedBuilder(character, settings);
-                                discordBotService.sendEmbedMessageToChannel(settings.getChannel().getChannelId(), embedBuilder);
-
-                                discordService.updateLastSentCharacters(settings.getChannel(), character.getName());
+                                sendFilteredMessage(character, settings);
                             }
                         }
                     }
@@ -111,9 +109,47 @@ public class DataFetcherService {
         boolean realmMatch = character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("All Realms");
         boolean regionMatch = character.getRegion().equalsIgnoreCase(settings.getRegion());
 
-        return languageMatch && realmMatch && regionMatch;
+        if (!languageMatch || !realmMatch || !regionMatch) {
+            return false;
+        }
+
+        Map<String, String> playerInfo = new HashMap<>();
+        playerInfo.put("class", character.getRaiderIOData().getClassType());
+        playerInfo.put("role", character.getRaiderIOData().getActiveSpecRole());
+        playerInfo.put("ilevel", character.getILevel());
+        
+        String progress = character.getRaidProgressions().stream()
+            .filter(raid -> raid.getRaidName().contains("Undermine"))
+            .map(raid -> raid.getSummary())
+            .findFirst()
+            .orElse("0/8N");
+
+        playerInfo.put("progress", progress);
+
+        return filterService.shouldSendMessage(settings.getChannel().getServer().getServerId(), playerInfo);
     }
 
+    private void sendFilteredMessage(CharacterInfoResponse character, UserSettings settings) {
+        try {
+            EmbedBuilder embedBuilder = getEmbedBuilder(character, settings);
+            
+            Map<String, String> playerInfo = new HashMap<>();
+            playerInfo.put("class", character.getRaiderIOData().getClassType());
+            playerInfo.put("role", character.getRaiderIOData().getActiveSpecRole());
+            playerInfo.put("ilevel", character.getILevel());
+            playerInfo.put("progress", character.getRaidProgressions().get(0).getSummary());
+
+            discordBotService.sendEmbedMessageToChannel(
+                settings.getChannel().getChannelId(), 
+                embedBuilder,
+                playerInfo
+            );
+
+            discordService.updateLastSentCharacters(settings.getChannel(), character.getName());
+        } catch (Exception e) {
+            log.error("[FILTER_ERROR] Error sending filtered message for character: {}", character.getName(), e);
+        }
+    }
 
     private static @NotNull EmbedBuilder getEmbedBuilder(CharacterInfoResponse character, UserSettings settings) {
         String raiderIOLink = "https://raider.io/characters/" + encodeURL(character.getRegion()) + "/" + encodeURL(character.getRealm().replace(' ', '-')) + "/" + encodeURL(character.getName());
