@@ -71,8 +71,13 @@ public class RecruitmentFilterService {
     }
 
     private boolean checkClassFilter(RecruitmentFilter filter, String playerClass) {
-        return filter.getClassFilter().equals("ANY") || 
-               filter.getClassFilter().contains(playerClass);
+        if (filter.getClassFilter().equals("ANY")) return true;
+        
+        // Class ismini normalize et
+        String normalizedPlayerClass = playerClass.toUpperCase().replace(" ", "_");
+        log.info("[CLASS_CHECK] Normalized player class: {} -> {}", playerClass, normalizedPlayerClass);
+        
+        return filter.getClassFilter().contains(normalizedPlayerClass);
     }
 
     private boolean checkRoleFilter(RecruitmentFilter filter, String playerRole) {
@@ -89,8 +94,14 @@ public class RecruitmentFilterService {
         if (filter.getRaidProgress().equals("ANY")) return true;
         
         try {
-            String[] required = filter.getRaidProgress().split("/");
-            String[] player = playerProgress.split("/");
+            // Progress formatını normalize et
+            String normalizedPlayerProgress = playerProgress.replace(" ", "");
+            String normalizedFilterProgress = filter.getRaidProgress().replace(" ", "");
+            
+            log.info("[PROGRESS_CHECK] Normalized progress: {} -> {}", playerProgress, normalizedPlayerProgress);
+            
+            String[] required = normalizedFilterProgress.split("/");
+            String[] player = normalizedPlayerProgress.split("/");
             
             int reqBoss = Integer.parseInt(required[0]);
             int playerBoss = Integer.parseInt(player[0]);
