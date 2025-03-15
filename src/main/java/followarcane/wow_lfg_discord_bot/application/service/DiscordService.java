@@ -96,6 +96,14 @@ public class DiscordService {
         userSettings.setRanks(request.isWarcraftlogsRanks());
         userSettings.setFaction(request.isFaction());
         userSettings.setProgress(request.isRecentRaidProgression());
+
+        // Channel güncelleme eklendi
+        DiscordChannel channel = userSettings.getChannel();
+        if (!channel.getChannelId().equals(request.getChannelId())) {
+            channel.setChannelId(request.getChannelId());
+            discordChannelRepository.save(channel);
+        }
+
         userSettingsRepository.save(userSettings);
     }
 
