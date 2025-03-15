@@ -201,7 +201,7 @@ public class DataFetcherService {
                         " | [WowProgress]" + "(" + wowProgressLink + ")" +
                         " | [Warcraftlogs]" + "(" + warcraftLogsLink + ")"
                 , false);
-        embedBuilder.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://imgur.com/kk6VClj.png");
+        embedBuilder.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
         embedBuilder.setThumbnail(character.getRaiderIOData().getThumbnailUrl());
 
         embedBuilder.setColor(Color.decode(classColorCodeHelper.getClassColorCode(character.getRaiderIOData().getClassType())));
