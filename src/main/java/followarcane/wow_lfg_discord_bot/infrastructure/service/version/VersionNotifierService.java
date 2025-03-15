@@ -63,7 +63,7 @@ public class VersionNotifierService {
 
         JSONObject footer = new JSONObject();
         footer.put("text", "Powered by Azerite!");
-        footer.put("icon_url", "https://imgur.com/kk6VClj.png");
+        footer.put("icon_url", "https://i.imgur.com/fK2PvPV.png");
         embed.put("footer", footer);
 
         JSONArray embeds = new JSONArray();
