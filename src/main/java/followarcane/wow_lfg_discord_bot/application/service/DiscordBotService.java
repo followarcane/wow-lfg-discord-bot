@@ -41,6 +41,7 @@ import java.util.stream.StreamSupport;
 public class DiscordBotService extends ListenerAdapter {
     private final MessageRepository messageRepository;
     private final DiscordServerRepository discordServerRepository;
+    private final RecruitmentFilterService filterService;
 
     private JDA jda;
 
@@ -65,30 +66,29 @@ public class DiscordBotService extends ListenerAdapter {
 
     private final RestTemplate restTemplate;
 
-    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate) {
+    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService) {
         this.messageRepository = messageRepository;
         this.discordServerRepository = discordServerRepository;
         this.discordService = discordService;
         this.requestConverter = requestConverter;
         this.restTemplate = restTemplate;
+        this.filterService = filterService;
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void startBot() {
         try {
-            log.info("Starting Discord bot...");
+            log.info("[DISCORD_START] Starting Discord bot...");
             if (token == null || token.isEmpty()) {
                 throw new RuntimeException("Discord bot token is not provided!");
             }
             jda = JDABuilder.createDefault(token)
                     .addEventListeners(this)
-                    .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                     .setActivity(Activity.customStatus("https://azerite.app"))
                     .build();
-            boolean botAlreadyLoggedIn = true;
-            log.info("Discord bot started successfully.");
+            log.info("[DISCORD_SUCCESS] Discord bot started successfully.");
         } catch (Exception e) {
-            log.error("Error starting Discord bot", e);
+            log.error("[DISCORD_ERROR] Error starting Discord bot: {}", e.getMessage(), e);
         }
     }
 
@@ -166,25 +166,39 @@ public class DiscordBotService extends ListenerAdapter {
         return Objects.requireNonNull(jda.getGuildById(guildId)).getTextChannels();
     }
 
-    public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed) {
+    public void sendEmbedMessageToChannel(String channelId, EmbedBuilder embed, Map<String, String> playerInfo) {
         try {
-            if (jda.getTextChannelById(channelId) == null) {
-                log.info("Channel not found : {}", channelId);
+            TextChannel channel = jda.getTextChannelById(channelId);
+            if (channel == null) {
+                log.error("[DISCORD_ERROR] Channel not found: {}", channelId);
                 return;
             }
-            Objects.requireNonNull(jda.getTextChannelById(channelId)).sendMessageEmbeds(embed.build()).queue();
-            log.info("Sending message to channel: {}", channelId);
+
+            if (!channel.canTalk()) {
+                log.error("[DISCORD_ERROR] Bot doesn't have permission...");
+                return;
+            }
+
+            channel.sendMessageEmbeds(embed.build()).queue(
+                success -> log.info("[DISCORD_SUCCESS] Message sent. ChannelID: {}, GuildID: {}", 
+                    channelId, 
+                    channel.getGuild().getId()),
+                error -> log.error("[DISCORD_ERROR] Failed to send message. ChannelID: {}, Error: {}", 
+                    channelId, 
+                    error.getMessage())
+            );
+
             Message message = new Message();
-            message.setMessageGuildId("guildIdHere");
+            message.setMessageGuildId(channel.getGuild().getId());
             message.setMessageChannelId(channelId);
             message.setMessageContent(embed.build().getTitle());
             message.setTimestamp(System.currentTimeMillis());
 
             messageRepository.save(message);
-        } catch (RuntimeException e) {
-            log.error("Error sending message to channel", e);
-        }
 
+        } catch (Exception e) {
+            log.error("[DISCORD_ERROR] Error sending message", e);
+        }
     }
 
     public String exchangeCodeForToken(String code, boolean isCallback) {
@@ -383,7 +397,7 @@ public class DiscordBotService extends ListenerAdapter {
                         " | [Warcraftlogs]" + "(" + warcraftLogsLink + ")"
                 , false);
         //embedBuilder.setFooter("Donate -> https://www.patreon.com/Shadlynn/membership", "https://imgur.com/kk6VClj.png");
-        embedBuilder.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://imgur.com/kk6VClj.png");
+        embedBuilder.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
         embedBuilder.setThumbnail("https://render.worldofwarcraft.com/eu/character/tw…atar.jpg?alt=/wow/static/images/2d/avatar/9-1.jpg");
 
         embedBuilder.setColor(Color.white);
