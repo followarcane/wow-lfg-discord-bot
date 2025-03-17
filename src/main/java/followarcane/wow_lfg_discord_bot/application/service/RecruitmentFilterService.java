@@ -10,6 +10,8 @@ import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
 import followarcane.wow_lfg_discord_bot.domain.repository.DiscordServerRepository;
 import followarcane.wow_lfg_discord_bot.application.request.RecruitmentFilterRequest;
 import followarcane.wow_lfg_discord_bot.application.response.RecruitmentFilterResponse;
+import java.util.List;
+import java.util.Arrays;
 
 @Service
 @Slf4j
@@ -77,7 +79,17 @@ public class RecruitmentFilterService {
         String normalizedPlayerClass = playerClass.toUpperCase().replace(" ", "_");
         log.info("[CLASS_CHECK] Normalized player class: {} -> {}", playerClass, normalizedPlayerClass);
         
-        return filter.getClassFilter().contains(normalizedPlayerClass);
+        // DB'deki filtreyi virgülle ayır
+        String[] allowedClasses = filter.getClassFilter().split(",");
+        
+        // Her bir class için tam eşleşme kontrol et
+        for (String allowedClass : allowedClasses) {
+            if (normalizedPlayerClass.equals(allowedClass.trim())) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     private boolean checkRoleFilter(RecruitmentFilter filter, String playerRole) {
