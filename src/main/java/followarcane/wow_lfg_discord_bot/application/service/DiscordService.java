@@ -7,14 +7,12 @@ import followarcane.wow_lfg_discord_bot.application.request.UserSettingsRequest;
 import followarcane.wow_lfg_discord_bot.application.request.RecruitmentFilterRequest;
 import followarcane.wow_lfg_discord_bot.application.response.RecruitmentFilterResponse;
 import followarcane.wow_lfg_discord_bot.application.response.ServerFeatureResponse;
-import followarcane.wow_lfg_discord_bot.domain.model.DiscordChannel;
-import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
-import followarcane.wow_lfg_discord_bot.domain.model.User;
-import followarcane.wow_lfg_discord_bot.domain.model.UserSettings;
+import followarcane.wow_lfg_discord_bot.domain.model.*;
 import followarcane.wow_lfg_discord_bot.domain.repository.DiscordChannelRepository;
 import followarcane.wow_lfg_discord_bot.domain.repository.DiscordServerRepository;
 import followarcane.wow_lfg_discord_bot.domain.repository.UserRepository;
 import followarcane.wow_lfg_discord_bot.domain.repository.UserSettingsRepository;
+import followarcane.wow_lfg_discord_bot.domain.repository.ServerFeatureRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +34,7 @@ public class DiscordService {
     private final DiscordChannelRepository discordChannelRepository;
     private final RequestConverter requestConverter;
     private final RecruitmentFilterService filterService;
+    private final ServerFeatureRepository serverFeatureRepository;
 
     public void addServer(DiscordServerRequest discordServerRequest) {
         DiscordServer discordServer = requestConverter.convertToDiscordServer(discordServerRequest);
@@ -202,20 +201,15 @@ public class DiscordService {
     }
 
     public List<ServerFeatureResponse> getServerFeatures(String serverId) {
-        DiscordServer server = serverRepository.findServerByServerId(serverId);
-        if (server == null) {
-            throw new RuntimeException("Server not found");
-        }
-
-        log.info("Server found: {}", server);
-        log.info("Server features raw data: {}", server.getFeatures());
-        log.info("Server ID for comparison: {} vs {}", server.getServerId(), serverId);
-
-        return server.getFeatures().stream()
+        List<ServerFeature> features = serverFeatureRepository.findByServer_ServerId(serverId);
+        
+        log.info("Found {} features for server {}", features.size(), serverId);
+        
+        return features.stream()
             .map(feature -> new ServerFeatureResponse(
                 feature.getFeatureType(),
                 feature.isEnabled()
             ))
-            .collect(Collectors.toList());
+            .toList();
     }
 }
