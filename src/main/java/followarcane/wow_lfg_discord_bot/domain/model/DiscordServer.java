@@ -11,6 +11,7 @@ import java.util.Set;
 @Table(name = "discord_servers")
 public class DiscordServer {
     @Id
+    @Column(name = "server_id")
     private String serverId;
     private String serverName;
     private String ownerId;
