@@ -2,6 +2,7 @@ package followarcane.wow_lfg_discord_bot.application.service;
 
 import followarcane.wow_lfg_discord_bot.application.response.BossRankResponse;
 import followarcane.wow_lfg_discord_bot.application.response.CharacterInfoResponse;
+import followarcane.wow_lfg_discord_bot.application.response.RaidProgressionResponse;
 import followarcane.wow_lfg_discord_bot.application.util.ClassColorCodeHelper;
 import followarcane.wow_lfg_discord_bot.domain.model.UserSettings;
 import followarcane.wow_lfg_discord_bot.infrastructure.properties.ApiProperties;
@@ -119,11 +120,10 @@ public class DataFetcherService {
         playerInfo.put("ilevel", character.getILevel() != null ? character.getILevel() : "0");
         
         String progress = character.getRaidProgressions().stream()
-            .filter(raid -> raid.getRaidName().contains("Undermine"))
-            .map(raid -> raid.getSummary())
             .findFirst()
-            .orElse("0/8N");
-
+            .map(RaidProgressionResponse::getSummary)
+            .orElse("0/8N");  // Default değer
+            
         playerInfo.put("progress", progress);
 
         log.info("[PLAYER_INFO] Created player info map: {}", playerInfo);
@@ -139,7 +139,13 @@ public class DataFetcherService {
             playerInfo.put("class", character.getRaiderIOData().getClassType());
             playerInfo.put("role", character.getRaiderIOData().getActiveSpecRole());
             playerInfo.put("ilevel", character.getILevel() != null ? character.getILevel() : "0");
-            playerInfo.put("progress", character.getRaidProgressions().get(0).getSummary());
+            
+            String progress = character.getRaidProgressions().stream()
+                .findFirst()
+                .map(raid -> raid.getSummary())
+                .orElse("0/8N");  // Default değer
+                
+            playerInfo.put("progress", progress);
 
             discordBotService.sendEmbedMessageToChannel(
                 settings.getChannel().getChannelId(), 
@@ -149,7 +155,8 @@ public class DataFetcherService {
 
             discordService.updateLastSentCharacters(settings.getChannel(), character.getName());
         } catch (Exception e) {
-            log.error("[FILTER_ERROR] Error sending filtered message for character: {}", character.getName(), e);
+            log.error("[FILTER_ERROR] Error sending filtered message for character {}: {}", 
+                character.getName(), e.getMessage(), e);
         }
     }
 
