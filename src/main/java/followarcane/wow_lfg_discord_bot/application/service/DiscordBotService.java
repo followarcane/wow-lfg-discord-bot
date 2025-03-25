@@ -317,45 +317,62 @@ public class DiscordBotService extends ListenerAdapter {
     }
 
     public Map<String, Object> getGuildDetails(String token, String guildId) {
-        try {
-            Thread.sleep(500);
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", token);
+        int maxRetries = 3;
+        int currentTry = 0;
+        long retryDelay = 500; // 500ms başlangıç delay
 
-            ResponseEntity<String> response = restTemplate.exchange(
-                    "https://discord.com/api/v9/users/@me/guilds",
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    String.class
-            );
+        while (currentTry < maxRetries) {
+            try {
+                Thread.sleep(retryDelay);  // Her denemeden önce bekle
+                
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", token);
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode guildsArray = objectMapper.readTree(response.getBody());
+                ResponseEntity<String> response = restTemplate.exchange(
+                        "https://discord.com/api/v9/users/@me/guilds",
+                        HttpMethod.GET,
+                        new HttpEntity<>(headers),
+                        String.class
+                );
 
-                Optional<JsonNode> matchedGuild = StreamSupport.stream(guildsArray.spliterator(), false)
-                        .filter(guildNode -> guildId.equals(guildNode.get("id").asText()))
-                        .findFirst();
+                if (response.getStatusCode().is2xxSuccessful()) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode guildsArray = objectMapper.readTree(response.getBody());
 
-                DiscordServer discordServer = discordService.getServerByServerId(guildId);
-                Map<String, Object> responses = new HashMap<>();
+                    Optional<JsonNode> matchedGuild = StreamSupport.stream(guildsArray.spliterator(), false)
+                            .filter(guildNode -> guildId.equals(guildNode.get("id").asText()))
+                            .findFirst();
 
-                if (matchedGuild.isPresent() && discordServer != null) {
-                    responses.put("id", matchedGuild.get().get("id").asText());
-                    responses.put("name", matchedGuild.get().get("name").asText());
-                    responses.put("icon", matchedGuild.get().get("icon").asText());
-                    responses.put("banner", matchedGuild.get().get("banner").asText());
-                    responses.put("owner", matchedGuild.get().get("owner"));
-                    responses.put("permissions", matchedGuild.get().get("permissions").asText());
-                    responses.put("features", matchedGuild.get().get("features"));
-                    responses.put("enabledFeatures", matchedGuild.get().get("enabledFeatures") == null ? new ArrayList<>() : matchedGuild.get().get("enabledFeatures"));
-                    return responses;
+                    DiscordServer discordServer = discordService.getServerByServerId(guildId);
+                    Map<String, Object> responses = new HashMap<>();
+
+                    if (matchedGuild.isPresent() && discordServer != null) {
+                        responses.put("id", matchedGuild.get().get("id").asText());
+                        responses.put("name", matchedGuild.get().get("name").asText());
+                        responses.put("icon", matchedGuild.get().get("icon").asText());
+                        responses.put("banner", matchedGuild.get().get("banner").asText());
+                        responses.put("owner", matchedGuild.get().get("owner"));
+                        responses.put("permissions", matchedGuild.get().get("permissions").asText());
+                        responses.put("features", matchedGuild.get().get("features"));
+                        responses.put("enabledFeatures", matchedGuild.get().get("enabledFeatures") == null ? 
+                            new ArrayList<>() : matchedGuild.get().get("enabledFeatures"));
+                        return responses;
+                    }
+                    return null;
                 }
+            } catch (Exception e) {
+                if (e.getMessage().contains("429 Too Many Requests")) {
+                    currentTry++;
+                    retryDelay *= 2;  // Exponential backoff
+                    log.warn("Rate limited, retry {} of {}, waiting {}ms", currentTry, maxRetries, retryDelay);
+                    continue;
+                }
+                log.error("Error getting guild details: {}", e.getMessage());
                 return null;
             }
-        } catch (Exception e) {
-            log.error("Error getting guild details: {}", e.getMessage());
         }
+        
+        log.error("Failed to get guild details after {} retries", maxRetries);
         return null;
     }
 
