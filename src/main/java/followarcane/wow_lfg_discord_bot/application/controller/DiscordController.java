@@ -3,6 +3,7 @@ package followarcane.wow_lfg_discord_bot.application.controller;
 import followarcane.wow_lfg_discord_bot.application.dto.TextChannelDTO;
 import followarcane.wow_lfg_discord_bot.application.request.*;
 import followarcane.wow_lfg_discord_bot.application.response.RecruitmentFilterResponse;
+import followarcane.wow_lfg_discord_bot.application.response.ServerFeatureResponse;
 import followarcane.wow_lfg_discord_bot.application.service.DiscordBotService;
 import followarcane.wow_lfg_discord_bot.application.service.DiscordService;
 import followarcane.wow_lfg_discord_bot.application.service.RecruitmentFilterService;
@@ -185,6 +186,25 @@ public class DiscordController {
         
         boolean result = filterService.shouldSendMessage(serverId, playerInfo);
         return ResponseEntity.ok(Map.of("result", result));
+    }
+
+    @GetMapping("/servers/{serverId}/features")
+    public ResponseEntity<?> getServerFeatures(
+            @PathVariable String serverId,
+            @RequestHeader("Authorization") String token) {
+        
+        ResponseEntity<String> validationResponse = discordBotService.validateAndGetUserId(token);
+        if (validationResponse.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+
+        try {
+            List<ServerFeatureResponse> features = discordService.getServerFeatures(serverId);
+            return ResponseEntity.ok(features);
+        } catch (Exception e) {
+            log.error("[FEATURE_ERROR] Error getting features for server {}: {}", serverId, e.getMessage());
+            return ResponseEntity.internalServerError().body("Error getting features");
+        }
     }
 }
 

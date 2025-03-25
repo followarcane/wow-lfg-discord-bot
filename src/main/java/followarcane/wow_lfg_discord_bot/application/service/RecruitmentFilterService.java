@@ -26,36 +26,23 @@ public class RecruitmentFilterService {
             .orElse(createDefaultFilter());
 
         try {
-            log.info("[FILTER_CHECK] Starting filter check for server: {}", serverId);
-            log.info("[FILTER_CHECK] Player Info: class={}, role={}, ilevel={}, progress={}", 
-                playerInfo.get("class"), 
-                playerInfo.get("role"), 
-                playerInfo.get("ilevel"), 
-                playerInfo.get("progress"));
-            log.info("[FILTER_CHECK] DB Filters: class={}, role={}, minIlevel={}, progress={}", 
-                filter.getClassFilter(), 
-                filter.getRoleFilter(), 
-                filter.getMinIlevel(), 
-                filter.getRaidProgress());
+            // Sadece başlangıç ve gelen bilgileri logla
+            log.debug("[FILTER_CHECK] Starting filter check for server: {} with player info: {}", 
+                serverId, playerInfo);
 
             boolean classMatch = checkClassFilter(filter, playerInfo.get("class"));
-            log.info("[FILTER_CHECK] Class Match: {} (required: {}, got: {})", 
-                classMatch, filter.getClassFilter(), playerInfo.get("class"));
-
             boolean roleMatch = checkRoleFilter(filter, playerInfo.get("role"));
-            log.info("[FILTER_CHECK] Role Match: {} (required: {}, got: {})", 
-                roleMatch, filter.getRoleFilter(), playerInfo.get("role"));
-
             boolean ilevelMatch = checkIlevelFilter(filter, playerInfo.get("ilevel"));
-            log.info("[FILTER_CHECK] ILevel Match: {} (required: {}, got: {})", 
-                ilevelMatch, filter.getMinIlevel(), playerInfo.get("ilevel"));
-
             boolean progressMatch = checkProgressFilter(filter, playerInfo.get("progress"));
-            log.info("[FILTER_CHECK] Progress Match: {} (required: {}, got: {})", 
-                progressMatch, filter.getRaidProgress(), playerInfo.get("progress"));
 
             boolean finalResult = classMatch && roleMatch && ilevelMatch && progressMatch;
-            log.info("[FILTER_CHECK] Final Result: {} for server: {}", finalResult, serverId);
+            
+            // Eğer filtre başarısız olduysa nedenini logla
+            if (!finalResult) {
+                log.info("[FILTER_FAILED] Server: {}, Failed filters: {}", 
+                    serverId,
+                    getFailedFilters(classMatch, roleMatch, ilevelMatch, progressMatch, filter, playerInfo));
+            }
 
             return finalResult;
         } catch (Exception e) {
@@ -153,6 +140,29 @@ public class RecruitmentFilterService {
             case "M" -> 3;
             default -> 0;
         };
+    }
+
+    private String getFailedFilters(boolean classMatch, boolean roleMatch, boolean ilevelMatch, 
+        boolean progressMatch, RecruitmentFilter filter, Map<String, String> playerInfo) {
+        
+        StringBuilder failed = new StringBuilder();
+        if (!classMatch) {
+            failed.append(String.format("Class(required:%s,got:%s) ", 
+                filter.getClassFilter(), playerInfo.get("class")));
+        }
+        if (!roleMatch) {
+            failed.append(String.format("Role(required:%s,got:%s) ", 
+                filter.getRoleFilter(), playerInfo.get("role")));
+        }
+        if (!ilevelMatch) {
+            failed.append(String.format("iLevel(required:%d,got:%s) ", 
+                filter.getMinIlevel(), playerInfo.get("ilevel")));
+        }
+        if (!progressMatch) {
+            failed.append(String.format("Progress(required:%s,got:%s)", 
+                filter.getRaidProgress(), playerInfo.get("progress")));
+        }
+        return failed.toString();
     }
 
     public void updateFilters(String serverId, RecruitmentFilterRequest request) {
