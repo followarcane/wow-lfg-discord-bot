@@ -207,8 +207,9 @@ public class DiscordService {
             throw new RuntimeException("Server not found");
         }
 
-    
-        log.info("Server {} has {} features", serverId, server.getFeatures().size());
+        log.info("Server found: {}", server);
+        log.info("Server features raw data: {}", server.getFeatures());
+        log.info("Server ID for comparison: {} vs {}", server.getServerId(), serverId);
 
         return server.getFeatures().stream()
             .map(feature -> new ServerFeatureResponse(
