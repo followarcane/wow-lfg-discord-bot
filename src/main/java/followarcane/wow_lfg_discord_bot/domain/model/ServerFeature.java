@@ -13,7 +13,7 @@ public class ServerFeature {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "server_id")
+    @JoinColumn(name = "server_id", referencedColumnName = "server_id")
     private DiscordServer server;
 
     @Enumerated(EnumType.STRING)
