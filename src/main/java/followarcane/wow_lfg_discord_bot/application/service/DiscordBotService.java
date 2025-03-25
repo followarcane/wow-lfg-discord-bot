@@ -354,7 +354,7 @@ public class DiscordBotService extends ListenerAdapter {
                 return null;
             }
         } catch (Exception e) {
-            System.err.println("Error getting guild details: " + e.getMessage());
+            log.error("Error getting guild details: {}", e.getMessage());
         }
         return null;
     }
