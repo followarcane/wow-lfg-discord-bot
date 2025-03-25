@@ -6,6 +6,7 @@ import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
 import followarcane.wow_lfg_discord_bot.application.request.UserSettingsRequest;
 import followarcane.wow_lfg_discord_bot.application.request.RecruitmentFilterRequest;
 import followarcane.wow_lfg_discord_bot.application.response.RecruitmentFilterResponse;
+import followarcane.wow_lfg_discord_bot.application.response.ServerFeatureResponse;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordChannel;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
 import followarcane.wow_lfg_discord_bot.domain.model.User;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -197,5 +199,19 @@ public class DiscordService {
 
     public DiscordServer getServerByServerId(String serverId) {
         return serverRepository.findServerByServerIdAndActiveTrue(serverId);
+    }
+
+    public List<ServerFeatureResponse> getServerFeatures(String serverId) {
+        DiscordServer server = serverRepository.findServerByServerId(serverId);
+        if (server == null) {
+            throw new RuntimeException("Server not found");
+        }
+
+        return server.getFeatures().stream()
+            .map(feature -> new ServerFeatureResponse(
+                feature.getFeatureType(),
+                feature.isEnabled()
+            ))
+            .collect(Collectors.toList());
     }
 }
