@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
 import followarcane.wow_lfg_discord_bot.application.response.StatisticsResponse;
+import followarcane.wow_lfg_discord_bot.domain.FeatureType;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
 import followarcane.wow_lfg_discord_bot.domain.model.Message;
+import followarcane.wow_lfg_discord_bot.domain.model.ServerFeature;
 import followarcane.wow_lfg_discord_bot.domain.model.User;
 import followarcane.wow_lfg_discord_bot.domain.repository.DiscordServerRepository;
 import followarcane.wow_lfg_discord_bot.domain.repository.MessageRepository;
@@ -152,6 +154,10 @@ public class DiscordBotService extends ListenerAdapter {
             discordServer.setIcon(icon);
             discordServer.setBanner(banner);
             discordServer.setDescription(description);
+
+            // Yeni server için default feature'ları ekle
+            ServerFeature lfgFeature = new ServerFeature(discordServer, FeatureType.LFG);
+            discordServer.getFeatures().add(lfgFeature);
 
             log.info("New server joined: {}", serverName);
         } else {
