@@ -80,3 +80,15 @@
 /.idea/uiDesigner.xml
 /.idea/modules/WoW-Lfg-Discord-Bot.main.iml
 /src/main/resources/application-local.yml
+/build/classes/java/main/followarcane/wow_lfg_discord_bot/domain/FeatureType.class
+/build/tmp/jar/MANIFEST.MF
+/build/classes/java/main/followarcane/wow_lfg_discord_bot/domain/model/RecruitmentFilter.class
+/build/classes/java/main/followarcane/wow_lfg_discord_bot/domain/repository/RecruitmentFilterRepository.class
+/build/classes/java/main/followarcane/wow_lfg_discord_bot/application/request/RecruitmentFilterRequest.class
+/build/classes/java/main/followarcane/wow_lfg_discord_bot/application/response/RecruitmentFilterResponse.class
+/build/classes/java/main/followarcane/wow_lfg_discord_bot/application/service/RecruitmentFilterService.class
+/build/classes/java/main/followarcane/wow_lfg_discord_bot/domain/model/ServerFeature.class
+/build/classes/java/main/followarcane/wow_lfg_discord_bot/application/response/ServerFeatureResponse.class
+/.vscode/settings.json
+/.idea/wow-lfg-discord-bot.iml
+/build/libs/WoW-Lfg-Discord-Bot-0.0.1-SNAPSHOT-plain.jar
