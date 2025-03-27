@@ -30,4 +30,14 @@ public class ServerFeature {
         this.featureType = featureType;
         this.enabled = featureType == FeatureType.LFG; // LFG için default true
     }
+    
+    // toString metodunu override edelim
+    @Override
+    public String toString() {
+        return "ServerFeature{" +
+            "id=" + id +
+            ", featureType=" + featureType +
+            ", enabled=" + enabled +
+            '}';
+    }
 } 
