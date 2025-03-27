@@ -3,6 +3,8 @@ package followarcane.wow_lfg_discord_bot.domain.model;
 import followarcane.wow_lfg_discord_bot.domain.FeatureType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -14,6 +16,8 @@ public class ServerFeature {
 
     @ManyToOne
     @JoinColumn(name = "server_id", referencedColumnName = "server_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private DiscordServer server;
 
     @Enumerated(EnumType.STRING)

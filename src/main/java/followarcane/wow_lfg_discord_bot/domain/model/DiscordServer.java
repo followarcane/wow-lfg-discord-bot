@@ -3,9 +3,10 @@ package followarcane.wow_lfg_discord_bot.domain.model;
 import followarcane.wow_lfg_discord_bot.domain.FeatureType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.ToString;
 
 @Entity
 @Data
@@ -25,10 +26,13 @@ public class DiscordServer {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User user;
 
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<ServerFeature> features = new HashSet<>();
 
     public boolean isFeatureEnabled(FeatureType featureType) {
