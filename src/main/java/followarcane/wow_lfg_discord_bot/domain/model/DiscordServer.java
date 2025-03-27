@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -27,6 +28,7 @@ public class DiscordServer {
     private User user;
 
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ToString.Exclude
     private Set<ServerFeature> features = new HashSet<>();
 
     public boolean isFeatureEnabled(FeatureType featureType) {
@@ -51,5 +53,14 @@ public class DiscordServer {
                     features.add(newFeature);
                 }
             );
+    }
+
+    @Override
+    public String toString() {
+        return "DiscordServer{" +
+            "serverId='" + serverId + '\'' +
+            ", serverName='" + serverName + '\'' +
+            ", active=" + active +
+            '}';
     }
 }
