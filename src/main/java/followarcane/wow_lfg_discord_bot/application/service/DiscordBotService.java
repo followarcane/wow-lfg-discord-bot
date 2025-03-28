@@ -250,6 +250,7 @@ public class DiscordBotService extends ListenerAdapter {
 
                     for (JsonNode run : runsNode) {
                         String dungeon = run.get("dungeon").asText();
+                        String dgLink = run.get("url").asText();
                         int level = run.get("mythic_level").asInt();
                         int upgrades = run.get("num_keystone_upgrades").asInt();
                         String completedAt = run.get("completed_at").asText().substring(0, 10);
@@ -260,9 +261,10 @@ public class DiscordBotService extends ListenerAdapter {
                             upgradeStars += "⭐";
                         }
 
-                        runsInfo.append("**").append(dungeon).append("** +").append(level)
+                        runsInfo.append("**").append("[").append(dungeon).append("]").append("(").append(dgLink).append(")")
+                                .append("** +").append(level)
                                 .append(" (").append(upgradeStars).append(")")
-                                .append(" - Score: ").append(score)
+                                .append("\nScore: ").append(score)
                                 .append(" - ").append(completedAt)
                                 .append("\n\n");
                     }
