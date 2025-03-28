@@ -405,9 +405,6 @@ public class DiscordBotService extends ListenerAdapter {
                     vaultInfo.append("**Slot 2 (4 runs):** ").append(vaultSlots[1]).append("\n");
                     vaultInfo.append("**Slot 3 (8 runs):** ").append(vaultSlots[2]).append("\n\n");
 
-                    // Ödül seviyelerini açıklayan bir not ekleyin
-                    vaultInfo.append("*Item levels: Champion < Hero < Myth*");
-
                     embed.addField("Great Vault Rewards", vaultInfo.toString(), false);
 
                     // Add upgrade suggestions
