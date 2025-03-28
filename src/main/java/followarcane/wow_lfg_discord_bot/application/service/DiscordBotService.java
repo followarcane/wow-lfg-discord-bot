@@ -102,20 +102,25 @@ public class DiscordBotService extends ListenerAdapter {
     }
 
     private void registerSlashCommands() {
-        // Tüm komutları tek seferde güncelle
-        jda.updateCommands().addCommands(
+        // Önce tüm komutları temizle
+        jda.updateCommands().queue(success -> {
+            log.info("All commands cleared successfully");
+
+            // Sonra yeni komutları ekle
+            jda.updateCommands().addCommands(
                 Commands.slash("help", "Shows help information about the bot"),
                 Commands.slash("setup", "Set up the LFG feature"),
                 Commands.slash("example", "Shows an example LFG message"),
                 Commands.slash("discord", "Get an invite link to our official Discord"),
                 Commands.slash("weeklyRuns", "Shows a player's weekly Mythic+ runs from Raider.io")
-                .addOption(OptionType.STRING, "name", "Character name", true)
-                .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
-                .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
-        ).queue(
-                success -> log.info("Successfully updated slash commands"),
-                error -> log.error("Error updating slash commands: {}", error.getMessage())
-        );
+                        .addOption(OptionType.STRING, "name", "Character name", true)
+                        .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
+                        .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
+            ).queue(
+                    updated -> log.info("Commands updated successfully"),
+                    error -> log.error("Error updating commands: {}", error.getMessage())
+            );
+        }, error -> log.error("Error clearing commands: {}", error.getMessage()));
     }
 
     @Override
