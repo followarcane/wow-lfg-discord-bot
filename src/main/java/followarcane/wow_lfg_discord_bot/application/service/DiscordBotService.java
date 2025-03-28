@@ -103,18 +103,12 @@ public class DiscordBotService extends ListenerAdapter {
     }
 
     private void registerSlashCommands() {
-        // Mevcut komutları kontrol et
+        // Mevcut komutları kontrol et ve güncelle
         jda.retrieveCommands().queue(existingCommands -> {
             log.info("Found {} existing commands", existingCommands.size());
 
-            // Komutlar zaten varsa, hiçbir şey yapma
-            if (!existingCommands.isEmpty()) {
-                log.info("Commands already registered, skipping registration");
-                return;
-            }
-
-            // Komutlar yoksa, yeni komutları ekle
-            log.info("No commands found, registering new commands");
+            // Komutları her zaman güncelle
+            log.info("Updating commands to ensure all are registered");
             jda.updateCommands().addCommands(
                 Commands.slash("help", "Shows help information about the bot"),
                 Commands.slash("setup", "Set up the LFG feature"),
@@ -129,8 +123,8 @@ public class DiscordBotService extends ListenerAdapter {
                             .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
                             .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
             ).queue(
-                    success -> log.info("Successfully registered slash commands"),
-                    error -> log.error("Error registering slash commands: {}", error.getMessage())
+                    success -> log.info("Successfully updated slash commands"),
+                    error -> log.error("Error updating slash commands: {}", error.getMessage())
             );
         });
     }
@@ -287,7 +281,7 @@ public class DiscordBotService extends ListenerAdapter {
                             runsInfo.append("**").append("[").append(dungeon).append("]").append("(").append(dgUrl).append(")")
                                     .append("** +").append(level)
                                     .append(" ").append(upgradeStars)
-                                    .append("\n **Score: ").append(score).append(completedAt).append("**")
+                                    .append("\n **Score: ").append(score).append(" - ").append(completedAt).append("**")
                                     .append("\n\n");
                         }
 
