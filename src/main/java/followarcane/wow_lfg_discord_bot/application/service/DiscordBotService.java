@@ -251,15 +251,16 @@ public class DiscordBotService extends ListenerAdapter {
                 // Add weekly runs - Birden fazla alana bölerek
                 JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
                 if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
-                    // Her 3 run için bir alan oluştur
+                    // Her 5 run için bir alan oluştur
                     int runCount = runsNode.size();
-                    int fieldsNeeded = (int) Math.ceil(runCount / 3.0);
-
+                    int runsPerField = 5;
+                    int fieldsNeeded = (int) Math.ceil(runCount / (double) runsPerField);
+                    
                     for (int i = 0; i < fieldsNeeded; i++) {
                         StringBuilder runsInfo = new StringBuilder();
-                        int startIdx = i * 3;
-                        int endIdx = Math.min(startIdx + 3, runCount);
-
+                        int startIdx = i * runsPerField;
+                        int endIdx = Math.min(startIdx + runsPerField, runCount);
+                        
                         for (int j = startIdx; j < endIdx; j++) {
                             JsonNode run = runsNode.get(j);
                             String dungeon = run.get("dungeon").asText();
@@ -267,21 +268,21 @@ public class DiscordBotService extends ListenerAdapter {
                             int upgrades = run.get("num_keystone_upgrades").asInt();
                             String completedAt = run.get("completed_at").asText().substring(0, 10);
                             double score = run.get("score").asDouble();
-
+                            String dgUrl = run.get("url").asText();
+                            
                             String upgradeStars = "";
                             for (int k = 0; k < upgrades; k++) {
                                 upgradeStars += "⭐";
                             }
 
-                            runsInfo.append("**").append(dungeon).append("** +").append(level)
-                                    .append(" (").append(upgradeStars).append(")")
-                                    .append(" - Score: ").append(score)
-                                    .append(" - ").append(completedAt)
+                            runsInfo.append("**").append("[").append(dgUrl).append("]").append(dungeon).append("** +").append(level)
+                                    .append(" ").append(upgradeStars)
+                                    .append("\n **Score: ").append(score).append(completedAt).append("**")
                                     .append("\n\n");
                         }
 
                         String fieldTitle = (fieldsNeeded == 1) ?
-                                "Weekly Mythic+ Runs" :
+                                "Weekly Mythic+ Runs" : 
                                 "Weekly Mythic+ Runs (" + (i + 1) + "/" + fieldsNeeded + ")";
 
                         embed.addField(fieldTitle, runsInfo.toString(), false);
