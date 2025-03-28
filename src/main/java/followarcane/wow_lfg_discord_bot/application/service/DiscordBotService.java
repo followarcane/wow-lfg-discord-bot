@@ -107,7 +107,7 @@ public class DiscordBotService extends ListenerAdapter {
         jda.upsertCommand("discord", "Get an invite link to our official Discord").queue();
 
         // Add new Raider.io command with required options
-        jda.upsertCommand("week", "Shows a player's weekly Mythic+ runs from Raider.io")
+        jda.upsertCommand("weeklyRuns", "Shows a player's weekly Mythic+ runs from Raider.io")
                 .addOption(OptionType.STRING, "name", "Character name", true)
                 .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
                 .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
