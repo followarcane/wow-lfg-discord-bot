@@ -32,12 +32,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -110,7 +107,7 @@ public class DiscordBotService extends ListenerAdapter {
         jda.upsertCommand("discord", "Get an invite link to our official Discord").queue();
 
         // Add new Raider.io command with required options
-        jda.upsertCommand("rio", "Shows a player's weekly Mythic+ runs from Raider.io")
+        jda.upsertCommand("week", "Shows a player's weekly Mythic+ runs from Raider.io")
                 .addOption(OptionType.STRING, "name", "Character name", true)
                 .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
                 .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
@@ -134,7 +131,7 @@ public class DiscordBotService extends ListenerAdapter {
             case "discord":
                 handleDiscordCommand(event);
                 break;
-            case "rio":
+            case "weeklyRuns":
                 handleRaiderIOCommand(event);
                 break;
             default:
@@ -178,9 +175,9 @@ public class DiscordBotService extends ListenerAdapter {
         String region = event.getOption("region").getAsString();
 
         try {
-            String url = String.format("https://raider.io/api/v1/characters/profile?region=%s&realm=%s&name=%s&fields=mythic_plus_weekly_highest_level_runs",
+            String url = String.format("https://raider.io/api/v1/characters/profile?region=%s&realm=%s&name=%s&fields=mythic_plus_scores_by_season%%3Acurrent%%2Cmythic_plus_weekly_highest_level_runs",
                     region, realm, name);
-
+            
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
@@ -206,10 +203,30 @@ public class DiscordBotService extends ListenerAdapter {
                 // Set color based on class using existing helper
                 embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
 
-                // Add character info
-                embed.addField("Role", characterRole, true);
-                embed.addField("Faction", StringUtils.capitalize(faction), true);
+                // Add current season scores
+                JsonNode scoresNode = rootNode.path("mythic_plus_scores_by_season").path(0).path("scores");
+                if (!scoresNode.isMissingNode()) {
+                    StringBuilder scoreInfo = new StringBuilder();
 
+                    // Add non-zero scores
+                    if (scoresNode.has("all") && scoresNode.get("all").asDouble() > 0) {
+                        scoreInfo.append("**Overall:** ").append(scoresNode.get("all").asDouble()).append("\n");
+                    }
+                    if (scoresNode.has("dps") && scoresNode.get("dps").asDouble() > 0) {
+                        scoreInfo.append("**DPS:** ").append(scoresNode.get("dps").asDouble()).append("\n");
+                    }
+                    if (scoresNode.has("healer") && scoresNode.get("healer").asDouble() > 0) {
+                        scoreInfo.append("**Healer:** ").append(scoresNode.get("healer").asDouble()).append("\n");
+                    }
+                    if (scoresNode.has("tank") && scoresNode.get("tank").asDouble() > 0) {
+                        scoreInfo.append("**Tank:** ").append(scoresNode.get("tank").asDouble()).append("\n");
+                    }
+
+                    if (scoreInfo.length() > 0) {
+                        embed.addField("Current Season Scores", scoreInfo.toString(), false);
+                    }
+                }
+                
                 // Add weekly runs
                 JsonNode runsNode = rootNode.get("mythic_plus_weekly_highest_level_runs");
                 if (runsNode.isArray() && runsNode.size() > 0) {
@@ -239,15 +256,14 @@ public class DiscordBotService extends ListenerAdapter {
                     embed.addField("Weekly Mythic+ Runs", "No runs found for this week", false);
                 }
 
-                // Add footer
-                embed.setFooter("Data from Raider.io • " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                        "https://cdnassets.raider.io/images/brand/Icon_Light_32.png");
-
+                // Add footer - same as LFG message
+                embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
+                
                 // Send the embed
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
 
             } else {
-                event.getHook().sendMessage("Could not find character: " + name + " on " + realm + "-" + region.toUpperCase() +
+                event.getHook().sendMessage("Could not find character: " + name + " on " + realm + "-" + region.toUpperCase() + 
                         ". Please check the spelling and try again.").queue();
             }
         } catch (Exception e) {
