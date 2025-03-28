@@ -263,7 +263,7 @@ public class DiscordBotService extends ListenerAdapter {
 
                         runsInfo.append("**").append("[").append(dungeon).append("]").append("(").append(dgLink).append(")")
                                 .append("** +").append(level)
-                                .append(" (").append(upgradeStars).append(")")
+                                .append(" ").append(upgradeStars)
                                 .append("\nScore: ").append(score)
                                 .append(" - ").append(completedAt)
                                 .append("\n\n");
