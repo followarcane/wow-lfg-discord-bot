@@ -33,7 +33,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -219,10 +218,6 @@ public class DiscordBotService extends ListenerAdapter {
 
                 // Set color based on class using existing helper
                 embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
-
-                // Add character info
-                embed.addField("Role", characterRole, true);
-                embed.addField("Faction", StringUtils.capitalize(faction), true);
 
                 // Add current season scores
                 JsonNode scoresNode = rootNode.path("mythic_plus_scores_by_season").path(0).path("scores");
