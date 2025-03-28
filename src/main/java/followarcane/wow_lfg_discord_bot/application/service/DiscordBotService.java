@@ -251,9 +251,9 @@ public class DiscordBotService extends ListenerAdapter {
                 // Add weekly runs - Birden fazla alana bölerek
                 JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
                 if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
-                    // Her 8 run için bir alan oluştur
+                    // Her 5 run için bir alan oluştur
                     int runCount = runsNode.size();
-                    int runsPerField = 8;
+                    int runsPerField = 5;
                     int fieldsNeeded = (int) Math.ceil(runCount / (double) runsPerField);
                     
                     for (int i = 0; i < fieldsNeeded; i++) {
