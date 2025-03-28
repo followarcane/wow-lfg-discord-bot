@@ -180,9 +180,9 @@ public class DiscordBotService extends ListenerAdapter {
         // Defer reply to give us time to fetch data
         event.deferReply().queue();
 
-        String name = event.getOption("name").getAsString();
-        String realm = event.getOption("realm").getAsString().replace(" ", "-");
-        String region = event.getOption("region").getAsString();
+        String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+        String realm = Objects.requireNonNull(event.getOption("realm")).getAsString().replace(" ", "-");
+        String region = Objects.requireNonNull(event.getOption("region")).getAsString();
 
         try {
             String url = UriComponentsBuilder.fromHttpUrl("https://raider.io/api/v1/characters/profile")
@@ -238,14 +238,14 @@ public class DiscordBotService extends ListenerAdapter {
                         scoreInfo.append("**Tank:** ").append(scoresNode.get("tank").asDouble()).append("\n");
                     }
 
-                    if (scoreInfo.length() > 0) {
+                    if (!scoreInfo.isEmpty()) {
                         embed.addField("Current Season Scores", scoreInfo.toString(), false);
                     }
                 }
 
                 // Add weekly runs - Güvenli bir şekilde kontrol et
                 JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
-                if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
+                if (!runsNode.isMissingNode() && runsNode.isArray() && !runsNode.isEmpty()) {
                     StringBuilder runsInfo = new StringBuilder();
 
                     for (JsonNode run : runsNode) {
@@ -256,9 +256,9 @@ public class DiscordBotService extends ListenerAdapter {
                         String completedAt = run.get("completed_at").asText().substring(0, 10);
                         double score = run.get("score").asDouble();
 
-                        String upgradeStars = "";
+                        StringBuilder upgradeStars = new StringBuilder();
                         for (int i = 0; i < upgrades; i++) {
-                            upgradeStars += "⭐";
+                            upgradeStars.append("⭐");
                         }
 
                         runsInfo.append("**").append("[").append(dungeon).append("]").append("(").append(dgLink).append(")")
