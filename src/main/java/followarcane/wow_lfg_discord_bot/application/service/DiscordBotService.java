@@ -197,9 +197,9 @@ public class DiscordBotService extends ListenerAdapter {
         // Defer reply to give us time to fetch data
         event.deferReply().queue();
 
-        String name = event.getOption("name").getAsString();
-        String realm = event.getOption("realm").getAsString().replace(" ", "-");
-        String region = event.getOption("region").getAsString();
+        String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+        String realm = Objects.requireNonNull(event.getOption("realm")).getAsString().replace(" ", "-");
+        String region = Objects.requireNonNull(event.getOption("region")).getAsString();
 
         try {
             String url = UriComponentsBuilder.fromHttpUrl("https://raider.io/api/v1/characters/profile")
@@ -255,14 +255,14 @@ public class DiscordBotService extends ListenerAdapter {
                         scoreInfo.append("**Tank:** ").append(scoresNode.get("tank").asDouble()).append("\n");
                     }
 
-                    if (scoreInfo.length() > 0) {
+                    if (!scoreInfo.isEmpty()) {
                         embed.addField("Current Season Scores", scoreInfo.toString(), false);
                     }
                 }
 
                 // Add weekly runs - Birden fazla alana bölerek
                 JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
-                if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
+                if (!runsNode.isMissingNode() && runsNode.isArray() && !runsNode.isEmpty()) {
                     // Her 5 run için bir alan oluştur
                     int runCount = runsNode.size();
                     int runsPerField = 6;
@@ -282,9 +282,9 @@ public class DiscordBotService extends ListenerAdapter {
                             double score = run.get("score").asDouble();
                             String dgUrl = run.get("url").asText();
                             
-                            String upgradeStars = "";
+                            StringBuilder upgradeStars = new StringBuilder();
                             for (int k = 0; k < upgrades; k++) {
-                                upgradeStars += "⭐";
+                                upgradeStars.append("⭐");
                             }
 
                             runsInfo.append("**").append("[").append(dungeon).append("]").append("(").append(dgUrl).append(")")
@@ -324,9 +324,9 @@ public class DiscordBotService extends ListenerAdapter {
         // Defer reply to give us time to fetch data
         event.deferReply().queue();
 
-        String name = event.getOption("name").getAsString();
-        String realm = event.getOption("realm").getAsString().replace(" ", "-");
-        String region = event.getOption("region").getAsString();
+        String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+        String realm = Objects.requireNonNull(event.getOption("realm")).getAsString().replace(" ", "-");
+        String region = Objects.requireNonNull(event.getOption("region")).getAsString();
 
         try {
             String url = UriComponentsBuilder.fromHttpUrl("https://raider.io/api/v1/characters/profile")
@@ -373,7 +373,7 @@ public class DiscordBotService extends ListenerAdapter {
                     String[] nextUpgrades = new String[3];
 
                     // First slot (1 run)
-                    if (runLevels.size() >= 1) {
+                    if (!runLevels.isEmpty()) {
                         vaultSlots[0] = getVaultReward(runLevels.get(0));
                     } else {
                         vaultSlots[0] = "No reward yet";
@@ -409,12 +409,11 @@ public class DiscordBotService extends ListenerAdapter {
                     }
 
                     // Add vault slots to embed
-                    StringBuilder vaultInfo = new StringBuilder();
-                    vaultInfo.append("**Slot 1 (1 run):** ").append(vaultSlots[0]).append("\n");
-                    vaultInfo.append("**Slot 2 (4 runs):** ").append(vaultSlots[1]).append("\n");
-                    vaultInfo.append("**Slot 3 (8 runs):** ").append(vaultSlots[2]).append("\n\n");
+                    String vaultInfo = "**Slot 1 (1 run):** " + vaultSlots[0] + "\n" +
+                            "**Slot 2 (4 runs):** " + vaultSlots[1] + "\n" +
+                            "**Slot 3 (8 runs):** " + vaultSlots[2] + "\n\n";
 
-                    embed.addField("Great Vault Rewards", vaultInfo.toString(), false);
+                    embed.addField("Great Vault Rewards", vaultInfo, false);
 
                     // Add upgrade suggestions
                     StringBuilder upgradeInfo = new StringBuilder();
@@ -424,7 +423,7 @@ public class DiscordBotService extends ListenerAdapter {
                         }
                     }
 
-                    if (upgradeInfo.length() > 0) {
+                    if (!upgradeInfo.isEmpty()) {
                         embed.addField("How to Improve", upgradeInfo.toString(), false);
                     }
 
@@ -471,8 +470,7 @@ public class DiscordBotService extends ListenerAdapter {
         else if (mythicLevel == 10) return "Myth 1 (662)";
         else if (mythicLevel == 11) return "Myth 1 (662)";
         else if (mythicLevel == 12) return "Myth 1 (662)";
-        else if (mythicLevel >= 13) return "Myth 1 (662)";
-        else return "Unknown";
+        else return "Myth 1 (662)";
     }
 
     @Override
