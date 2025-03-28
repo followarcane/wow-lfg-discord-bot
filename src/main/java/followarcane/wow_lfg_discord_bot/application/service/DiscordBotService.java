@@ -103,25 +103,32 @@ public class DiscordBotService extends ListenerAdapter {
     }
 
     private void registerSlashCommands() {
-        // Önce tüm komutları temizle
-        jda.updateCommands().queue(success -> {
-            log.info("All commands cleared successfully");
+        // Mevcut komutları kontrol et
+        jda.retrieveCommands().queue(existingCommands -> {
+            log.info("Found {} existing commands", existingCommands.size());
 
-            // Sonra yeni komutları ekle
+            // Komutlar zaten varsa, hiçbir şey yapma
+            if (!existingCommands.isEmpty()) {
+                log.info("Commands already registered, skipping registration");
+                return;
+            }
+
+            // Komutlar yoksa, yeni komutları ekle
+            log.info("No commands found, registering new commands");
             jda.updateCommands().addCommands(
                 Commands.slash("help", "Shows help information about the bot"),
                 Commands.slash("setup", "Set up the LFG feature"),
                 Commands.slash("example", "Shows an example LFG message"),
                 Commands.slash("discord", "Get an invite link to our official Discord"),
                     Commands.slash("weekly-runs", "Shows a player's weekly Mythic+ runs from Raider.io")
-                        .addOption(OptionType.STRING, "name", "Character name", true)
-                        .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
-                        .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
+                            .addOption(OptionType.STRING, "name", "Character name", true)
+                            .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
+                            .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
             ).queue(
-                    updated -> log.info("Commands updated successfully"),
-                    error -> log.error("Error updating commands: {}", error.getMessage())
+                    success -> log.info("Successfully registered slash commands"),
+                    error -> log.error("Error registering slash commands: {}", error.getMessage())
             );
-        }, error -> log.error("Error clearing commands: {}", error.getMessage()));
+        });
     }
 
     @Override
@@ -248,7 +255,7 @@ public class DiscordBotService extends ListenerAdapter {
                 if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
                     // Her 5 run için bir alan oluştur
                     int runCount = runsNode.size();
-                    int runsPerField = 5;
+                    int runsPerField = 6;
                     int fieldsNeeded = (int) Math.ceil(runCount / (double) runsPerField);
                     
                     for (int i = 0; i < fieldsNeeded; i++) {
@@ -270,7 +277,7 @@ public class DiscordBotService extends ListenerAdapter {
                                 upgradeStars += "⭐";
                             }
 
-                            runsInfo.append("**").append("[").append(dgUrl).append("]").append(dungeon).append("** +").append(level)
+                            runsInfo.append("**").append("[").append(dgUrl).append("](").append(dungeon).append(")** +").append(level)
                                     .append(" ").append(upgradeStars)
                                     .append("\n **Score: ").append(score).append(completedAt).append("**")
                                     .append("\n\n");
