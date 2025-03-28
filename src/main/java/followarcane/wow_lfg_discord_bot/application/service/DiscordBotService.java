@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
 import followarcane.wow_lfg_discord_bot.application.response.StatisticsResponse;
+import followarcane.wow_lfg_discord_bot.application.util.ClassColorCodeHelper;
 import followarcane.wow_lfg_discord_bot.domain.FeatureType;
 import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
 import followarcane.wow_lfg_discord_bot.domain.model.Message;
@@ -22,6 +23,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,9 +32,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -66,12 +71,15 @@ public class DiscordBotService extends ListenerAdapter {
 
     private final RestTemplate restTemplate;
 
-    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService) {
+    private final ClassColorCodeHelper classColorCodeHelper;
+
+    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService, ClassColorCodeHelper classColorCodeHelper) {
         this.messageRepository = messageRepository;
         this.discordServerRepository = discordServerRepository;
         this.discordService = discordService;
         this.requestConverter = requestConverter;
         this.restTemplate = restTemplate;
+        this.classColorCodeHelper = classColorCodeHelper;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -100,6 +108,13 @@ public class DiscordBotService extends ListenerAdapter {
         jda.upsertCommand("setup", "Set up the LFG feature").queue();
         jda.upsertCommand("example", "Shows an example LFG message").queue();
         jda.upsertCommand("discord", "Get an invite link to our official Discord").queue();
+
+        // Add new Raider.io command with required options
+        jda.upsertCommand("rio", "Shows a player's weekly Mythic+ runs from Raider.io")
+                .addOption(OptionType.STRING, "name", "Character name", true)
+                .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
+                .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
+                .queue();
     }
 
     @Override
@@ -118,6 +133,9 @@ public class DiscordBotService extends ListenerAdapter {
                 break;
             case "discord":
                 handleDiscordCommand(event);
+                break;
+            case "rio":
+                handleRaiderIOCommand(event);
                 break;
             default:
                 event.reply("Unknown command!").setEphemeral(true).queue();
@@ -149,6 +167,93 @@ public class DiscordBotService extends ListenerAdapter {
 
     private void handleDiscordCommand(SlashCommandInteractionEvent event) {
         event.reply("Join our official Discord server: https://discord.gg/FVR9e3X6xx").queue();
+    }
+
+    private void handleRaiderIOCommand(SlashCommandInteractionEvent event) {
+        // Defer reply to give us time to fetch data
+        event.deferReply().queue();
+
+        String name = event.getOption("name").getAsString();
+        String realm = event.getOption("realm").getAsString().replace(" ", "-");
+        String region = event.getOption("region").getAsString();
+
+        try {
+            String url = String.format("https://raider.io/api/v1/characters/profile?region=%s&realm=%s&name=%s&fields=mythic_plus_weekly_highest_level_runs",
+                    region, realm, name);
+
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNode = mapper.readTree(response.getBody());
+
+                // Create embed message
+                EmbedBuilder embed = new EmbedBuilder();
+
+                // Set character info in title
+                String characterName = rootNode.get("name").asText();
+                String characterClass = rootNode.get("class").asText();
+                String characterSpec = rootNode.get("active_spec_name").asText();
+                String characterRole = rootNode.get("active_spec_role").asText();
+                String characterRealm = rootNode.get("realm").asText();
+                String profileUrl = rootNode.get("profile_url").asText();
+                String thumbnailUrl = rootNode.get("thumbnail_url").asText();
+                String faction = rootNode.get("faction").asText();
+
+                embed.setTitle(characterName + " | " + characterRealm + " | " + characterSpec + " " + characterClass, profileUrl);
+                embed.setThumbnail(thumbnailUrl);
+
+                // Set color based on class using existing helper
+                embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
+
+                // Add character info
+                embed.addField("Role", characterRole, true);
+                embed.addField("Faction", StringUtils.capitalize(faction), true);
+
+                // Add weekly runs
+                JsonNode runsNode = rootNode.get("mythic_plus_weekly_highest_level_runs");
+                if (runsNode.isArray() && runsNode.size() > 0) {
+                    StringBuilder runsInfo = new StringBuilder();
+
+                    for (JsonNode run : runsNode) {
+                        String dungeon = run.get("dungeon").asText();
+                        int level = run.get("mythic_level").asInt();
+                        int upgrades = run.get("num_keystone_upgrades").asInt();
+                        String completedAt = run.get("completed_at").asText().substring(0, 10);
+                        double score = run.get("score").asDouble();
+
+                        String upgradeStars = "";
+                        for (int i = 0; i < upgrades; i++) {
+                            upgradeStars += "⭐";
+                        }
+
+                        runsInfo.append("**").append(dungeon).append("** +").append(level)
+                                .append(" (").append(upgradeStars).append(")")
+                                .append(" - Score: ").append(score)
+                                .append(" - ").append(completedAt)
+                                .append("\n\n");
+                    }
+
+                    embed.addField("Weekly Mythic+ Runs", runsInfo.toString(), false);
+                } else {
+                    embed.addField("Weekly Mythic+ Runs", "No runs found for this week", false);
+                }
+
+                // Add footer
+                embed.setFooter("Data from Raider.io • " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                        "https://cdnassets.raider.io/images/brand/Icon_Light_32.png");
+
+                // Send the embed
+                event.getHook().sendMessageEmbeds(embed.build()).queue();
+
+            } else {
+                event.getHook().sendMessage("Could not find character: " + name + " on " + realm + "-" + region.toUpperCase() +
+                        ". Please check the spelling and try again.").queue();
+            }
+        } catch (Exception e) {
+            log.error("Error fetching Raider.io data: {}", e.getMessage(), e);
+            event.getHook().sendMessage("Error fetching data from Raider.io. Please try again later.").queue();
+        }
     }
 
     @Override
