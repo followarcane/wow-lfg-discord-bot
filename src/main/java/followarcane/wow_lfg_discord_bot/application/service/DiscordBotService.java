@@ -18,10 +18,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -87,53 +86,71 @@ public class DiscordBotService extends ListenerAdapter {
             jda = JDABuilder.createDefault(token)
                     .addEventListeners(this)
                     .setActivity(Activity.customStatus("https://azerite.app"))
+                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
                     .build();
+
+            registerSlashCommands();
+            
             log.info("[DISCORD_SUCCESS] Discord bot started successfully.");
         } catch (Exception e) {
             log.error("[DISCORD_ERROR] Error starting Discord bot: {}", e.getMessage(), e);
         }
     }
 
+    private void registerSlashCommands() {
+        jda.upsertCommand("help", "Shows help information about the bot").queue();
+        jda.upsertCommand("setup", "Set up the LFG feature").queue();
+        jda.upsertCommand("example", "Shows an example LFG message").queue();
+        jda.upsertCommand("discord", "Get an invite link to our official Discord").queue();
+    }
+
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        String[] prefixes = {"!", "?", "/"};
-        String message = event.getMessage().getContentRaw().trim();
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        String commandName = event.getName();
 
-        if (event.getAuthor().isBot())
-            return;
-
-        Member member = event.getGuild().getMember(event.getAuthor());
-
-        if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
-            return;
-        }
-
-        for (String prefix : prefixes) {
-            if (message.startsWith(prefix)) {
-                String command = message.substring(prefix.length()).trim();
-
-                if (command.equalsIgnoreCase("example")) {
-                    Objects.requireNonNull(jda.getTextChannelById(event.getChannel().getId()))
-                            .sendMessageEmbeds(sendExampleEmbedMessage().build())
-                            .queue();
-                }
-                if (command.equalsIgnoreCase("help")) {
-                    String helpMessage = "To set up Azerite and start searching for players, please visit https://azerite.app and invite the bot to your channel again.\n" +
-                            "Then, go to the 'Looking For Player?' configuration in the features section to adjust your settings and join us!\n" +
-                            "Feel free to ask any question in our official discord.\n\n" +
-                            "You can have an invite link with command !discord.";
-                    Objects.requireNonNull(jda.getTextChannelById(event.getChannel().getId()))
-                            .sendMessage(helpMessage)
-                            .queue();
-                }
-                if (command.equalsIgnoreCase("discord")) {
-                    Objects.requireNonNull(jda.getTextChannelById(event.getChannel().getId()))
-                            .sendMessage("https://discord.gg/FVR9e3X6xx")
-                            .queue();
-                }
+        switch (commandName) {
+            case "help":
+                handleHelpCommand(event);
                 break;
-            }
+            case "setup":
+                handleSetupCommand(event);
+                break;
+            case "example":
+                handleExampleCommand(event);
+                break;
+            case "discord":
+                handleDiscordCommand(event);
+                break;
+            default:
+                event.reply("Unknown command!").setEphemeral(true).queue();
+                break;
         }
+    }
+
+    private void handleHelpCommand(SlashCommandInteractionEvent event) {
+        String helpMessage = "To set up Azerite and start searching for players, please visit https://azerite.app and invite the bot to your channel again.\n" +
+                "Then, go to the 'Looking For Player?' configuration in the features section to adjust your settings and join us!\n" +
+                "Feel free to ask any question in our official discord.\n\n" +
+                "You can get an invite link with the /discord command.";
+
+        event.reply(helpMessage).queue();
+    }
+
+    private void handleSetupCommand(SlashCommandInteractionEvent event) {
+        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+            event.reply("You need administrator permission to use this command!").setEphemeral(true).queue();
+            return;
+        }
+
+        event.reply("Setting up LFG feature... Please visit https://azerite.app to complete the configuration.").queue();
+    }
+
+    private void handleExampleCommand(SlashCommandInteractionEvent event) {
+        event.replyEmbeds(sendExampleEmbedMessage().build()).queue();
+    }
+
+    private void handleDiscordCommand(SlashCommandInteractionEvent event) {
+        event.reply("Join our official Discord server: https://discord.gg/FVR9e3X6xx").queue();
     }
 
     @Override
