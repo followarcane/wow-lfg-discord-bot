@@ -112,7 +112,7 @@ public class DiscordBotService extends ListenerAdapter {
                 Commands.slash("setup", "Set up the LFG feature"),
                 Commands.slash("example", "Shows an example LFG message"),
                 Commands.slash("discord", "Get an invite link to our official Discord"),
-                Commands.slash("weeklyRuns", "Shows a player's weekly Mythic+ runs from Raider.io")
+                    Commands.slash("weekly runs", "Shows a player's weekly Mythic+ runs from Raider.io")
                         .addOption(OptionType.STRING, "name", "Character name", true)
                         .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
                         .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
@@ -140,7 +140,7 @@ public class DiscordBotService extends ListenerAdapter {
             case "discord":
                 handleDiscordCommand(event);
                 break;
-            case "weeklyRuns":
+            case "weekly runs":
                 handleRaiderIOCommand(event);
                 break;
             default:
