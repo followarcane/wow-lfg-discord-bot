@@ -123,6 +123,10 @@ public class DiscordBotService extends ListenerAdapter {
                     Commands.slash("weekly-runs", "Shows a player's weekly Mythic+ runs from Raider.io")
                             .addOption(OptionType.STRING, "name", "Character name", true)
                             .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
+                            .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true),
+                    Commands.slash("vault", "Shows a player's Great Vault rewards based on weekly M+ runs")
+                            .addOption(OptionType.STRING, "name", "Character name", true)
+                            .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
                             .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
             ).queue(
                     success -> log.info("Successfully registered slash commands"),
@@ -150,6 +154,9 @@ public class DiscordBotService extends ListenerAdapter {
                 break;
             case "weekly-runs":
                 handleRaiderIOCommand(event);
+                break;
+            case "vault":
+                handleVaultCommand(event);
                 break;
             default:
                 event.reply("Unknown command!").setEphemeral(true).queue();
@@ -277,7 +284,8 @@ public class DiscordBotService extends ListenerAdapter {
                                 upgradeStars += "⭐";
                             }
 
-                            runsInfo.append("**").append("[").append(dgUrl).append("](").append(dungeon).append(")** +").append(level)
+                            runsInfo.append("**").append("[").append(dungeon).append("]").append("(").append(dgUrl).append(")")
+                                    .append("** +").append(level)
                                     .append(" ").append(upgradeStars)
                                     .append("\n **Score: ").append(score).append(completedAt).append("**")
                                     .append("\n\n");
@@ -307,6 +315,161 @@ public class DiscordBotService extends ListenerAdapter {
             log.error("Error fetching Raider.io data: {}", e.getMessage(), e);
             event.getHook().sendMessage("Error fetching data from Raider.io. Please try again later.").queue();
         }
+    }
+
+    private void handleVaultCommand(SlashCommandInteractionEvent event) {
+        // Defer reply to give us time to fetch data
+        event.deferReply().queue();
+
+        String name = event.getOption("name").getAsString();
+        String realm = event.getOption("realm").getAsString().replace(" ", "-");
+        String region = event.getOption("region").getAsString();
+
+        try {
+            String url = UriComponentsBuilder.fromHttpUrl("https://raider.io/api/v1/characters/profile")
+                    .queryParam("region", region)
+                    .queryParam("realm", realm)
+                    .queryParam("name", name)
+                    .queryParam("fields", "mythic_plus_scores_by_season:current,mythic_plus_weekly_highest_level_runs")
+                    .build()
+                    .toUriString();
+            log.info("Raider.io API URL: {}", url);
+
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNode = mapper.readTree(response.getBody());
+
+                // Create embed message
+                EmbedBuilder embed = new EmbedBuilder();
+
+                // Set character info in title
+                String characterName = rootNode.get("name").asText();
+                String characterClass = rootNode.get("class").asText();
+                String characterRealm = rootNode.get("realm").asText();
+                String profileUrl = rootNode.get("profile_url").asText();
+                String thumbnailUrl = rootNode.get("thumbnail_url").asText();
+
+                embed.setTitle(characterName + " | " + characterRealm + " | Great Vault Preview", profileUrl);
+                embed.setThumbnail(thumbnailUrl);
+                embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
+
+                // Process weekly runs
+                JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
+                if (!runsNode.isMissingNode() && runsNode.isArray()) {
+                    // Sort runs by level (highest first)
+                    List<Integer> runLevels = new ArrayList<>();
+                    for (JsonNode run : runsNode) {
+                        runLevels.add(run.get("mythic_level").asInt());
+                    }
+                    Collections.sort(runLevels, Collections.reverseOrder());
+
+                    // Calculate vault rewards
+                    String[] vaultSlots = new String[3];
+                    String[] nextUpgrades = new String[3];
+
+                    // First slot (1 run)
+                    if (runLevels.size() >= 1) {
+                        vaultSlots[0] = getVaultReward(runLevels.get(0));
+                    } else {
+                        vaultSlots[0] = "No reward yet";
+                        nextUpgrades[0] = "Complete any M+ dungeon";
+                    }
+
+                    // Second slot (4 runs)
+                    if (runLevels.size() >= 4) {
+                        int lowestOfTop4 = runLevels.get(3); // 4th highest run
+                        vaultSlots[1] = getVaultReward(lowestOfTop4);
+
+                        // Check if can be improved
+                        if (runLevels.size() >= 5 && runLevels.get(4) > lowestOfTop4) {
+                            nextUpgrades[1] = "Your 4th highest run can be improved";
+                        }
+                    } else {
+                        vaultSlots[1] = "No reward yet";
+                        nextUpgrades[1] = "Complete " + (4 - runLevels.size()) + " more M+ dungeons";
+                    }
+
+                    // Third slot (8 runs)
+                    if (runLevels.size() >= 8) {
+                        int lowestOfTop8 = runLevels.get(7); // 8th highest run
+                        vaultSlots[2] = getVaultReward(lowestOfTop8);
+
+                        // Check if can be improved
+                        if (runLevels.size() > 8 && runLevels.get(8) > lowestOfTop8) {
+                            nextUpgrades[2] = "Your 8th highest run can be improved";
+                        }
+                    } else {
+                        vaultSlots[2] = "No reward yet";
+                        nextUpgrades[2] = "Complete " + (8 - runLevels.size()) + " more M+ dungeons";
+                    }
+
+                    // Add vault slots to embed
+                    StringBuilder vaultInfo = new StringBuilder();
+                    vaultInfo.append("**Slot 1 (1 run):** ").append(vaultSlots[0]).append("\n");
+                    vaultInfo.append("**Slot 2 (4 runs):** ").append(vaultSlots[1]).append("\n");
+                    vaultInfo.append("**Slot 3 (8 runs):** ").append(vaultSlots[2]).append("\n\n");
+
+                    embed.addField("Great Vault Rewards", vaultInfo.toString(), false);
+
+                    // Add upgrade suggestions
+                    StringBuilder upgradeInfo = new StringBuilder();
+                    for (int i = 0; i < 3; i++) {
+                        if (nextUpgrades[i] != null) {
+                            upgradeInfo.append("**Slot ").append(i + 1).append(":** ").append(nextUpgrades[i]).append("\n");
+                        }
+                    }
+
+                    if (upgradeInfo.length() > 0) {
+                        embed.addField("How to Improve", upgradeInfo.toString(), false);
+                    }
+
+                    // Add completed runs count
+                    embed.addField("Completed Runs", runLevels.size() + "/8", true);
+
+                    // Add highest completed level
+                    if (!runLevels.isEmpty()) {
+                        embed.addField("Highest Level", "+" + runLevels.get(0), true);
+                    }
+                } else {
+                    embed.addField("Great Vault Rewards", "No Mythic+ runs completed this week", false);
+                    embed.addField("How to Improve", "Complete Mythic+ dungeons to unlock Great Vault rewards", false);
+                }
+
+                // Add footer
+                embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
+
+                // Send the embed
+                event.getHook().sendMessageEmbeds(embed.build()).queue();
+
+            } else {
+                event.getHook().sendMessage("Could not find character: " + name + " on " + realm + "-" + region.toUpperCase() +
+                        ". Please check the spelling and try again.").queue();
+            }
+        } catch (Exception e) {
+            log.error("Error fetching Raider.io data: {}", e.getMessage(), e);
+            event.getHook().sendMessage("Error fetching data from Raider.io. Please try again later.").queue();
+        }
+    }
+
+    private String getVaultReward(int mythicLevel) {
+        // Based on the table you provided
+        if (mythicLevel <= 0) return "No reward";
+        else if (mythicLevel == 1) return "Champion 1 (636)";
+        else if (mythicLevel == 2) return "Champion 2 (639)";
+        else if (mythicLevel == 3) return "Champion 2 (639)";
+        else if (mythicLevel == 4) return "Champion 3 (642)";
+        else if (mythicLevel == 5) return "Champion 4 (645)";
+        else if (mythicLevel == 6) return "Hero 1 (649)";
+        else if (mythicLevel == 7) return "Hero 1 (649)";
+        else if (mythicLevel == 8) return "Hero 2 (652)";
+        else if (mythicLevel == 9) return "Hero 2 (652)";
+        else if (mythicLevel == 10) return "Hero 3 (655)";
+        else if (mythicLevel == 11) return "Hero 3 (655)";
+        else if (mythicLevel == 12) return "Hero 3 (655)";
+        else if (mythicLevel >= 13) return "Myth 1 (662)";
+        else return "Unknown";
     }
 
     @Override
