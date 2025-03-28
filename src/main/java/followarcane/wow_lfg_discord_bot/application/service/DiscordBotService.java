@@ -33,6 +33,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -219,6 +220,10 @@ public class DiscordBotService extends ListenerAdapter {
                 // Set color based on class using existing helper
                 embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
 
+                // Add character info
+                embed.addField("Role", characterRole, true);
+                embed.addField("Faction", StringUtils.capitalize(faction), true);
+
                 // Add current season scores
                 JsonNode scoresNode = rootNode.path("mythic_plus_scores_by_season").path(0).path("scores");
                 if (!scoresNode.isMissingNode()) {
@@ -243,33 +248,44 @@ public class DiscordBotService extends ListenerAdapter {
                     }
                 }
 
-                // Add weekly runs - Güvenli bir şekilde kontrol et
+                // Add weekly runs - Birden fazla alana bölerek
                 JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
                 if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
-                    StringBuilder runsInfo = new StringBuilder();
+                    // Her 3 run için bir alan oluştur
+                    int runCount = runsNode.size();
+                    int fieldsNeeded = (int) Math.ceil(runCount / 3.0);
 
-                    for (JsonNode run : runsNode) {
-                        String dungeon = run.get("dungeon").asText();
-                        String dgLink = run.get("url").asText();
-                        int level = run.get("mythic_level").asInt();
-                        int upgrades = run.get("num_keystone_upgrades").asInt();
-                        String completedAt = run.get("completed_at").asText().substring(0, 10);
-                        double score = run.get("score").asDouble();
+                    for (int i = 0; i < fieldsNeeded; i++) {
+                        StringBuilder runsInfo = new StringBuilder();
+                        int startIdx = i * 3;
+                        int endIdx = Math.min(startIdx + 3, runCount);
 
-                        String upgradeStars = "";
-                        for (int i = 0; i < upgrades; i++) {
-                            upgradeStars += "⭐";
+                        for (int j = startIdx; j < endIdx; j++) {
+                            JsonNode run = runsNode.get(j);
+                            String dungeon = run.get("dungeon").asText();
+                            int level = run.get("mythic_level").asInt();
+                            int upgrades = run.get("num_keystone_upgrades").asInt();
+                            String completedAt = run.get("completed_at").asText().substring(0, 10);
+                            double score = run.get("score").asDouble();
+
+                            String upgradeStars = "";
+                            for (int k = 0; k < upgrades; k++) {
+                                upgradeStars += "⭐";
+                            }
+
+                            runsInfo.append("**").append(dungeon).append("** +").append(level)
+                                    .append(" (").append(upgradeStars).append(")")
+                                    .append(" - Score: ").append(score)
+                                    .append(" - ").append(completedAt)
+                                    .append("\n\n");
                         }
 
-                        runsInfo.append("**").append("[").append(dungeon).append("]").append("(").append(dgLink).append(")")
-                                .append("** +").append(level)
-                                .append(" ").append(upgradeStars)
-                                .append("\nScore: ").append(score)
-                                .append(" - ").append(completedAt)
-                                .append("\n\n");
-                    }
+                        String fieldTitle = (fieldsNeeded == 1) ?
+                                "Weekly Mythic+ Runs" :
+                                "Weekly Mythic+ Runs (" + (i + 1) + "/" + fieldsNeeded + ")";
 
-                    embed.addField("Weekly Mythic+ Runs", runsInfo.toString(), false);
+                        embed.addField(fieldTitle, runsInfo.toString(), false);
+                    }
                 } else {
                     embed.addField("Weekly Mythic+ Runs", "No runs found for this week", false);
                 }
