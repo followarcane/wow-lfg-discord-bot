@@ -1,3 +1,36 @@
+# Compiled class files
+/bin/
+/target/
+*.class
+
+# Log files
+*.log
+/logs/
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Application specific
+application-dev.yml
+application-local.yml
+
 /build/classes/java/main/followarcane/wow_lfg_discord_bot/infrastructure/properties/ApiProperties.class
 /build/classes/java/main/followarcane/wow_lfg_discord_bot/infrastructure/config/AppConfig.class
 /build/resources/main/application.properties
