@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,17 +102,20 @@ public class DiscordBotService extends ListenerAdapter {
     }
 
     private void registerSlashCommands() {
-        jda.upsertCommand("help", "Shows help information about the bot").queue();
-        jda.upsertCommand("setup", "Set up the LFG feature").queue();
-        jda.upsertCommand("example", "Shows an example LFG message").queue();
-        jda.upsertCommand("discord", "Get an invite link to our official Discord").queue();
-
-        // Add new Raider.io command with required options
-        jda.upsertCommand("weeklyRuns", "Shows a player's weekly Mythic+ runs from Raider.io")
+        // Tüm komutları tek seferde güncelle
+        jda.updateCommands().addCommands(
+                Commands.slash("help", "Shows help information about the bot"),
+                Commands.slash("setup", "Set up the LFG feature"),
+                Commands.slash("example", "Shows an example LFG message"),
+                Commands.slash("discord", "Get an invite link to our official Discord"),
+                Commands.slash("weeklyRuns", "Shows a player's weekly Mythic+ runs from Raider.io")
                 .addOption(OptionType.STRING, "name", "Character name", true)
                 .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
                 .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
-                .queue();
+        ).queue(
+                success -> log.info("Successfully updated slash commands"),
+                error -> log.error("Error updating slash commands: {}", error.getMessage())
+        );
     }
 
     @Override
