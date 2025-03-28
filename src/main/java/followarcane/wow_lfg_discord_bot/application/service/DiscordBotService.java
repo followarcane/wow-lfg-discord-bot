@@ -131,9 +131,18 @@ public class DiscordBotService extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        // Log command usage with user and server information
+        String userName = event.getUser().getName();
+        String userId = event.getUser().getId();
         String commandName = event.getName();
+        String guildName = event.getGuild() != null ? event.getGuild().getName() : "DM";
+        String guildId = event.getGuild() != null ? event.getGuild().getId() : "N/A";
 
-        switch (commandName) {
+        log.info("[COMMAND_USED] Command: /{}, User: {} ({}), Server: {} ({})",
+                commandName, userName, userId, guildName, guildId);
+
+        // Process the command
+        switch (event.getName()) {
             case "help":
                 handleHelpCommand(event);
                 break;
