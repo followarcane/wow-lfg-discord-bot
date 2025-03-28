@@ -377,8 +377,8 @@ public class DiscordBotService extends ListenerAdapter {
                         vaultSlots[1] = getVaultReward(lowestOfTop4);
 
                         // Check if can be improved
-                        if (runLevels.size() >= 5 && runLevels.get(4) > lowestOfTop4) {
-                            nextUpgrades[1] = "Your 4th highest run can be improved";
+                        if (lowestOfTop4 < 10) {  // 10+ gives Myth 1
+                            nextUpgrades[1] = "Complete a M+" + (10) + " or higher to get Myth 1 (662)";
                         }
                     } else {
                         vaultSlots[1] = "No reward yet";
@@ -391,8 +391,8 @@ public class DiscordBotService extends ListenerAdapter {
                         vaultSlots[2] = getVaultReward(lowestOfTop8);
 
                         // Check if can be improved
-                        if (runLevels.size() > 8 && runLevels.get(8) > lowestOfTop8) {
-                            nextUpgrades[2] = "Your 8th highest run can be improved";
+                        if (lowestOfTop8 < 10) {  // 10+ gives Myth 1
+                            nextUpgrades[2] = "Complete a M+" + (10) + " or higher to get Myth 1 (662)";
                         }
                     } else {
                         vaultSlots[2] = "No reward yet";
@@ -404,6 +404,9 @@ public class DiscordBotService extends ListenerAdapter {
                     vaultInfo.append("**Slot 1 (1 run):** ").append(vaultSlots[0]).append("\n");
                     vaultInfo.append("**Slot 2 (4 runs):** ").append(vaultSlots[1]).append("\n");
                     vaultInfo.append("**Slot 3 (8 runs):** ").append(vaultSlots[2]).append("\n\n");
+
+                    // Ödül seviyelerini açıklayan bir not ekleyin
+                    vaultInfo.append("*Item levels: Champion < Hero < Myth*");
 
                     embed.addField("Great Vault Rewards", vaultInfo.toString(), false);
 
@@ -450,18 +453,18 @@ public class DiscordBotService extends ListenerAdapter {
     private String getVaultReward(int mythicLevel) {
         // Based on the table you provided
         if (mythicLevel <= 0) return "No reward";
-        else if (mythicLevel == 1) return "Champion 1 (636)";
-        else if (mythicLevel == 2) return "Champion 2 (639)";
-        else if (mythicLevel == 3) return "Champion 2 (639)";
-        else if (mythicLevel == 4) return "Champion 3 (642)";
-        else if (mythicLevel == 5) return "Champion 4 (645)";
-        else if (mythicLevel == 6) return "Hero 1 (649)";
-        else if (mythicLevel == 7) return "Hero 1 (649)";
-        else if (mythicLevel == 8) return "Hero 2 (652)";
-        else if (mythicLevel == 9) return "Hero 2 (652)";
-        else if (mythicLevel == 10) return "Hero 3 (655)";
-        else if (mythicLevel == 11) return "Hero 3 (655)";
-        else if (mythicLevel == 12) return "Hero 3 (655)";
+        else if (mythicLevel == 1) return "Champion 4 (645)";
+        else if (mythicLevel == 2) return "Hero 1 (649)";
+        else if (mythicLevel == 3) return "Hero 1 (649)";
+        else if (mythicLevel == 4) return "Hero 2 (652)";
+        else if (mythicLevel == 5) return "Hero 2 (652)";
+        else if (mythicLevel == 6) return "Hero 3 (655)";
+        else if (mythicLevel == 7) return "Hero 4 (658)";
+        else if (mythicLevel == 8) return "Hero 4 (658)";
+        else if (mythicLevel == 9) return "Hero 4 (658)";
+        else if (mythicLevel == 10) return "Myth 1 (662)";
+        else if (mythicLevel == 11) return "Myth 1 (662)";
+        else if (mythicLevel == 12) return "Myth 1 (662)";
         else if (mythicLevel >= 13) return "Myth 1 (662)";
         else return "Unknown";
     }
