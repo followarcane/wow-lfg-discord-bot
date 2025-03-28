@@ -1,17 +1,16 @@
 package followarcane.wow_lfg_discord_bot.application.service;
 
-import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j;
-import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import followarcane.wow_lfg_discord_bot.domain.model.RecruitmentFilter;
-import followarcane.wow_lfg_discord_bot.domain.repository.RecruitmentFilterRepository;
-import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
-import followarcane.wow_lfg_discord_bot.domain.repository.DiscordServerRepository;
 import followarcane.wow_lfg_discord_bot.application.request.RecruitmentFilterRequest;
 import followarcane.wow_lfg_discord_bot.application.response.RecruitmentFilterResponse;
-import java.util.List;
-import java.util.Arrays;
+import followarcane.wow_lfg_discord_bot.domain.model.DiscordServer;
+import followarcane.wow_lfg_discord_bot.domain.model.RecruitmentFilter;
+import followarcane.wow_lfg_discord_bot.domain.repository.DiscordServerRepository;
+import followarcane.wow_lfg_discord_bot.domain.repository.RecruitmentFilterRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -64,7 +63,6 @@ public class RecruitmentFilterService {
         
         // Class ismini normalize et
         String normalizedPlayerClass = playerClass.toUpperCase().replace(" ", "_");
-        log.info("[CLASS_CHECK] Normalized player class: {} -> {}", playerClass, normalizedPlayerClass);
         
         // DB'deki filtreyi virgülle ayır
         String[] allowedClasses = filter.getClassFilter().split(",");
@@ -92,8 +90,6 @@ public class RecruitmentFilterService {
             double ilevel = Double.parseDouble(playerIlevel);
             int playerIlevelInt = (int) ilevel;
             
-            log.info("[ILEVEL_CHECK] Parsed ilevel: {} -> {}", playerIlevel, playerIlevelInt);
-            
             return playerIlevelInt >= filter.getMinIlevel();
         } catch (NumberFormatException e) {
             log.error("[ILEVEL_ERROR] Invalid ilevel format: {}, allowing message", playerIlevel);
@@ -108,8 +104,6 @@ public class RecruitmentFilterService {
             // Progress formatını normalize et
             String normalizedPlayerProgress = playerProgress.replace(" ", "");
             String normalizedFilterProgress = filter.getRaidProgress().replace(" ", "");
-            
-            log.info("[PROGRESS_CHECK] Normalized progress: {} -> {}", playerProgress, normalizedPlayerProgress);
             
             String[] required = normalizedFilterProgress.split("/");
             String[] player = normalizedPlayerProgress.split("/");
