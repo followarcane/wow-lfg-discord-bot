@@ -34,6 +34,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.awt.*;
 import java.util.*;
@@ -184,8 +185,14 @@ public class DiscordBotService extends ListenerAdapter {
         String region = event.getOption("region").getAsString();
 
         try {
-            String url = String.format("https://raider.io/api/v1/characters/profile?region=%s&realm=%s&name=%s&fields=mythic_plus_scores_by_season%%3Acurrent%%2Cmythic_plus_weekly_highest_level_runs",
-                    region, realm, name);
+            String url = UriComponentsBuilder.fromHttpUrl("https://raider.io/api/v1/characters/profile")
+                    .queryParam("region", region)
+                    .queryParam("realm", realm)
+                    .queryParam("name", name)
+                    .queryParam("fields", "mythic_plus_scores_by_season:current,mythic_plus_weekly_highest_level_runs")
+                    .build()
+                    .toUriString();
+            log.info("Raider.io API URL: {}", url);
             
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
@@ -235,10 +242,10 @@ public class DiscordBotService extends ListenerAdapter {
                         embed.addField("Current Season Scores", scoreInfo.toString(), false);
                     }
                 }
-                
-                // Add weekly runs
-                JsonNode runsNode = rootNode.get("mythic_plus_weekly_highest_level_runs");
-                if (runsNode.isArray() && runsNode.size() > 0) {
+
+                // Add weekly runs - Güvenli bir şekilde kontrol et
+                JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
+                if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
                     StringBuilder runsInfo = new StringBuilder();
 
                     for (JsonNode run : runsNode) {
