@@ -278,9 +278,9 @@ public class WowVaultService {
         worldSection.append("Note: World activities tracking will be implemented soon!");
 
         // Alanları ekle
-        embed.addField("", raidSection.toString(), false);
-        embed.addField("", dungeonSection.toString(), false);
-        embed.addField("", worldSection.toString(), false);
+        embed.addField("__**RAIDS**__", raidSection.toString(), false);
+        embed.addField("__**DUNGEONS**__", dungeonSection.toString(), false);
+        embed.addField("__**WORLD**__", worldSection.toString(), false);
 
         // Karakter bilgilerini ekle
         embed.setThumbnail(thumbnailUrl);
