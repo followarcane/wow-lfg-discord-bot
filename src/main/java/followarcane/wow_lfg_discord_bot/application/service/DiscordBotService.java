@@ -72,13 +72,16 @@ public class DiscordBotService extends ListenerAdapter {
 
     private final ClassColorCodeHelper classColorCodeHelper;
 
-    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService, ClassColorCodeHelper classColorCodeHelper) {
+    private final WowVaultService wowVaultService;
+
+    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService, ClassColorCodeHelper classColorCodeHelper, WowVaultService wowVaultService) {
         this.messageRepository = messageRepository;
         this.discordServerRepository = discordServerRepository;
         this.discordService = discordService;
         this.requestConverter = requestConverter;
         this.restTemplate = restTemplate;
         this.classColorCodeHelper = classColorCodeHelper;
+        this.wowVaultService = wowVaultService;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -329,150 +332,15 @@ public class DiscordBotService extends ListenerAdapter {
         String region = event.getOption("region").getAsString();
 
         try {
-            String url = UriComponentsBuilder.fromHttpUrl("https://raider.io/api/v1/characters/profile")
-                    .queryParam("region", region)
-                    .queryParam("realm", realm)
-                    .queryParam("name", name)
-                    .queryParam("fields", "mythic_plus_scores_by_season:current,mythic_plus_weekly_highest_level_runs")
-                    .build()
-                    .toUriString();
-            log.info("Raider.io API URL: {}", url);
+            // WowVaultService'i kullanarak vault embed'ini oluştur
+            EmbedBuilder embed = wowVaultService.createVaultEmbed(name, realm, region);
 
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode rootNode = mapper.readTree(response.getBody());
-
-                // Create embed message
-                EmbedBuilder embed = new EmbedBuilder();
-
-                // Set character info in title
-                String characterName = rootNode.get("name").asText();
-                String characterClass = rootNode.get("class").asText();
-                String characterRealm = rootNode.get("realm").asText();
-                String profileUrl = rootNode.get("profile_url").asText();
-                String thumbnailUrl = rootNode.get("thumbnail_url").asText();
-
-                embed.setTitle(characterName + " | " + characterRealm + " | Great Vault Preview", profileUrl);
-                embed.setThumbnail(thumbnailUrl);
-                embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
-
-                // Process weekly runs
-                JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
-                if (!runsNode.isMissingNode() && runsNode.isArray()) {
-                    // Sort runs by level (highest first)
-                    List<Integer> runLevels = new ArrayList<>();
-                    for (JsonNode run : runsNode) {
-                        runLevels.add(run.get("mythic_level").asInt());
-                    }
-                    Collections.sort(runLevels, Collections.reverseOrder());
-
-                    // Calculate vault rewards
-                    String[] vaultSlots = new String[3];
-                    String[] nextUpgrades = new String[3];
-
-                    // First slot (1 run)
-                    if (runLevels.size() >= 1) {
-                        vaultSlots[0] = getVaultReward(runLevels.get(0));
-                    } else {
-                        vaultSlots[0] = "No reward yet";
-                        nextUpgrades[0] = "Complete any M+ dungeon";
-                    }
-
-                    // Second slot (4 runs)
-                    if (runLevels.size() >= 4) {
-                        int lowestOfTop4 = runLevels.get(3); // 4th highest run
-                        vaultSlots[1] = getVaultReward(lowestOfTop4);
-
-                        // Check if can be improved
-                        if (lowestOfTop4 < 10) {  // 10+ gives Myth 1
-                            nextUpgrades[1] = "Complete a M+" + (10) + " or higher to get Myth 1 (662)";
-                        }
-                    } else {
-                        vaultSlots[1] = "No reward yet";
-                        nextUpgrades[1] = "Complete " + (4 - runLevels.size()) + " more M+ dungeons";
-                    }
-
-                    // Third slot (8 runs)
-                    if (runLevels.size() >= 8) {
-                        int lowestOfTop8 = runLevels.get(7); // 8th highest run
-                        vaultSlots[2] = getVaultReward(lowestOfTop8);
-
-                        // Check if can be improved
-                        if (lowestOfTop8 < 10) {  // 10+ gives Myth 1
-                            nextUpgrades[2] = "Complete a M+" + (10) + " or higher to get Myth 1 (662)";
-                        }
-                    } else {
-                        vaultSlots[2] = "No reward yet";
-                        nextUpgrades[2] = "Complete " + (8 - runLevels.size()) + " more M+ dungeons";
-                    }
-
-                    // Add vault slots to embed
-                    StringBuilder vaultInfo = new StringBuilder();
-                    vaultInfo.append("**Slot 1 (1 run):** ").append(vaultSlots[0]).append("\n");
-                    vaultInfo.append("**Slot 2 (4 runs):** ").append(vaultSlots[1]).append("\n");
-                    vaultInfo.append("**Slot 3 (8 runs):** ").append(vaultSlots[2]).append("\n\n");
-
-                    embed.addField("Great Vault Rewards", vaultInfo.toString(), false);
-
-                    // Add upgrade suggestions
-                    StringBuilder upgradeInfo = new StringBuilder();
-                    for (int i = 0; i < 3; i++) {
-                        if (nextUpgrades[i] != null) {
-                            upgradeInfo.append("**Slot ").append(i + 1).append(":** ").append(nextUpgrades[i]).append("\n");
-                        }
-                    }
-
-                    if (upgradeInfo.length() > 0) {
-                        embed.addField("How to Improve", upgradeInfo.toString(), false);
-                    }
-
-                    // Add completed runs count
-                    embed.addField("Completed Runs", runLevels.size() + "/8", true);
-
-                    // Add highest completed level
-                    if (!runLevels.isEmpty()) {
-                        embed.addField("Highest Level", "+" + runLevels.get(0), true);
-                    }
-                } else {
-                    embed.addField("Great Vault Rewards", "No Mythic+ runs completed this week", false);
-                    embed.addField("How to Improve", "Complete Mythic+ dungeons to unlock Great Vault rewards", false);
-                }
-
-                // Add footer
-                embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
-
-                // Send the embed
-                event.getHook().sendMessageEmbeds(embed.build()).queue();
-
-            } else {
-                event.getHook().sendMessage("Could not find character: " + name + " on " + realm + "-" + region.toUpperCase() +
-                        ". Please check the spelling and try again.").queue();
-            }
+            // Embed'i gönder
+            event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (Exception e) {
-            log.error("Error fetching Raider.io data: {}", e.getMessage(), e);
-            event.getHook().sendMessage("Error fetching data from Raider.io. Please try again later.").queue();
+            log.error("Error handling vault command: {}", e.getMessage(), e);
+            event.getHook().sendMessage("Error fetching data. Please try again later.").queue();
         }
-    }
-
-    private String getVaultReward(int mythicLevel) {
-        // Based on the table you provided
-        if (mythicLevel <= 0) return "No reward";
-        else if (mythicLevel == 1) return "Champion 4 (645)";
-        else if (mythicLevel == 2) return "Hero 1 (649)";
-        else if (mythicLevel == 3) return "Hero 1 (649)";
-        else if (mythicLevel == 4) return "Hero 2 (652)";
-        else if (mythicLevel == 5) return "Hero 2 (652)";
-        else if (mythicLevel == 6) return "Hero 3 (655)";
-        else if (mythicLevel == 7) return "Hero 4 (658)";
-        else if (mythicLevel == 8) return "Hero 4 (658)";
-        else if (mythicLevel == 9) return "Hero 4 (658)";
-        else if (mythicLevel == 10) return "Myth 1 (662)";
-        else if (mythicLevel == 11) return "Myth 1 (662)";
-        else if (mythicLevel == 12) return "Myth 1 (662)";
-        else if (mythicLevel >= 13) return "Myth 1 (662)";
-        else return "Unknown";
     }
 
     @Override

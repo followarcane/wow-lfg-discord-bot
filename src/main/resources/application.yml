@@ -11,6 +11,15 @@ wow-api:
   username: "${PROD_WOW_API_USERNAME}"
   password: "${PROD_WOW_API_PASSWORD}"
 
+battle-net:
+  api:
+    url: https://eu.api.blizzard.com
+  client:
+    id: "${PROD_BATTLE_NET_CLIENT_ID}"
+    secret: "${PROD_BATTLE_NET_CLIENT_SECRET}"
+  redirect:
+    uri: "${PROD_BATTLE_NET_CALLBACK_URL}"
+
 discord:
   api:
     url: https://discord.com/api/v10
