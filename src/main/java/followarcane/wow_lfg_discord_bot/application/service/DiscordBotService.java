@@ -34,7 +34,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.awt.*;
 import java.util.*;
@@ -159,7 +158,7 @@ public class DiscordBotService extends ListenerAdapter {
                 handleDiscordCommand(event);
                 break;
             case "weekly-runs":
-                handleRaiderIOCommand(event);
+                handleWeeklyRunsCommand(event);
                 break;
             case "vault":
                 handleVaultCommand(event);
@@ -196,131 +195,19 @@ public class DiscordBotService extends ListenerAdapter {
         event.reply("Join our official Discord server: https://discord.gg/FVR9e3X6xx").queue();
     }
 
-    private void handleRaiderIOCommand(SlashCommandInteractionEvent event) {
+    private void handleWeeklyRunsCommand(SlashCommandInteractionEvent event) {
         // Defer reply to give us time to fetch data
         event.deferReply().queue();
 
         String name = event.getOption("name").getAsString();
-        String realm = event.getOption("realm").getAsString().replace(" ", "-");
+        String realm = event.getOption("realm").getAsString();
         String region = event.getOption("region").getAsString();
 
-        try {
-            String url = UriComponentsBuilder.fromHttpUrl("https://raider.io/api/v1/characters/profile")
-                    .queryParam("region", region)
-                    .queryParam("realm", realm)
-                    .queryParam("name", name)
-                    .queryParam("fields", "mythic_plus_scores_by_season:current,mythic_plus_weekly_highest_level_runs")
-                    .build()
-                    .toUriString();
-            log.info("Raider.io API URL: {}", url);
-            
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        // WowVaultService'in createWeeklyRunsEmbed metodunu kullan
+        EmbedBuilder embed = wowVaultService.createWeeklyRunsEmbed(name, realm, region);
 
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode rootNode = mapper.readTree(response.getBody());
-
-                // Create embed message
-                EmbedBuilder embed = new EmbedBuilder();
-
-                // Set character info in title
-                String characterName = rootNode.get("name").asText();
-                String characterClass = rootNode.get("class").asText();
-                String characterSpec = rootNode.get("active_spec_name").asText();
-                String characterRole = rootNode.get("active_spec_role").asText();
-                String characterRealm = rootNode.get("realm").asText();
-                String profileUrl = rootNode.get("profile_url").asText();
-                String thumbnailUrl = rootNode.get("thumbnail_url").asText();
-                String faction = rootNode.get("faction").asText();
-
-                embed.setTitle(characterName + " | " + characterRealm + " | " + characterSpec + " " + characterClass, profileUrl);
-                embed.setThumbnail(thumbnailUrl);
-
-                // Set color based on class using existing helper
-                embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
-
-                // Add current season scores
-                JsonNode scoresNode = rootNode.path("mythic_plus_scores_by_season").path(0).path("scores");
-                if (!scoresNode.isMissingNode()) {
-                    StringBuilder scoreInfo = new StringBuilder();
-
-                    // Add non-zero scores
-                    if (scoresNode.has("all") && scoresNode.get("all").asDouble() > 0) {
-                        scoreInfo.append("**Overall:** ").append(scoresNode.get("all").asDouble()).append("\n");
-                    }
-                    if (scoresNode.has("dps") && scoresNode.get("dps").asDouble() > 0) {
-                        scoreInfo.append("**DPS:** ").append(scoresNode.get("dps").asDouble()).append("\n");
-                    }
-                    if (scoresNode.has("healer") && scoresNode.get("healer").asDouble() > 0) {
-                        scoreInfo.append("**Healer:** ").append(scoresNode.get("healer").asDouble()).append("\n");
-                    }
-                    if (scoresNode.has("tank") && scoresNode.get("tank").asDouble() > 0) {
-                        scoreInfo.append("**Tank:** ").append(scoresNode.get("tank").asDouble()).append("\n");
-                    }
-
-                    if (scoreInfo.length() > 0) {
-                        embed.addField("Current Season Scores", scoreInfo.toString(), false);
-                    }
-                }
-
-                // Add weekly runs - Birden fazla alana bölerek
-                JsonNode runsNode = rootNode.path("mythic_plus_weekly_highest_level_runs");
-                if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
-                    // Her 5 run için bir alan oluştur
-                    int runCount = runsNode.size();
-                    int runsPerField = 6;
-                    int fieldsNeeded = (int) Math.ceil(runCount / (double) runsPerField);
-                    
-                    for (int i = 0; i < fieldsNeeded; i++) {
-                        StringBuilder runsInfo = new StringBuilder();
-                        int startIdx = i * runsPerField;
-                        int endIdx = Math.min(startIdx + runsPerField, runCount);
-                        
-                        for (int j = startIdx; j < endIdx; j++) {
-                            JsonNode run = runsNode.get(j);
-                            String dungeon = run.get("dungeon").asText();
-                            int level = run.get("mythic_level").asInt();
-                            int upgrades = run.get("num_keystone_upgrades").asInt();
-                            String completedAt = run.get("completed_at").asText().substring(0, 10);
-                            double score = run.get("score").asDouble();
-                            String dgUrl = run.get("url").asText();
-                            
-                            String upgradeStars = "";
-                            for (int k = 0; k < upgrades; k++) {
-                                upgradeStars += "⭐";
-                            }
-
-                            runsInfo.append("**").append("[").append(dungeon).append("]").append("(").append(dgUrl).append(")")
-                                    .append("** +").append(level)
-                                    .append(" ").append(upgradeStars)
-                                    .append("\n **Score: ").append(score).append(" - ").append(completedAt).append("**")
-                                    .append("\n\n");
-                        }
-
-                        String fieldTitle = (fieldsNeeded == 1) ?
-                                "Weekly Mythic+ Runs" : 
-                                "Weekly Mythic+ Runs (" + (i + 1) + "/" + fieldsNeeded + ")";
-
-                        embed.addField(fieldTitle, runsInfo.toString(), false);
-                    }
-                } else {
-                    embed.addField("Weekly Mythic+ Runs", "No runs found for this week", false);
-                }
-
-                // Add footer - same as LFG message
-                embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
-                
-                // Send the embed
-                event.getHook().sendMessageEmbeds(embed.build()).queue();
-
-            } else {
-                event.getHook().sendMessage("Could not find character: " + name + " on " + realm + "-" + region.toUpperCase() + 
-                        ". Please check the spelling and try again.").queue();
-            }
-        } catch (Exception e) {
-            log.error("Error fetching Raider.io data: {}", e.getMessage(), e);
-            event.getHook().sendMessage("Error fetching data from Raider.io. Please try again later.").queue();
-        }
+        // Send the embed
+        event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
 
     private void handleVaultCommand(SlashCommandInteractionEvent event) {
