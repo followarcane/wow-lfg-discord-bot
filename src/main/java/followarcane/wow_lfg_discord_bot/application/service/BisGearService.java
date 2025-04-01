@@ -126,7 +126,7 @@ public class BisGearService {
                     formattedSlot.equalsIgnoreCase("Weapon1") ||
                     formattedSlot.equalsIgnoreCase("Mainhand") ||
                     formattedSlot.equalsIgnoreCase("Main-hand") ||
-                    formattedSlot.equalsIgnoreCase("Main_hand") ||
+                    formattedSlot.equalsIgnoreCase("Main_hand") || formattedSlot.equalsIgnoreCase("Main hand") ||
                     formattedSlot.replace("_", " ").equalsIgnoreCase("Main Hand")) {
 
                 // Main Hand slotunu ara
@@ -215,7 +215,18 @@ public class BisGearService {
         }
 
         // İlk harfi büyük, geri kalanı küçük yap
-        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+        String returnValue = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+
+        // Weapon/Main Hand için özel kontrol
+        if (returnValue.equalsIgnoreCase("Weapon") ||
+                returnValue.equalsIgnoreCase("Weapon1") ||
+                returnValue.equalsIgnoreCase("Mainhand") ||
+                returnValue.equalsIgnoreCase("Main-hand") ||
+                returnValue.equalsIgnoreCase("Main_hand") || returnValue.equalsIgnoreCase("Main hand") ||
+                returnValue.replace("_", " ").equalsIgnoreCase("Main Hand")) {
+            returnValue = "Main Hand";
+        }
+        return returnValue;
     }
 
     private String formatClassName(String name) {
@@ -566,6 +577,8 @@ public class BisGearService {
             return "";
         }
 
+        logger.info("Original stats: {}", stats);
+        
         StringBuilder cleanStats = new StringBuilder();
 
         // İlevel bilgisini çıkar
@@ -583,7 +596,12 @@ public class BisGearService {
                     extractStat(stats, "Agi") +
                     extractStat(stats, "Str");
             if (!primaryStats.isEmpty()) {
-                cleanStats.append("Primary: ").append(primaryStats.trim()).append("\n");
+                cleanStats.append("Primary: ").append(primaryStats.trim());
+                // Son virgülü kaldır
+                if (primaryStats.trim().endsWith(",")) {
+                    cleanStats.delete(cleanStats.length() - 1, cleanStats.length());
+                }
+                cleanStats.append("\n");
             }
         }
 
@@ -593,7 +611,12 @@ public class BisGearService {
                 extractStat(stats, "Crit") +
                 extractStat(stats, "Vers");
         if (!secondaryStats.isEmpty()) {
-            cleanStats.append("Secondary: ").append(secondaryStats.trim()).append("\n");
+            cleanStats.append("Secondary: ").append(secondaryStats.trim());
+            // Son virgülü kaldır
+            if (secondaryStats.trim().endsWith(",")) {
+                cleanStats.delete(cleanStats.length() - 1, cleanStats.length());
+            }
+            cleanStats.append("\n");
         }
 
         // Gem bilgilerini çıkar
@@ -612,6 +635,17 @@ public class BisGearService {
 
         String result = cleanStats.toString().trim();
 
+        // Eğer hiçbir şey bulunamadıysa, orijinal stats'ı kısalt
+        if (result.isEmpty()) {
+            logger.warn("Could not extract formatted stats, using original stats");
+            if (stats.length() > 900) {
+                return stats.substring(0, 897) + "...";
+            }
+            return stats;
+        }
+
+        logger.info("Formatted stats: {}", result);
+        
         // Discord'un 1024 karakter sınırlaması var
         // Güvenli olmak için 900 karakterle sınırlayalım
         if (result.length() > 900) {
@@ -623,33 +657,28 @@ public class BisGearService {
 
     // Belirli bir statı çıkarmak için yardımcı metod
     private String extractStat(String stats, String statName) {
-        if (stats.contains(statName)) {
-            int start = stats.indexOf(statName) - 10; // Sayı için biraz geriye git
-            if (start < 0) start = 0;
-            int end = stats.indexOf(statName) + statName.length();
-
-            // Sayıyı bul
-            String segment = stats.substring(start, Math.min(end + 10, stats.length()));
-            StringBuilder statValue = new StringBuilder();
-
-            boolean foundDigit = false;
-            boolean foundStatName = false;
-
-            for (char c : segment.toCharArray()) {
-                if (Character.isDigit(c) || c == ',' || c == '+' || c == '.') {
-                    statValue.append(c);
-                    foundDigit = true;
-                } else if (foundDigit && segment.substring(segment.indexOf(c)).startsWith(statName)) {
-                    statValue.append(" ").append(statName);
-                    foundStatName = true;
-                    break;
-                }
-            }
-
-            if (foundDigit && foundStatName) {
-                return statValue.toString() + ", ";
-            }
+        if (stats == null || !stats.contains(statName)) {
+            return "";
         }
+
+        try {
+            int statIndex = stats.indexOf(statName);
+            if (statIndex == -1) return "";
+
+            // Stat adından önce gelen sayıyı bul
+            int numStart = statIndex;
+            while (numStart > 0 && (Character.isDigit(stats.charAt(numStart - 1)) || stats.charAt(numStart - 1) == ',' || stats.charAt(numStart - 1) == '+' || stats.charAt(numStart - 1) == '.')) {
+                numStart--;
+            }
+
+            if (numStart < statIndex) {
+                // Sayı ve stat adını birleştir
+                return stats.substring(numStart, statIndex + statName.length()) + ", ";
+            }
+        } catch (Exception e) {
+            logger.warn("Error extracting stat {}: {}", statName, e.getMessage());
+        }
+
         return "";
     }
 
@@ -672,7 +701,39 @@ public class BisGearService {
                 String heroTalentName = key.substring((formattedClassName + "_" + formattedSpecName + "_").length());
 
                 // Bu hero talent için bir embed oluştur
-                EmbedBuilder embed = createBisGearEmbed("", className, specName, heroTalentName);
+                EmbedBuilder embed = new EmbedBuilder();
+
+                // Sınıf rengini al
+                Color classColor;
+                try {
+                    classColor = Color.decode(classColorCodeHelper.getClassColorCode(formattedClassName));
+                    logger.info("Using class color for {}: {}", formattedClassName, classColor);
+                } catch (Exception e) {
+                    logger.warn("Could not get class color for {}. Using default color.", formattedClassName);
+                    classColor = Color.GRAY; // Varsayılan renk
+                }
+
+                embed.setColor(classColor);
+
+                // Başlık oluştur
+                embed.setTitle("BIS Gear for " + formattedClassName + " " + formattedSpecName + " (" + heroTalentName + ")");
+
+                // BIS ekipman bilgilerini al
+                Map<String, Map<String, Object>> bisGear = cache.get(key);
+
+                // Her slot için ayrı bir field oluştur
+                for (Map.Entry<String, Map<String, Object>> entry : bisGear.entrySet()) {
+                    String slotName = entry.getKey();
+                    Map<String, Object> slotInfo = entry.getValue();
+
+                    String itemName = (String) slotInfo.get("name");
+                    String itemUrl = (String) slotInfo.get("url");
+
+                    embed.addField(slotName, "[" + itemName + "](" + itemUrl + ")", true);
+                }
+
+                embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
+                
                 embeds.add(embed);
             }
         }
