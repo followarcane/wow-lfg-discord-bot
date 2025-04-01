@@ -136,9 +136,9 @@ public class DiscordBotService extends ListenerAdapter {
                             .addOption(OptionType.STRING, "region", "Region (EU, US)", true),
                     Commands.slash("bis-gear", "Show Best in Slot gear from SimulationCraft")
                             .addOption(OptionType.STRING, "class", "Character class", true)
-                            .addOption(OptionType.STRING, "spec", "Character specialization", true)
-                            .addOption(OptionType.STRING, "slot", "Equipment slot (head, neck, etc.)", false)
+                            .addOption(OptionType.STRING, "spec", "Character specialization(leave empty for all)", false)
                             .addOption(OptionType.STRING, "hero_talent", "Hero talent (leave empty for all)", false)
+                            .addOption(OptionType.STRING, "slot", "Equipment slot (head, neck, etc. leave empty for all)", false)
             ).queue(
                     success -> log.info("Successfully updated slash commands"),
                     error -> log.error("Error updating slash commands: {}", error.getMessage())
