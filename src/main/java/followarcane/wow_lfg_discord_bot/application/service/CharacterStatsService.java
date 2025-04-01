@@ -111,7 +111,7 @@ public class CharacterStatsService {
 
         // Ana istatistikler
         StringBuilder mainStats = new StringBuilder();
-        mainStats.append("```**Health:** ").append(df.format(statsData.get("health").asLong())).append("\n");
+        mainStats.append("**Health:** ").append(df.format(statsData.get("health").asLong())).append("\n");
 
         // Power type ve değeri
         String powerType = statsData.path("power_type").path("name").asText();
@@ -123,40 +123,40 @@ public class CharacterStatsService {
         mainStats.append("**Agility:** ").append(df.format(statsData.path("agility").path("effective").asLong())).append("\n");
         mainStats.append("**Intellect:** ").append(df.format(statsData.path("intellect").path("effective").asLong())).append("\n");
         mainStats.append("**Stamina:** ").append(df.format(statsData.path("stamina").path("effective").asLong())).append("\n");
-        mainStats.append("```\n\n");
+        mainStats.append("\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
 
-        embed.addField("Primary Stats", mainStats.toString(), false);
+        embed.addField("__**PRIMARY STATS**__", mainStats.toString(), false);
 
         // İkincil istatistikler
         StringBuilder secondaryStats = new StringBuilder();
-        secondaryStats.append("```**Critical Strike:** ").append(statsData.path("spell_crit").path("value").asText()).append("%\n");
+        secondaryStats.append("**Critical Strike:** ").append(statsData.path("spell_crit").path("value").asText()).append("%\n");
         secondaryStats.append("**Haste:** ").append(statsData.path("spell_haste").path("value").asText()).append("%\n");
         secondaryStats.append("**Mastery:** ").append(statsData.path("mastery").path("value").asText()).append("%\n");
         secondaryStats.append("**Versatility:** ").append(statsData.get("versatility_damage_done_bonus").asText()).append("%\n");
         secondaryStats.append("**Leech:** ").append(statsData.path("lifesteal").path("value").asText()).append("%\n");
-        secondaryStats.append("```\n\n");
+        secondaryStats.append("\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
 
-        embed.addField("Secondary Stats", secondaryStats.toString(), false);
+        embed.addField("__**SECONDARY STATS**__", secondaryStats.toString(), false);
 
         // Savunma istatistikleri
         StringBuilder defenseStats = new StringBuilder();
-        defenseStats.append("```**Armor:** ").append(df.format(statsData.path("armor").path("effective").asLong())).append("\n");
+        defenseStats.append("**Armor:** ").append(df.format(statsData.path("armor").path("effective").asLong())).append("\n");
         defenseStats.append("**Dodge:** ").append(statsData.path("dodge").path("value").asText()).append("%\n");
         defenseStats.append("**Parry:** ").append(statsData.path("parry").path("value").asText()).append("%\n");
         defenseStats.append("**Block:** ").append(statsData.path("block").path("value").asText()).append("%\n");
         defenseStats.append("**Avoidance:** ").append(statsData.path("avoidance").path("rating_bonus").asText()).append("%\n");
-        defenseStats.append("```\n\n");
+        defenseStats.append("\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
 
-        embed.addField("Defense", defenseStats.toString(), false);
+        embed.addField("__**DEFENSE**__", defenseStats.toString(), false);
 
         // Saldırı istatistikleri
         StringBuilder attackStats = new StringBuilder();
 
         // Büyü gücü veya saldırı gücü (sınıfa göre)
         if (statsData.get("spell_power").asInt() > 0) {
-            attackStats.append("```**Spell Power:** ").append(df.format(statsData.get("spell_power").asLong())).append("\n");
+            attackStats.append("**Spell Power:** ").append(df.format(statsData.get("spell_power").asLong())).append("\n");
         } else {
-            attackStats.append("```**Attack Power:** ").append(df.format(statsData.get("attack_power").asLong())).append("\n");
+            attackStats.append("**Attack Power:** ").append(df.format(statsData.get("attack_power").asLong())).append("\n");
         }
 
         // Silah hasarı
@@ -166,9 +166,9 @@ public class CharacterStatsService {
                     .append(" - ").append(df.format(statsData.get("main_hand_damage_max").asDouble())).append("\n");
             attackStats.append("**Attack Speed:** ").append(statsData.get("main_hand_speed").asText()).append("\n");
         }
-        attackStats.append("```\n\n");
+        attackStats.append("\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
 
-        embed.addField("Attack", attackStats.toString(), false);
+        embed.addField("__**ATTACK**__", attackStats.toString(), false);
 
         // Footer ekle
         embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership",
