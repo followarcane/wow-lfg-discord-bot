@@ -163,17 +163,18 @@ public class WowVaultService {
         }
 
         // Great Vault bilgilerini ekle
+        embed.addField("Raid Rewards",
+                "**Slot 1 (2 bosses):** " + raidRewards[0] + "\n" +
+                        "**Slot 2 (4 bosses):** " + raidRewards[1] + "\n" +
+                        "**Slot 3 (6 bosses):** " + raidRewards[2],
+                false);
+
         embed.addField("Mythic+ Rewards", 
                 "**Slot 1 (1 run):** " + mythicPlusRewards[0] + "\n" +
                         "**Slot 2 (4 runs):** " + mythicPlusRewards[1] + "\n" +
                         "**Slot 3 (8 runs):** " + mythicPlusRewards[2],
                 false);
 
-        embed.addField("Raid Rewards", 
-                "**Slot 1 (2 bosses):** " + raidRewards[0] + "\n" +
-                        "**Slot 2 (4 bosses):** " + raidRewards[1] + "\n" +
-                        "**Slot 3 (6 bosses):** " + raidRewards[2],
-                false);
 
         // How to Improve kısmını ekle
         StringBuilder howToImprove = new StringBuilder();
@@ -194,7 +195,7 @@ public class WowVaultService {
 
                 // Slot 1 için öneri
                 if (runLevels.isEmpty()) {
-                    howToImprove.append("• Complete at least 1 Mythic+ dungeon for Slot 1\n");
+                    howToImprove.append("• Complete at least 1 Mythic+ dungeon for Slot 1\n\n");
                     needsImprovement = true;
                 }
 
@@ -202,7 +203,7 @@ public class WowVaultService {
                 if (runLevels.size() < 4) {
                     howToImprove.append("• Complete ").append(4 - runLevels.size())
                             .append(" more Mythic+ dungeon").append(4 - runLevels.size() > 1 ? "s" : "")
-                            .append(" for Slot 2\n");
+                            .append(" for Slot 2\n\n");
                     needsImprovement = true;
                 }
 
@@ -210,7 +211,7 @@ public class WowVaultService {
                 if (runLevels.size() < 8) {
                     howToImprove.append("• Complete ").append(8 - runLevels.size())
                             .append(" more Mythic+ dungeon").append(8 - runLevels.size() > 1 ? "s" : "")
-                            .append(" for Slot 3\n");
+                            .append(" for Slot 3\n\n");
                     needsImprovement = true;
                 }
 
@@ -223,7 +224,7 @@ public class WowVaultService {
                     if (!currentReward.equals(nextReward)) {
                         int targetLevel = getMinLevelForReward(nextReward);
                         howToImprove.append("• Complete a +").append(targetLevel)
-                                .append(" dungeon to upgrade Slot 1 reward to ").append(nextReward).append("\n");
+                                .append(" dungeon to upgrade Slot 1 reward to ").append(nextReward).append("\n\n");
                         needsImprovement = true;
                     }
 
@@ -235,7 +236,7 @@ public class WowVaultService {
                         if (!currentReward4.equals(nextReward4)) {
                             int targetLevel = getMinLevelForReward(nextReward4);
                             howToImprove.append("• Complete a +").append(targetLevel)
-                                    .append(" dungeon to upgrade Slot 2 reward to ").append(nextReward4).append("\n");
+                                    .append(" dungeon to upgrade Slot 2 reward to ").append(nextReward4).append("\n\n");
                             needsImprovement = true;
                         }
                     }
@@ -248,7 +249,7 @@ public class WowVaultService {
                         if (!currentReward8.equals(nextReward8)) {
                             int targetLevel = getMinLevelForReward(nextReward8);
                             howToImprove.append("• Complete a +").append(targetLevel)
-                                    .append(" dungeon to upgrade Slot 3 reward to ").append(nextReward8).append("\n");
+                                    .append(" dungeon to upgrade Slot 3 reward to ").append(nextReward8).append("\n\n");
                             needsImprovement = true;
                         }
                     }
@@ -272,7 +273,7 @@ public class WowVaultService {
                 }
 
                 if (totalBossesKilled == 0) {
-                    howToImprove.append("• Start raiding Liberation of Undermine to unlock raid slots\n");
+                    howToImprove.append("• Start raiding Liberation of Undermine to unlock raid slots\n\n");
                     needsImprovement = true;
                 } else {
                     // Slot 1 için öneri (2 boss)
@@ -280,7 +281,7 @@ public class WowVaultService {
                         int remaining = 2 - totalBossesKilled;
                         howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
                                 .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 1 raid reward (").append(getRaidReward(difficultyName)).append(")\n");
+                                .append(" to unlock Slot 1 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
                         needsImprovement = true;
                     }
 
@@ -289,7 +290,7 @@ public class WowVaultService {
                         int remaining = 4 - totalBossesKilled;
                         howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
                                 .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 2 raid reward (").append(getRaidReward(difficultyName)).append(")\n");
+                                .append(" to unlock Slot 2 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
                         needsImprovement = true;
                     }
 
@@ -298,7 +299,7 @@ public class WowVaultService {
                         int remaining = 6 - totalBossesKilled;
                         howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
                                 .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 3 raid reward (").append(getRaidReward(difficultyName)).append(")\n");
+                                .append(" to unlock Slot 3 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
                         needsImprovement = true;
                     }
 
@@ -306,7 +307,7 @@ public class WowVaultService {
                     if (!difficultyName.equals("mythic")) {
                         String nextDifficulty = difficultyName.equals("normal") ? "heroic" : "mythic";
                         howToImprove.append("• Kill bosses in ").append(nextDifficulty)
-                                .append(" difficulty to get better rewards (").append(getRaidReward(nextDifficulty)).append(")\n");
+                                .append(" difficulty to get better rewards (").append(getRaidReward(nextDifficulty)).append(")\n\n");
                         needsImprovement = true;
                     }
                 }
@@ -341,7 +342,6 @@ public class WowVaultService {
                     runLevels.add(run.get("mythic_level").asInt());
                 }
 
-                // Seviyeleri büyükten küçüğe sırala
                 Collections.sort(runLevels, Collections.reverseOrder());
 
                 // Ödülleri hesapla
@@ -349,21 +349,21 @@ public class WowVaultService {
                 if (!runLevels.isEmpty()) {
                     rewards[0] = getVaultReward(runLevels.get(0));
                 } else {
-                    rewards[0] = "No reward yet";
+                    rewards[0] = "No Reward";
                 }
 
                 // Slot 2: En yüksek 4 koşunun en düşüğü
                 if (runLevels.size() >= 4) {
                     rewards[1] = getVaultReward(runLevels.get(3));
                 } else {
-                    rewards[1] = "Complete " + (4 - runLevels.size()) + " more runs";
+                    rewards[1] = "No Reward";
                 }
 
                 // Slot 3: En yüksek 8 koşunun en düşüğü
                 if (runLevels.size() >= 8) {
                     rewards[2] = getVaultReward(runLevels.get(7));
                 } else {
-                    rewards[2] = "Complete " + (8 - runLevels.size()) + " more runs";
+                    rewards[2] = "No Reward";
                 }
 
                 return rewards;
