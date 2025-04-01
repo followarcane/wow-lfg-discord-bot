@@ -119,6 +119,35 @@ public class BisGearService {
         if (!formattedSlot.isEmpty()) {
             logger.info("Available slots: {}", bisGear.keySet());
 
+            // Özel durumlar için kontrol
+            if (formattedSlot.equalsIgnoreCase("Trinket")) {
+                // Tüm trinketleri içeren bir map oluştur
+                Map<String, Object> allTrinkets = new HashMap<>();
+                for (String key : bisGear.keySet()) {
+                    if (key.startsWith("Trinket")) {
+                        allTrinkets.put(key, bisGear.get(key));
+                    }
+                }
+
+                if (!allTrinkets.isEmpty()) {
+                    logger.info("Found {} trinkets", allTrinkets.size());
+                    return allTrinkets;
+                }
+            } else if (formattedSlot.equalsIgnoreCase("Finger") || formattedSlot.equalsIgnoreCase("Ring")) {
+                // Tüm yüzükleri içeren bir map oluştur
+                Map<String, Object> allRings = new HashMap<>();
+                for (String key : bisGear.keySet()) {
+                    if (key.startsWith("Finger")) {
+                        allRings.put(key, bisGear.get(key));
+                    }
+                }
+
+                if (!allRings.isEmpty()) {
+                    logger.info("Found {} rings", allRings.size());
+                    return allRings;
+                }
+            }
+            
             // Try exact match first
             if (bisGear.containsKey(formattedSlot)) {
                 return bisGear.get(formattedSlot);
@@ -132,6 +161,14 @@ public class BisGearService {
                 }
             }
 
+            // If case-insensitive match fails, try partial match
+            for (String key : bisGear.keySet()) {
+                if (key.toLowerCase().contains(formattedSlot.toLowerCase())) {
+                    logger.info("Found partial match for slot: {} -> {}", formattedSlot, key);
+                    return bisGear.get(key);
+                }
+            }
+            
             logger.info("No match found for slot: {}", formattedSlot);
             return new HashMap<>();
         }
@@ -218,8 +255,15 @@ public class BisGearService {
         String formattedSlot = formatName(slot);
         
         // Sınıf rengini al
-        Color classColor = Color.decode(classColorCodeHelper.getClassColorCode(className));
-
+        Color classColor;
+        try {
+            classColor = Color.decode(classColorCodeHelper.getClassColorCode(formattedClassName));
+            logger.info("Using class color for {}: {}", formattedClassName, classColor);
+        } catch (Exception e) {
+            logger.warn("Could not get class color for {}. Using default color.", formattedClassName);
+            classColor = Color.GRAY; // Varsayılan renk
+        }
+        
         // Embed oluştur
         EmbedBuilder embed = new EmbedBuilder();
         embed.setColor(classColor);
@@ -348,10 +392,31 @@ public class BisGearService {
 
                 if (itemInfo.isEmpty()) {
                     embed.setDescription("No BIS gear information found for this slot, spec, and hero talent.");
+                } else if (formattedSlot.equalsIgnoreCase("Trinket") || formattedSlot.equalsIgnoreCase("Finger") || formattedSlot.equalsIgnoreCase("Ring")) {
+                    // Birden fazla trinket veya yüzük için
+                    for (Map.Entry<String, Object> entry : itemInfo.entrySet()) {
+                        String slotName = entry.getKey();
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> slotInfo = (Map<String, Object>) entry.getValue();
+
+                        String itemName = (String) slotInfo.get("name");
+                        String itemUrl = (String) slotInfo.get("url");
+                        String stats = (String) slotInfo.get("stats");
+
+                        embed.addField(slotName, "[" + itemName + "](" + itemUrl + ")", false);
+
+                        if (stats != null && !stats.isEmpty()) {
+                            // Stats bilgisi çok uzun olabilir, bu yüzden kısaltıyoruz
+                            if (stats.length() > 1000) {
+                                stats = stats.substring(0, 990) + "...\n\n";
+                            }
+                            embed.addField(slotName + " Stats", stats + "\n\n", false);
+                        }
+                    }
                 } else {
+                    // Tek bir slot için
                     String itemName = (String) itemInfo.get("name");
                     String itemUrl = (String) itemInfo.get("url");
-                    //String source = (String) itemInfo.get("source");
                     String stats = (String) itemInfo.get("stats");
 
                     embed.addField("Item", "[" + itemName + "](" + itemUrl + ")", false);
@@ -361,10 +426,8 @@ public class BisGearService {
                         if (stats.length() > 1000) {
                             stats = stats.substring(0, 990) + "...\n\n";
                         }
-                        embed.addField("Stats", stats, false);
+                        embed.addField("Stats", stats + "\n\n", false);
                     }
-
-                    //embed.addField("Source", source, false);
                 }
             } else {
                 // Hero talent belirtilmediğinde, her hero talent için belirli bir slotu göster
@@ -379,32 +442,82 @@ public class BisGearService {
                         // Get BIS gear for this hero talent
                         Map<String, Map<String, Object>> bisGear = cache.get(key);
 
-                        // Check if this hero talent has the specified slot
-                        if (bisGear.containsKey(formattedSlot)) {
-                            foundAny = true;
+                        // Özel durumlar için kontrol
+                        if (formattedSlot.equalsIgnoreCase("Trinket")) {
+                            boolean foundTrinket = false;
+                            for (String slotKey : bisGear.keySet()) {
+                                if (slotKey.startsWith("Trinket")) {
+                                    if (!foundTrinket) {
+                                        foundAny = true;
+                                        foundTrinket = true;
+                                        embed.addField("Hero Talent: " + heroTalentName, "BIS trinkets for " + formattedClassName + " " + formattedSpecName + " with " + heroTalentName + " hero talent", false);
+                                    }
 
-                            // Add a section for this hero talent
-                            embed.addField("Hero Talent: " + heroTalentName, "BIS gear for " + formattedClassName + " " + formattedSpecName + " with " + heroTalentName + " hero talent", false);
+                                    Map<String, Object> itemInfo = bisGear.get(slotKey);
+                                    String itemName = (String) itemInfo.get("name");
+                                    String itemUrl = (String) itemInfo.get("url");
+                                    String stats = (String) itemInfo.get("stats");
 
-                            // Get item info
-                            Map<String, Object> itemInfo = bisGear.get(formattedSlot);
+                                    embed.addField(slotKey, "[" + itemName + "](" + itemUrl + ")", false);
 
-                            String itemName = (String) itemInfo.get("name");
-                            String itemUrl = (String) itemInfo.get("url");
-                            //String source = (String) itemInfo.get("source");
-                            String stats = (String) itemInfo.get("stats");
-
-                            embed.addField("Item", "[" + itemName + "](" + itemUrl + ")", false);
-
-                            if (stats != null && !stats.isEmpty()) {
-                                // Stats bilgisi çok uzun olabilir, bu yüzden kısaltıyoruz
-                                if (stats.length() > 1000) {
-                                    stats = stats.substring(0, 997) + "...";
+                                    if (stats != null && !stats.isEmpty()) {
+                                        if (stats.length() > 1000) {
+                                            stats = stats.substring(0, 990) + "...\n\n";
+                                        }
+                                        embed.addField(slotKey + " Stats", stats + "\n\n", false);
+                                    }
                                 }
-                                embed.addField("Stats", stats, false);
                             }
+                        } else if (formattedSlot.equalsIgnoreCase("Finger") || formattedSlot.equalsIgnoreCase("Ring")) {
+                            boolean foundRing = false;
+                            for (String slotKey : bisGear.keySet()) {
+                                if (slotKey.startsWith("Finger")) {
+                                    if (!foundRing) {
+                                        foundAny = true;
+                                        foundRing = true;
+                                        embed.addField("Hero Talent: " + heroTalentName, "BIS rings for " + formattedClassName + " " + formattedSpecName + " with " + heroTalentName + " hero talent", false);
+                                    }
 
-                            //embed.addField("Source", source, false);
+                                    Map<String, Object> itemInfo = bisGear.get(slotKey);
+                                    String itemName = (String) itemInfo.get("name");
+                                    String itemUrl = (String) itemInfo.get("url");
+                                    String stats = (String) itemInfo.get("stats");
+
+                                    embed.addField(slotKey, "[" + itemName + "](" + itemUrl + ")", false);
+
+                                    if (stats != null && !stats.isEmpty()) {
+                                        if (stats.length() > 1000) {
+                                            stats = stats.substring(0, 990) + "...\n\n";
+                                        }
+                                        embed.addField(slotKey + " Stats", stats + "\n\n", false);
+                                    }
+                                }
+                            }
+                        } else {
+                            // Check if this hero talent has the specified slot
+                            if (bisGear.containsKey(formattedSlot)) {
+                                foundAny = true;
+
+                                // Add a section for this hero talent
+                                embed.addField("Hero Talent: " + heroTalentName, "BIS gear for " + formattedClassName + " " + formattedSpecName + " with " + heroTalentName + " hero talent", false);
+
+                                // Get item info
+                                Map<String, Object> itemInfo = bisGear.get(formattedSlot);
+
+                                String itemName = (String) itemInfo.get("name");
+                                String itemUrl = (String) itemInfo.get("url");
+                                String stats = (String) itemInfo.get("stats");
+
+                                embed.addField("Item", "[" + itemName + "](" + itemUrl + ")", false);
+
+                                if (stats != null && !stats.isEmpty()) {
+                                    // Stats bilgisi çok uzun olabilir, bu yüzden kısaltıyoruz
+                                    if (stats.length() > 1000) {
+                                        stats = stats.substring(0, 997) + "...";
+                                    }
+                                    embed.addField("Stats", stats + "\n\n", false);
+                                }
+                            }
                         }
                     }
                 }
