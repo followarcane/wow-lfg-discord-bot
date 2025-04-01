@@ -124,7 +124,7 @@ public class CharacterStatsService {
         mainStats.append("**Intellect:** ").append(df.format(statsData.path("intellect").path("effective").asLong())).append("\n");
         mainStats.append("**Stamina:** ").append(df.format(statsData.path("stamina").path("effective").asLong())).append("\n");
 
-        embed.addField("Primary Stats", mainStats.toString(), true);
+        embed.addField("Primary Stats", mainStats.toString(), false);
 
         // İkincil istatistikler
         StringBuilder secondaryStats = new StringBuilder();
@@ -134,7 +134,7 @@ public class CharacterStatsService {
         secondaryStats.append("**Versatility:** ").append(statsData.get("versatility_damage_done_bonus").asText()).append("%\n");
         secondaryStats.append("**Leech:** ").append(statsData.path("lifesteal").path("value").asText()).append("%\n");
 
-        embed.addField("Secondary Stats", secondaryStats.toString(), true);
+        embed.addField("Secondary Stats", secondaryStats.toString(), false);
 
         // Savunma istatistikleri
         StringBuilder defenseStats = new StringBuilder();
@@ -144,7 +144,7 @@ public class CharacterStatsService {
         defenseStats.append("**Block:** ").append(statsData.path("block").path("value").asText()).append("%\n");
         defenseStats.append("**Avoidance:** ").append(statsData.path("avoidance").path("rating_bonus").asText()).append("%\n");
 
-        embed.addField("Defense", defenseStats.toString(), true);
+        embed.addField("Defense", defenseStats.toString(), false);
 
         // Saldırı istatistikleri
         StringBuilder attackStats = new StringBuilder();
@@ -164,7 +164,7 @@ public class CharacterStatsService {
             attackStats.append("**Attack Speed:** ").append(statsData.get("main_hand_speed").asText()).append("\n");
         }
 
-        embed.addField("Attack", attackStats.toString(), true);
+        embed.addField("Attack", attackStats.toString(), false);
 
         // Footer ekle
         embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership",

@@ -129,7 +129,7 @@ public class DiscordBotService extends ListenerAdapter {
                             .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true),
                     Commands.slash("char-stats", "Show character statistics")
                             .addOption(OptionType.STRING, "name", "Character name", true)
-                            .addOption(OptionType.STRING, "realm", "Realm name", true)
+                            .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
                             .addOption(OptionType.STRING, "region", "Region (EU, US)", true)
             ).queue(
                     success -> log.info("Successfully updated slash commands"),
