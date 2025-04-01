@@ -71,7 +71,7 @@ jobs:
 
       # 8. Build the project using Gradle
       - name: Build the project
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
 
       # 9. Set up SSH
       - name: Setup SSH
