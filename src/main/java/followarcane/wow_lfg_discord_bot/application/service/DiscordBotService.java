@@ -73,7 +73,9 @@ public class DiscordBotService extends ListenerAdapter {
 
     private final WowVaultService wowVaultService;
 
-    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService, ClassColorCodeHelper classColorCodeHelper, WowVaultService wowVaultService) {
+    private final CharacterStatsService characterStatsService;
+
+    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService, ClassColorCodeHelper classColorCodeHelper, WowVaultService wowVaultService, CharacterStatsService characterStatsService) {
         this.messageRepository = messageRepository;
         this.discordServerRepository = discordServerRepository;
         this.discordService = discordService;
@@ -81,6 +83,7 @@ public class DiscordBotService extends ListenerAdapter {
         this.restTemplate = restTemplate;
         this.classColorCodeHelper = classColorCodeHelper;
         this.wowVaultService = wowVaultService;
+        this.characterStatsService = characterStatsService;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -123,7 +126,11 @@ public class DiscordBotService extends ListenerAdapter {
                     Commands.slash("vault", "Shows a player's Great Vault rewards based on weekly M+ runs")
                             .addOption(OptionType.STRING, "name", "Character name", true)
                             .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
-                            .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true)
+                            .addOption(OptionType.STRING, "region", "Region (eu/us/kr/tw)", true),
+                    Commands.slash("char-stats", "Show character statistics")
+                            .addOption(OptionType.STRING, "name", "Character name", true)
+                            .addOption(OptionType.STRING, "realm", "Realm name", true)
+                            .addOption(OptionType.STRING, "region", "Region (EU, US)", true)
             ).queue(
                     success -> log.info("Successfully updated slash commands"),
                     error -> log.error("Error updating slash commands: {}", error.getMessage())
@@ -162,6 +169,9 @@ public class DiscordBotService extends ListenerAdapter {
                 break;
             case "vault":
                 handleVaultCommand(event);
+                break;
+            case "char-stats":
+                handleCharacterStatsCommand(event);
                 break;
             default:
                 event.reply("Unknown command!").setEphemeral(true).queue();
@@ -228,6 +238,17 @@ public class DiscordBotService extends ListenerAdapter {
             log.error("Error handling vault command: {}", e.getMessage(), e);
             event.getHook().sendMessage("Error fetching data. Please try again later.").queue();
         }
+    }
+
+    private void handleCharacterStatsCommand(SlashCommandInteractionEvent event) {
+        event.deferReply().queue();
+
+        String name = event.getOption("name").getAsString();
+        String realm = event.getOption("realm").getAsString();
+        String region = event.getOption("region").getAsString();
+
+        EmbedBuilder embed = characterStatsService.createCharacterStatsEmbed(name, realm, region);
+        event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
 
     @Override

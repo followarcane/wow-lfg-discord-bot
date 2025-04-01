@@ -116,38 +116,38 @@ public class BattleNetApiService {
     }
 
     /**
-     * Genel amaçlı Blizzard API çağrısı yapar
+     * Blizzard API'den karakter istatistiklerini çeker
      */
-    public JsonNode fetchBlizzardData(String endpoint, String region, String namespace) {
+    public JsonNode fetchCharacterStats(String name, String realm, String region) {
         try {
-            String token = getBlizzardToken();
-            if (token == null) {
-                log.error("Failed to get Blizzard API token");
+            // Access token al
+            String accessToken = getBlizzardToken();
+            if (accessToken == null) {
+                log.error("Failed to get access token");
                 return null;
             }
 
-            String blizzardUrl = UriComponentsBuilder.fromHttpUrl(battleNetApiUrl + endpoint)
-                    .queryParam("namespace", namespace + "-" + region)
+            // API URL'sini oluştur
+            String apiUrl = UriComponentsBuilder.fromHttpUrl(battleNetApiUrl)
+                    .path("/profile/wow/character/{realm}/{character}/statistics")
+                    .queryParam("namespace", "profile-" + region.toLowerCase())
                     .queryParam("locale", "en_US")
-                    .build()
+                    .buildAndExpand(realm.toLowerCase(), name.toLowerCase())
                     .toUriString();
 
+            // API çağrısını yap
             HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(token);
+            headers.setBearerAuth(accessToken);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            log.info("Fetching Blizzard data from: {}", blizzardUrl);
-            ResponseEntity<String> response = restTemplate.exchange(
-                    blizzardUrl,
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    String.class
-            );
+            log.info("Fetching character stats from: {}", apiUrl);
+            ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 return new ObjectMapper().readTree(response.getBody());
             }
         } catch (Exception e) {
-            log.error("Error fetching Blizzard data: {}", e.getMessage(), e);
+            log.error("Error fetching character stats: {}", e.getMessage(), e);
         }
         return null;
     }
