@@ -90,8 +90,8 @@ public class BisGearService {
                     Map<String, Object> itemInfo = new HashMap<>(entry.getValue());
 
                     // Add hero talent to source
-                    String source = (String) itemInfo.get("source");
-                    itemInfo.put("source", source + " (Hero Talent: " + heroTalentName + ")");
+                    //String source = (String) itemInfo.get("source");
+                    //itemInfo.put("source", source + " (Hero Talent: " + heroTalentName + ")");
 
                     // Add to result
                     result.put(slot, itemInfo);
@@ -194,7 +194,7 @@ public class BisGearService {
         if (itemInfo != null && !itemInfo.isEmpty()) {
             result.put("name", (String) itemInfo.get("name"));
             result.put("url", (String) itemInfo.get("url"));
-            result.put("source", (String) itemInfo.get("source"));
+            //result.put("source", (String) itemInfo.get("source"));
             result.put("stats", (String) itemInfo.get("stats"));
         }
 
@@ -255,11 +255,21 @@ public class BisGearService {
 
                         String itemName = (String) slotInfo.get("name");
                         String itemUrl = (String) slotInfo.get("url");
-                        String source = (String) slotInfo.get("source");
-
+                        String stats = (String) slotInfo.get("stats");
+                        
                         fieldContent.append("**").append(slotName).append("**: [").append(itemName).append("](").append(itemUrl).append(")\n");
-                        fieldContent.append("Source: ").append(source).append("\n\n");
 
+                        // Stats bilgisini ekle (eğer varsa)
+                        if (stats != null && !stats.isEmpty()) {
+                            // Stats bilgisi çok uzun olabilir, bu yüzden kısaltıyoruz
+                            if (stats.length() > 100) {
+                                stats = stats.substring(0, 97) + "...";
+                            }
+                            fieldContent.append("Stats: ").append(stats).append("\n\n");
+                        } else {
+                            fieldContent.append("\n");
+                        }
+                        
                         slotCount++;
 
                         // Her 5 slot için yeni bir field oluştur
@@ -299,11 +309,21 @@ public class BisGearService {
 
                             String itemName = (String) slotInfo.get("name");
                             String itemUrl = (String) slotInfo.get("url");
-                            String source = (String) slotInfo.get("source");
-
+                            String stats = (String) slotInfo.get("stats");
+                            
                             fieldContent.append("**").append(slotName).append("**: [").append(itemName).append("](").append(itemUrl).append(")\n");
-                            fieldContent.append("Source: ").append(source).append("\n\n");
 
+                            // Stats bilgisini ekle (eğer varsa)
+                            if (stats != null && !stats.isEmpty()) {
+                                // Stats bilgisi çok uzun olabilir, bu yüzden kısaltıyoruz
+                                if (stats.length() > 100) {
+                                    stats = stats.substring(0, 97) + "...";
+                                }
+                                fieldContent.append("Stats: ").append(stats).append("\n\n");
+                            } else {
+                                fieldContent.append("\n");
+                            }
+                            
                             slotCount++;
 
                             // Her 5 slot için yeni bir field oluştur veya son slota geldiğimizde
@@ -331,19 +351,20 @@ public class BisGearService {
                 } else {
                     String itemName = (String) itemInfo.get("name");
                     String itemUrl = (String) itemInfo.get("url");
-                    String source = (String) itemInfo.get("source");
+                    //String source = (String) itemInfo.get("source");
                     String stats = (String) itemInfo.get("stats");
 
                     embed.addField("Item", "[" + itemName + "](" + itemUrl + ")", false);
-                    embed.addField("Source", source, false);
 
                     if (stats != null && !stats.isEmpty()) {
                         // Stats bilgisi çok uzun olabilir, bu yüzden kısaltıyoruz
                         if (stats.length() > 1000) {
-                            stats = stats.substring(0, 997) + "...";
+                            stats = stats.substring(0, 990) + "...\n\n";
                         }
                         embed.addField("Stats", stats, false);
                     }
+
+                    //embed.addField("Source", source, false);
                 }
             } else {
                 // Hero talent belirtilmediğinde, her hero talent için belirli bir slotu göster
@@ -370,11 +391,10 @@ public class BisGearService {
 
                             String itemName = (String) itemInfo.get("name");
                             String itemUrl = (String) itemInfo.get("url");
-                            String source = (String) itemInfo.get("source");
+                            //String source = (String) itemInfo.get("source");
                             String stats = (String) itemInfo.get("stats");
 
                             embed.addField("Item", "[" + itemName + "](" + itemUrl + ")", false);
-                            embed.addField("Source", source, false);
 
                             if (stats != null && !stats.isEmpty()) {
                                 // Stats bilgisi çok uzun olabilir, bu yüzden kısaltıyoruz
@@ -383,6 +403,8 @@ public class BisGearService {
                                 }
                                 embed.addField("Stats", stats, false);
                             }
+
+                            //embed.addField("Source", source, false);
                         }
                     }
                 }
