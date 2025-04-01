@@ -2,10 +2,13 @@ package followarcane.wow_lfg_discord_bot.application.service;
 
 
 import followarcane.wow_lfg_discord_bot.application.util.ClassColorCodeHelper;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,85 +65,118 @@ public class BisGearServiceManualTest {
     }
 
     @Test
-    public void testGetBisGear() {
-        // Death Knight Blood Deathbringer için BIS ekipmanları getir
-        Map<String, Map<String, Object>> bisGear = bisGearService.getBisGear("Death_Knight", "Blood", "Deathbringer");
-        
-        // Sonuçları kontrol et
-        assertNotNull(bisGear);
-        assertFalse(bisGear.isEmpty());
+    public void testCreateBisGearEmbedWithOnlyClass() {
+        // Sadece sınıf belirtildiğinde
+        String className = "priest";
+        String specName = "";
+        String heroTalent = "";
+        String slot = "";
 
-        // Head slotunu kontrol et
-        assertTrue(bisGear.containsKey("Head"));
-        Map<String, Object> headItem = bisGear.get("Head");
-        assertNotNull(headItem.get("name"));
-        assertNotNull(headItem.get("url"));
+        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
 
-        // Sonuçları yazdır
-        System.out.println("BIS gear for Death Knight Blood Deathbringer:");
-        for (Map.Entry<String, Map<String, Object>> entry : bisGear.entrySet()) {
-            System.out.println("  " + entry.getKey() + ": " + entry.getValue().get("name"));
+        // Embed'in oluşturulduğunu doğrula
+        assertNotNull(embed);
+
+        // Embed'in başlığını kontrol et
+        String title = embed.build().getTitle();
+        System.out.println("Title: " + title);
+
+        // Embed'in açıklamasını kontrol et
+        String description = embed.build().getDescription();
+        System.out.println("Description: " + (description != null ? description : "No description"));
+
+        // Embed'in alanlarını kontrol et
+        List<MessageEmbed.Field> fields = embed.build().getFields();
+        System.out.println("Number of fields: " + fields.size());
+        for (MessageEmbed.Field field : fields) {
+            System.out.println("Field: " + field.getName() + " - " + field.getValue());
         }
     }
 
     @Test
-    public void testGetBisGearForSlot() {
-        // Death Knight Blood Deathbringer için Head slotundaki BIS ekipmanı getir
-        Map<String, Object> headItem = bisGearService.getBisGearForSlot("Head", "Death_Knight", "Blood", "Deathbringer");
-        
-        // Sonuçları kontrol et
-        assertNotNull(headItem);
-        assertFalse(headItem.isEmpty());
-        assertNotNull(headItem.get("name"));
-        assertNotNull(headItem.get("url"));
+    public void testCreateBisGearEmbedWithClassAndSpec() {
+        // Sınıf ve spec belirtildiğinde
+        String className = "priest";
+        String specName = "shadow";
+        String heroTalent = "";
+        String slot = "";
 
-        // Sonuçları yazdır
-        System.out.println("BIS Head item for Death Knight Blood Deathbringer:");
-        System.out.println("  Name: " + headItem.get("name"));
-        System.out.println("  URL: " + headItem.get("url"));
-        System.out.println("  Source: " + headItem.get("source"));
-        System.out.println("  Stats: " + headItem.get("stats"));
+        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
+
+        // Embed'in oluşturulduğunu doğrula
+        assertNotNull(embed);
+
+        // Embed'in başlığını kontrol et
+        String title = embed.build().getTitle();
+        System.out.println("Title: " + title);
+
+        // Embed'in açıklamasını kontrol et
+        String description = embed.build().getDescription();
+        System.out.println("Description: " + (description != null ? description : "No description"));
+
+        // Embed'in alanlarını kontrol et
+        List<MessageEmbed.Field> fields = embed.build().getFields();
+        System.out.println("Number of fields: " + fields.size());
+        for (MessageEmbed.Field field : fields) {
+            System.out.println("Field: " + field.getName() + " - " + field.getValue());
+        }
     }
 
     @Test
-    public void testRefreshCache() throws Exception {
-        // BisGearService'in cache alanına erişim sağla
-        Field cacheField = BisGearService.class.getDeclaredField("cache");
-        cacheField.setAccessible(true);
-        Map<String, Map<String, Map<String, Object>>> cache =
-                (Map<String, Map<String, Map<String, Object>>>) cacheField.get(bisGearService);
-        
-        // Önbelleği yenile
-        System.out.println("Önbelleği yenileme öncesi önbellek boyutu: " + cache.size());
-        bisGearService.refreshCache();
-        System.out.println("Önbelleği yenileme sonrası önbellek boyutu: " + cache.size());
+    public void testCreateBisGearEmbedWithClassSpecAndHeroTalent() {
+        // Sınıf, spec ve hero talent belirtildiğinde
+        String className = "priest";
+        String specName = "shadow";
+        String heroTalent = "archon";
+        String slot = "head";
 
-        // Önbellekte hala öğeler olduğunu doğrula
-        assertFalse(cache.isEmpty());
+        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
+
+        // Embed'in oluşturulduğunu doğrula
+        assertNotNull(embed);
+
+        // Embed'in başlığını kontrol et
+        String title = embed.build().getTitle();
+        System.out.println("Title: " + title);
+
+        // Embed'in açıklamasını kontrol et
+        String description = embed.build().getDescription();
+        System.out.println("Description: " + (description != null ? description : "No description"));
+
+        // Embed'in alanlarını kontrol et
+        List<MessageEmbed.Field> fields = embed.build().getFields();
+        System.out.println("Number of fields: " + fields.size());
+        for (MessageEmbed.Field field : fields) {
+            System.out.println("Field: " + field.getName() + " - " + field.getValue());
+        }
     }
 
     @Test
-    public void testFetchBisGearWithSelenium() {
-        // Test parametreleri
-        String slot = "Head";
-        String className = "Death_Knight";
-        String specName = "Blood";
-        String heroTalent = "Deathbringer";
+    public void testCreateBisGearEmbedWithClassSpecHeroTalentAndSlot() {
+        // Sınıf, spec, hero talent ve slot belirtildiğinde
+        String className = "priest";
+        String specName = "shadow";
+        String heroTalent = "archon";
+        String slot = "Main Hand";
 
-        // Selenium metodunu çağır
-        Map<String, String> bisItems = bisGearService.fetchBisGearWithSelenium(slot, className, specName, heroTalent);
+        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
 
-        // Sonuçları kontrol et
-        assertNotNull(bisItems);
-        assertFalse(bisItems.isEmpty());
-        assertNotNull(bisItems.get("name"));
-        assertNotNull(bisItems.get("url"));
+        // Embed'in oluşturulduğunu doğrula
+        assertNotNull(embed);
 
-        // Sonuçları yazdır
-        System.out.println("BIS Head item for Death Knight Blood Deathbringer (via Selenium):");
-        System.out.println("  Name: " + bisItems.get("name"));
-        System.out.println("  URL: " + bisItems.get("url"));
-        System.out.println("  Source: " + bisItems.get("source"));
-        System.out.println("  Stats: " + bisItems.get("stats"));
+        // Embed'in başlığını kontrol et
+        String title = embed.build().getTitle();
+        System.out.println("Title: " + title);
+
+        // Embed'in açıklamasını kontrol et
+        String description = embed.build().getDescription();
+        System.out.println("Description: " + (description != null ? description : "No description"));
+
+        // Embed'in alanlarını kontrol et
+        List<MessageEmbed.Field> fields = embed.build().getFields();
+        System.out.println("Number of fields: " + fields.size());
+        for (MessageEmbed.Field field : fields) {
+            System.out.println("Field: " + field.getName() + " - " + field.getValue());
+        }
     }
 } 

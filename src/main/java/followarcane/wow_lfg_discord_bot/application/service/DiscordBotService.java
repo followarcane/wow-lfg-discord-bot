@@ -265,13 +265,27 @@ public class DiscordBotService extends ListenerAdapter {
     private void handleBisGearCommand(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        String slot = event.getOption("slot") != null ? event.getOption("slot").getAsString() : "all";
+        String slot = event.getOption("slot") != null ? event.getOption("slot").getAsString() : "";
         String className = event.getOption("class").getAsString();
         String specName = event.getOption("spec").getAsString();
         String heroTalent = event.getOption("hero_talent") != null ? event.getOption("hero_talent").getAsString() : "";
 
-        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
-        event.getHook().sendMessageEmbeds(embed.build()).queue();
+        // Log the command parameters
+        log.info("BIS Gear Command - Class: {}, Spec: {}, Hero Talent: {}, Slot: {}",
+                className, specName, heroTalent, slot.isEmpty() ? "All" : slot);
+
+        try {
+            // Format slot name (first letter uppercase, rest lowercase)
+            if (!slot.isEmpty()) {
+                slot = slot.substring(0, 1).toUpperCase() + slot.substring(1).toLowerCase();
+            }
+
+            EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
+            event.getHook().sendMessageEmbeds(embed.build()).queue();
+        } catch (Exception e) {
+            log.error("Error processing BIS gear command: {}", e.getMessage(), e);
+            event.getHook().sendMessage("An error occurred while processing your request. Please check your input and try again.").queue();
+        }
     }
 
     @Override
