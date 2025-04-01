@@ -149,11 +149,12 @@ public class WowVaultService {
         String profileUrl = raiderIoData.get("profile_url").asText();
         String thumbnailUrl = raiderIoData.get("thumbnail_url").asText();
 
-        embed.setTitle(characterName + " | " + characterRealm + " | Great Vault", profileUrl);
-        embed.setThumbnail(thumbnailUrl);
-        embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
+        // Altın rengini kullan (WoW UI'ına benzer)
+        Color goldColor = new Color(207, 171, 49);
+        embed.setColor(goldColor);
 
-        // Başlık mesajı ekle
+        // Başlık ve açıklama
+        embed.setTitle(characterName + "'s Great Vault", profileUrl);
         embed.setDescription("**Add items to the Great Vault by completing activities each week.\nOnce per week you may select a single reward.**");
         
         // M+ koşu sayısını hesapla
@@ -198,182 +199,102 @@ public class WowVaultService {
 
         // Raid bölümü
         StringBuilder raidSection = new StringBuilder();
-        raidSection.append("## Raids\n\n");
-
-        // Raid başlıkları
+        raidSection.append("**Raids**\n");
         raidSection.append("```\n");
-        raidSection.append("Defeat 2 Bosses      Defeat 4 Bosses      Defeat 6 Bosses\n");
-        raidSection.append("----------------     ----------------     ----------------\n");
+        raidSection.append("Defeat 2 Bosses    Defeat 4 Bosses    Defeat 6 Bosses\n");
+        raidSection.append("\n");
 
-        // Raid durumları
-        String slot1Status = raidBossCounts[0] >= 2 ? "✅ " + raidRewards[0] : "🔒 " + raidBossCounts[0] + "/2";
-        String slot2Status = raidBossCounts[0] >= 4 ? "✅ " + raidRewards[1] : "🔒 " + raidBossCounts[0] + "/4";
-        String slot3Status = raidBossCounts[0] >= 6 ? "✅ " + raidRewards[2] : "🔒 " + raidBossCounts[0] + "/6";
+        // Raid ödüllerinin durumunu göster
+        String slot1Status = raidBossCounts[0] >= 2 ? "✅" : "🔒";
+        String slot2Status = raidBossCounts[0] >= 4 ? "✅" : "🔒";
+        String slot3Status = raidBossCounts[0] >= 6 ? "✅" : "🔒";
 
-        // Statüler için maksimum uzunluk
-        int maxLength = 18;
+        raidSection.append(String.format("%-25s %-25s %-25s\n", slot1Status, slot2Status, slot3Status));
+        raidSection.append(String.format("%-25s %-25s %-25s\n",
+                raidBossCounts[0] + "/2",
+                raidBossCounts[0] + "/4",
+                raidBossCounts[0] + "/6"));
+        raidSection.append("```\n");
 
-        // Statüleri kısalt ve hizala
-        slot1Status = formatStatusText(slot1Status, maxLength);
-        slot2Status = formatStatusText(slot2Status, maxLength);
-        slot3Status = formatStatusText(slot3Status, maxLength);
-
-        raidSection.append(slot1Status + "     " + slot2Status + "     " + slot3Status + "\n");
-        raidSection.append("```");
-        
-        embed.addField("", raidSection.toString(), false);
-
-        // Dungeons bölümü
+        // Mythic+ bölümü
         StringBuilder dungeonSection = new StringBuilder();
-        dungeonSection.append("## Dungeons\n\n");
-
-        // Dungeon başlıkları
+        dungeonSection.append("**Dungeons**\n");
         dungeonSection.append("```\n");
-        dungeonSection.append("Complete 1 Dungeon   Complete 4 Dungeons  Complete 8 Dungeons\n");
-        dungeonSection.append("----------------     ----------------     ----------------\n");
+        dungeonSection.append("Complete 1 Dungeon,      Complete 4 Dungeons,      Complete 8 Dungeons\n");
+        dungeonSection.append("\n");
 
-        // Dungeon durumları
-        String dungeonSlot1 = totalMythicPlusRuns >= 1 ? "✅ " + mythicPlusRewards[0] : "🔒 " + totalMythicPlusRuns + "/1";
-        String dungeonSlot2 = totalMythicPlusRuns >= 4 ? "✅ " + mythicPlusRewards[1] : "🔒 " + totalMythicPlusRuns + "/4";
-        String dungeonSlot3 = totalMythicPlusRuns >= 8 ? "✅ " + mythicPlusRewards[2] : "🔒 " + totalMythicPlusRuns + "/8";
+        // M+ ödüllerinin durumunu göster
+        String m1Status = totalMythicPlusRuns >= 1 ? "✅" : "🔒";
+        String m2Status = totalMythicPlusRuns >= 4 ? "✅" : "🔒";
+        String m3Status = totalMythicPlusRuns >= 8 ? "✅" : "🔒";
 
-        // Statüleri kısalt ve hizala
-        dungeonSlot1 = formatStatusText(dungeonSlot1, maxLength);
-        dungeonSlot2 = formatStatusText(dungeonSlot2, maxLength);
-        dungeonSlot3 = formatStatusText(dungeonSlot3, maxLength);
+        dungeonSection.append(String.format("%-25s %-25s %-25s\n", m1Status, m2Status, m3Status));
+        dungeonSection.append(String.format("%-25s %-25s %-25s\n",
+                totalMythicPlusRuns + "/1",
+                totalMythicPlusRuns + "/4",
+                totalMythicPlusRuns + "/8"));
+        dungeonSection.append("```\n");
 
-        dungeonSection.append(dungeonSlot1 + "     " + dungeonSlot2 + "     " + dungeonSlot3 + "\n");
-        dungeonSection.append("```");
-        
-        embed.addField("", dungeonSection.toString(), false);
-
-        // World bölümü
+        // World bölümü (opsiyonel)
         StringBuilder worldSection = new StringBuilder();
-        worldSection.append("## World\n\n");
-
-        // World başlıkları
+        worldSection.append("**World**\n");
         worldSection.append("```\n");
-        worldSection.append("Complete 2 Activities Complete 4 Activities Complete 8 Activities\n");
-        worldSection.append("----------------     ----------------     ----------------\n");
-        worldSection.append("🔒 0/2               🔒 0/4               🔒 0/8\n");
-        worldSection.append("```");
+        worldSection.append("Complete 2 Delves or     Complete 4 Delves or     Complete 8 Delves or\n");
+        worldSection.append("World Activities          World Activities          World Activities\n");
+        worldSection.append("\n");
+        worldSection.append(String.format("%-25s %-25s %-25s\n", "🔒", "🔒", "🔒"));
+        worldSection.append(String.format("%-25s %-25s %-25s\n", "0/2", "0/4", "0/8"));
+        worldSection.append("```\n");
 
+        // Ödüller bölümü
+        StringBuilder rewardsSection = new StringBuilder();
+        rewardsSection.append("**Available Rewards**\n");
+        rewardsSection.append("```\n");
+
+        boolean hasRewards = false;
+
+        // Raid ödülleri
+        if (!raidRewards[0].equals("No Reward")) {
+            rewardsSection.append("Raid Slot 1: " + raidRewards[0] + "\n");
+            hasRewards = true;
+        }
+        if (!raidRewards[1].equals("No Reward")) {
+            rewardsSection.append("Raid Slot 2: " + raidRewards[1] + "\n");
+            hasRewards = true;
+        }
+        if (!raidRewards[2].equals("No Reward")) {
+            rewardsSection.append("Raid Slot 3: " + raidRewards[2] + "\n");
+            hasRewards = true;
+        }
+
+        // M+ ödülleri
+        if (!mythicPlusRewards[0].equals("No Reward")) {
+            rewardsSection.append("M+ Slot 1: " + mythicPlusRewards[0] + "\n");
+            hasRewards = true;
+        }
+        if (!mythicPlusRewards[1].equals("No Reward")) {
+            rewardsSection.append("M+ Slot 2: " + mythicPlusRewards[1] + "\n");
+            hasRewards = true;
+        }
+        if (!mythicPlusRewards[2].equals("No Reward")) {
+            rewardsSection.append("M+ Slot 3: " + mythicPlusRewards[2] + "\n");
+            hasRewards = true;
+        }
+
+        if (!hasRewards) {
+            rewardsSection.append("No rewards available yet. Complete activities to unlock rewards.\n");
+        }
+
+        rewardsSection.append("```\n");
+
+        // Alanları ekle
+        embed.addField("", raidSection.toString(), false);
+        embed.addField("", dungeonSection.toString(), false);
         embed.addField("", worldSection.toString(), false);
-        
-        // How to Improve kısmını ekle (opsiyonel)
-        StringBuilder howToImprove = new StringBuilder();
-        boolean needsImprovement = false;
+        embed.addField("", rewardsSection.toString(), false);
 
-        try {
-            // M+ iyileştirme önerileri
-            if (!runsNode.isMissingNode() && runsNode.isArray()) {
-                for (JsonNode run : runsNode) {
-                    int level = run.get("mythic_level").asInt();
-                    String dungeon = run.get("dungeon").asText();
-                    String dgUrl = run.get("url").asText();
-
-                    // Slot 1 için öneri
-                    if (level < 2) {
-                        howToImprove.append("• Complete ").append(2 - level)
-                                .append(" more Mythic+ dungeon").append(2 - level > 1 ? "s" : "")
-                                .append(" for Slot 1\n\n");
-                        needsImprovement = true;
-                    }
-
-                    // Slot 2 için öneri
-                    if (level < 4) {
-                        howToImprove.append("• Complete ").append(4 - level)
-                                .append(" more Mythic+ dungeon").append(4 - level > 1 ? "s" : "")
-                                .append(" for Slot 2\n\n");
-                        needsImprovement = true;
-                    }
-
-                    // Slot 3 için öneri
-                    if (level < 6) {
-                        howToImprove.append("• Complete ").append(6 - level)
-                                .append(" more Mythic+ dungeon").append(6 - level > 1 ? "s" : "")
-                                .append(" for Slot 3\n\n");
-                        needsImprovement = true;
-                    }
-
-                    // Ödül seviyesini artırmak için öneri
-                    if (level > 0) {
-                        String currentReward = getVaultReward(level);
-                        String nextReward = getNextBetterReward(level);
-
-                        if (!currentReward.equals(nextReward)) {
-                            int targetLevel = getMinLevelForReward(nextReward);
-                            howToImprove.append("• Complete a +").append(targetLevel)
-                                    .append(" dungeon to upgrade ").append(currentReward).append(" to ").append(nextReward).append("\n\n");
-                            needsImprovement = true;
-                        }
-                    }
-                }
-            }
-
-            // Raid iyileştirme önerileri
-            if (blizzardData != null) {
-                int[] bossesKilledByDifficulty = calculateWeeklyRaidProgress(blizzardData, region);
-                int totalBossesKilled = 0;
-                String difficultyName = "normal";
-
-                if (bossesKilledByDifficulty[2] > 0) {
-                    totalBossesKilled = bossesKilledByDifficulty[2];
-                    difficultyName = "mythic";
-                } else if (bossesKilledByDifficulty[1] > 0) {
-                    totalBossesKilled = bossesKilledByDifficulty[1];
-                    difficultyName = "heroic";
-                } else {
-                    totalBossesKilled = bossesKilledByDifficulty[0];
-                }
-
-                if (totalBossesKilled == 0) {
-                    howToImprove.append("• Start raiding Liberation of Undermine to unlock raid slots\n\n");
-                    needsImprovement = true;
-                } else {
-                    // Slot 1 için öneri (2 boss)
-                    if (totalBossesKilled < 2) {
-                        int remaining = 2 - totalBossesKilled;
-                        howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
-                                .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 1 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
-                        needsImprovement = true;
-                    }
-
-                    // Slot 2 için öneri (4 boss)
-                    if (totalBossesKilled < 4) {
-                        int remaining = 4 - totalBossesKilled;
-                        howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
-                                .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 2 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
-                        needsImprovement = true;
-                    }
-
-                    // Slot 3 için öneri (6 boss)
-                    if (totalBossesKilled < 6) {
-                        int remaining = 6 - totalBossesKilled;
-                        howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
-                                .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 3 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
-                        needsImprovement = true;
-                    }
-
-                    // Daha yüksek zorluk seviyesi için öneri
-                    if (!difficultyName.equals("mythic")) {
-                        String nextDifficulty = difficultyName.equals("normal") ? "heroic" : "mythic";
-                        howToImprove.append("• Kill bosses in ").append(nextDifficulty)
-                                .append(" difficulty to get better rewards (").append(getRaidReward(nextDifficulty)).append(")\n\n");
-                        needsImprovement = true;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error generating improvement suggestions: {}", e.getMessage(), e);
-        }
-
-        if (needsImprovement) {
-            embed.addField("How to Improve", howToImprove.toString(), false);
-        }
+        // Karakter bilgilerini thumbnail olarak ekle
+        embed.setThumbnail(thumbnailUrl);
 
         // Footer ekle
         embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
