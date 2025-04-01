@@ -390,7 +390,6 @@ public class WowVaultService {
 
             // Her boss için en yüksek zorluk seviyesini takip et
             Map<String, String> bossHighestDifficulty = new HashMap<>();
-            String highestOverallDifficulty = "none";
 
             // Haftalık reset zamanını hesapla
             Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -422,11 +421,6 @@ public class WowVaultService {
                                     for (JsonNode modeNode : instanceNode.get("modes")) {
                                         String difficulty = modeNode.path("difficulty").path("type").asText().toLowerCase();
 
-                                        // Zorluk seviyesini sırala (mythic > heroic > normal > lfr)
-                                        if (compareDifficulty(difficulty, highestOverallDifficulty) > 0) {
-                                            highestOverallDifficulty = difficulty;
-                                        }
-
                                         if (modeNode.has("progress")) {
                                             JsonNode progressNode = modeNode.get("progress");
 
@@ -440,7 +434,7 @@ public class WowVaultService {
                                                             String bossId = encounterNode.path("encounter").path("id").asText();
                                                             String bossName = encounterNode.path("encounter").path("name").asText();
 
-                                                            log.debug("Found kill for boss {} ({}) at {} difficulty, time: {}",
+                                                            log.debug("Found kill for boss {} ({}) at {} difficulty, time: {}", 
                                                                     bossName, bossId, difficulty, new Date(killTime));
                                                             
                                                             // Bu boss için daha önce daha yüksek zorluk seviyesinde kill var mı?
@@ -469,29 +463,75 @@ public class WowVaultService {
             // Unique boss sayısını hesapla
             int uniqueBossesKilled = bossHighestDifficulty.size();
             log.info("Unique bosses killed this week: {}", uniqueBossesKilled);
-            log.info("Highest difficulty encountered: {}", highestOverallDifficulty);
 
             // Boss ID'lerini ve zorluk seviyelerini logla
             for (Map.Entry<String, String> entry : bossHighestDifficulty.entrySet()) {
                 log.debug("Boss ID: {}, Highest Difficulty: {}", entry.getKey(), entry.getValue());
             }
-            
-            // Ödülleri hesapla
-            String rewardText = getRaidReward(highestOverallDifficulty);
 
-            // Slot 1: 2+ unique boss
+            // Zorluk seviyelerine göre boss sayılarını hesapla
+            int mythicBosses = 0;
+            int heroicBosses = 0;
+            int normalBosses = 0;
+            int lfrBosses = 0;
+
+            for (String difficulty : bossHighestDifficulty.values()) {
+                switch (difficulty) {
+                    case "mythic":
+                        mythicBosses++;
+                        break;
+                    case "heroic":
+                        heroicBosses++;
+                        break;
+                    case "normal":
+                        normalBosses++;
+                        break;
+                    case "lfr":
+                        lfrBosses++;
+                        break;
+                }
+            }
+
+            log.info("Mythic bosses: {}, Heroic bosses: {}, Normal bosses: {}, LFR bosses: {}",
+                    mythicBosses, heroicBosses, normalBosses, lfrBosses);
+
+            // Slot 1 (2+ boss) için ödül hesapla
             if (uniqueBossesKilled >= 2) {
-                rewards[0] = rewardText;
+                if (mythicBosses >= 2) {
+                    rewards[0] = getRaidReward("mythic");
+                } else if (heroicBosses + mythicBosses >= 2) {
+                    rewards[0] = getRaidReward("heroic");
+                } else if (normalBosses + heroicBosses + mythicBosses >= 2) {
+                    rewards[0] = getRaidReward("normal");
+                } else {
+                    rewards[0] = getRaidReward("lfr");
+                }
             }
 
-            // Slot 2: 4+ unique boss
+            // Slot 2 (4+ boss) için ödül hesapla
             if (uniqueBossesKilled >= 4) {
-                rewards[1] = rewardText;
+                if (mythicBosses >= 4) {
+                    rewards[1] = getRaidReward("mythic");
+                } else if (heroicBosses + mythicBosses >= 4) {
+                    rewards[1] = getRaidReward("heroic");
+                } else if (normalBosses + heroicBosses + mythicBosses >= 4) {
+                    rewards[1] = getRaidReward("normal");
+                } else {
+                    rewards[1] = getRaidReward("lfr");
+                }
             }
 
-            // Slot 3: 6+ unique boss
+            // Slot 3 (6+ boss) için ödül hesapla
             if (uniqueBossesKilled >= 6) {
-                rewards[2] = rewardText;
+                if (mythicBosses >= 6) {
+                    rewards[2] = getRaidReward("mythic");
+                } else if (heroicBosses + mythicBosses >= 6) {
+                    rewards[2] = getRaidReward("heroic");
+                } else if (normalBosses + heroicBosses + mythicBosses >= 6) {
+                    rewards[2] = getRaidReward("normal");
+                } else {
+                    rewards[2] = getRaidReward("lfr");
+                }
             }
         } catch (Exception e) {
             log.error("Error calculating raid rewards: {}", e.getMessage(), e);
