@@ -390,8 +390,23 @@ public class WowVaultService {
 
             // Her boss için en yüksek zorluk seviyesini takip et
             Map<String, String> bossHighestDifficulty = new HashMap<>();
-            int uniqueBossesKilled = 0;
             String highestOverallDifficulty = "none";
+
+            // Haftalık reset zamanını hesapla
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            cal.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+            cal.set(Calendar.HOUR_OF_DAY, region.equalsIgnoreCase("eu") ? 7 : 15);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+
+            long currentTime = System.currentTimeMillis();
+            if (cal.getTimeInMillis() > currentTime) {
+                cal.add(Calendar.WEEK_OF_YEAR, -1);
+            }
+
+            long weekStartTime = cal.getTimeInMillis();
+            log.info("Weekly reset time for region {}: {}", region, new java.util.Date(weekStartTime));
 
             // "Liberation of Undermine" raid'ini bul
             if (blizzardData.has("expansions") && blizzardData.get("expansions").isArray()) {
@@ -401,21 +416,7 @@ public class WowVaultService {
                             if (instanceNode.has("instance") &&
                                     instanceNode.get("instance").has("name") &&
                                     instanceNode.get("instance").get("name").asText().equals("Liberation of Undermine")) {
-
-                                // Haftalık reset zamanını hesapla
-                                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                                cal.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
-                                cal.set(Calendar.HOUR_OF_DAY, region.equalsIgnoreCase("eu") ? 7 : 15);
-                                cal.set(Calendar.MINUTE, 0);
-                                cal.set(Calendar.SECOND, 0);
-                                cal.set(Calendar.MILLISECOND, 0);
-
-                                if (cal.getTimeInMillis() > System.currentTimeMillis()) {
-                                    cal.add(Calendar.WEEK_OF_YEAR, -1);
-                                }
-
-                                long weekStartTime = cal.getTimeInMillis();
-
+                                
                                 // Her zorluk seviyesi için kontrol et
                                 if (instanceNode.has("modes") && instanceNode.get("modes").isArray()) {
                                     for (JsonNode modeNode : instanceNode.get("modes")) {
@@ -439,13 +440,16 @@ public class WowVaultService {
                                                             String bossId = encounterNode.path("encounter").path("id").asText();
                                                             String bossName = encounterNode.path("encounter").path("name").asText();
 
+                                                            log.debug("Found kill for boss {} ({}) at {} difficulty, time: {}",
+                                                                    bossName, bossId, difficulty, new Date(killTime));
+                                                            
                                                             // Bu boss için daha önce daha yüksek zorluk seviyesinde kill var mı?
                                                             String currentHighest = bossHighestDifficulty.getOrDefault(bossId, "none");
 
                                                             if (compareDifficulty(difficulty, currentHighest) > 0) {
                                                                 // Daha yüksek zorluk seviyesi bulundu
                                                                 bossHighestDifficulty.put(bossId, difficulty);
-                                                                log.debug("Boss {} killed at {} difficulty", bossName, difficulty);
+                                                                log.debug("Updated highest difficulty for boss {} to {}", bossName, difficulty);
                                                             }
                                                         }
                                                     }
@@ -455,16 +459,21 @@ public class WowVaultService {
                                     }
                                 }
 
-                                // Unique boss sayısını hesapla
-                                uniqueBossesKilled = bossHighestDifficulty.size();
-                                log.info("Unique bosses killed this week: {}", uniqueBossesKilled);
-                                log.info("Highest difficulty encountered: {}", highestOverallDifficulty);
-
                                 break;
                             }
                         }
                     }
                 }
+            }
+
+            // Unique boss sayısını hesapla
+            int uniqueBossesKilled = bossHighestDifficulty.size();
+            log.info("Unique bosses killed this week: {}", uniqueBossesKilled);
+            log.info("Highest difficulty encountered: {}", highestOverallDifficulty);
+
+            // Boss ID'lerini ve zorluk seviyelerini logla
+            for (Map.Entry<String, String> entry : bossHighestDifficulty.entrySet()) {
+                log.debug("Boss ID: {}, Highest Difficulty: {}", entry.getKey(), entry.getValue());
             }
             
             // Ödülleri hesapla
