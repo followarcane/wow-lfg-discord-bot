@@ -90,6 +90,9 @@ public class BattleNetApiService {
 
                 HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
+                log.info("Client ID: {}", battleNetClientApi);
+                log.info("Client Secret: {}", battleNetClientSecret);
+
                 log.info("Requesting Blizzard API token");
                 ResponseEntity<String> response = restTemplate.exchange(
                         tokenUrl,

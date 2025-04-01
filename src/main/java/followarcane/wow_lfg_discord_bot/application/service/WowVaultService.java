@@ -66,6 +66,45 @@ public class WowVaultService {
     }
 
     /**
+     * Karakter için haftalık M+ koşularını içeren bir embed oluşturur
+     */
+    public EmbedBuilder createWeeklyRunsEmbed(String name, String realm, String region) {
+        try {
+            // Raider.io API'den Mythic+ verilerini al
+            JsonNode raiderIoData = fetchRaiderIoData(name, realm, region);
+            if (raiderIoData == null) {
+                return createErrorEmbed("Character not found",
+                        "Could not find character: " + name + " on " + realm + "-" + region.toUpperCase());
+            }
+
+            // Embed mesajı oluştur
+            EmbedBuilder embed = new EmbedBuilder();
+
+            // Karakter bilgilerini ayarla
+            String characterName = raiderIoData.get("name").asText();
+            String characterClass = raiderIoData.get("class").asText();
+            String characterRealm = raiderIoData.get("realm").asText();
+            String profileUrl = raiderIoData.get("profile_url").asText();
+            String thumbnailUrl = raiderIoData.get("thumbnail_url").asText();
+
+            embed.setTitle(characterName + " | " + characterRealm + " | Weekly Mythic+ Runs", profileUrl);
+            embed.setThumbnail(thumbnailUrl);
+            embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
+
+            // Haftalık M+ koşularını ekle
+            addWeeklyRunsToEmbed(embed, raiderIoData);
+
+            // Footer ekle
+            embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
+
+            return embed;
+        } catch (Exception e) {
+            log.error("Error creating weekly runs embed: {}", e.getMessage(), e);
+            return createErrorEmbed("Error", "An error occurred while fetching data. Please try again later.");
+        }
+    }
+
+    /**
      * Raider.io API'den karakter verilerini çeker
      */
     private JsonNode fetchRaiderIoData(String name, String realm, String region) {
@@ -124,13 +163,13 @@ public class WowVaultService {
         }
 
         // Great Vault bilgilerini ekle
-        embed.addField("Mythic+ Rewards",
+        embed.addField("Mythic+ Rewards", 
                 "**Slot 1 (1 run):** " + mythicPlusRewards[0] + "\n" +
                         "**Slot 2 (4 runs):** " + mythicPlusRewards[1] + "\n" +
                         "**Slot 3 (8 runs):** " + mythicPlusRewards[2],
                 false);
 
-        embed.addField("Raid Rewards",
+        embed.addField("Raid Rewards", 
                 "**Slot 1 (2 bosses):** " + raidRewards[0] + "\n" +
                         "**Slot 2 (4 bosses):** " + raidRewards[1] + "\n" +
                         "**Slot 3 (6 bosses):** " + raidRewards[2],
@@ -279,9 +318,6 @@ public class WowVaultService {
         if (needsImprovement) {
             embed.addField("How to Improve", howToImprove.toString(), false);
         }
-
-        // Haftalık M+ koşularını ekle
-        addWeeklyRunsToEmbed(embed, raiderIoData);
 
         // Footer ekle
         embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
