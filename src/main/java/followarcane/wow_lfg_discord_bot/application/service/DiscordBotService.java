@@ -134,11 +134,11 @@ public class DiscordBotService extends ListenerAdapter {
                             .addOption(OptionType.STRING, "name", "Character name", true)
                             .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
                             .addOption(OptionType.STRING, "region", "Region (EU, US)", true),
-                    Commands.slash("bis-gear", "Show Best in Slot gear from SimulationCraft")
-                            .addOption(OptionType.STRING, "class", "Character class", true)
-                            .addOption(OptionType.STRING, "spec", "Character specialization(leave empty for all)", true)
-                            .addOption(OptionType.STRING, "hero_talent", "Hero talent (leave empty for all)", false)
-                            .addOption(OptionType.STRING, "slot", "Equipment slot (head, neck, etc. leave empty for all)", false)
+                    Commands.slash("bis-gear", "Show Best in Slot gear for any class/spec/hero talent combination")
+                            .addOption(OptionType.STRING, "class", "Character class (e.g. priest, warrior, mage)", true)
+                            .addOption(OptionType.STRING, "spec", "Character specialization (e.g. shadow, arms, fire)", true)
+                            .addOption(OptionType.STRING, "hero_talent", "[Optional] Specific hero talent (leave empty to see all)", false)
+                            .addOption(OptionType.STRING, "slot", "[Optional] Equipment slot (e.g. head, chest, weapon, trinket)", false)
             ).queue(
                     success -> log.info("Successfully updated slash commands"),
                     error -> log.error("Error updating slash commands: {}", error.getMessage())
@@ -263,28 +263,39 @@ public class DiscordBotService extends ListenerAdapter {
     }
 
     private void handleBisGearCommand(SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
-
-        String slot = event.getOption("slot") != null ? event.getOption("slot").getAsString() : "";
         String className = event.getOption("class").getAsString();
         String specName = event.getOption("spec").getAsString();
         String heroTalent = event.getOption("hero_talent") != null ? event.getOption("hero_talent").getAsString() : "";
+        String slot = event.getOption("slot") != null ? event.getOption("slot").getAsString() : "";
 
-        // Log the command parameters
         log.info("BIS Gear Command - Class: {}, Spec: {}, Hero Talent: {}, Slot: {}",
-                className, specName, heroTalent, slot.isEmpty() ? "All" : slot);
+                className, specName, heroTalent.isEmpty() ? "All" : heroTalent, slot.isEmpty() ? "All" : slot);
 
         try {
-            // Format slot name (first letter uppercase, rest lowercase)
-            if (!slot.isEmpty()) {
-                slot = slot.substring(0, 1).toUpperCase() + slot.substring(1).toLowerCase();
-            }
+            // Hero talent belirtilmişse veya slot belirtilmişse, tek bir embed göster
+            if (!heroTalent.isEmpty() || !slot.isEmpty()) {
+                EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
+                event.replyEmbeds(embed.build()).queue();
+            } else {
+                // Hero talent belirtilmemişse ve slot belirtilmemişse, her hero talent için ayrı bir embed göster
+                List<EmbedBuilder> embeds = bisGearService.createBisGearEmbedsForAllHeroTalents(className, specName);
 
-            EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
-            event.getHook().sendMessageEmbeds(embed.build()).queue();
+                if (embeds.isEmpty()) {
+                    event.reply("No BIS gear information found for " + className + " " + specName).queue();
+                    return;
+                }
+
+                // İlk embed'i göster
+                event.replyEmbeds(embeds.get(0).build()).queue();
+
+                // Diğer embed'leri takip mesajları olarak gönder
+                for (int i = 1; i < embeds.size(); i++) {
+                    event.getHook().sendMessageEmbeds(embeds.get(i).build()).queue();
+                }
+            }
         } catch (Exception e) {
             log.error("Error processing BIS gear command: {}", e.getMessage(), e);
-            event.getHook().sendMessage("An error occurred while processing your request. Please check your input and try again.").queue();
+            event.reply("An error occurred while processing your request. Please try again later.").setEphemeral(true).queue();
         }
     }
 
