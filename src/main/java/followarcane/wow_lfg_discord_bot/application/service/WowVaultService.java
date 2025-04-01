@@ -187,32 +187,35 @@ public class WowVaultService {
         StringBuilder raidSection = new StringBuilder();
         raidSection.append("**Raids**\n");
         raidSection.append("```\n");
-        raidSection.append("Defeat 2 Bosses       Defeat 4 Bosses       Defeat 6 Bosses\n");
+        raidSection.append("Defeat 2 Bosses          Defeat 4 Bosses          Defeat 6 Bosses\n");
+        raidSection.append("\n");
 
         // Raid ödüllerinin durumunu göster
         String slot1Status = raidBossCounts[0] >= 2 ? "✅" : "🔒";
         String slot2Status = raidBossCounts[0] >= 4 ? "✅" : "🔒";
         String slot3Status = raidBossCounts[0] >= 6 ? "✅" : "🔒";
 
-        // İlerleme durumunu göster (tamamlanan slotlar için max değeri göster)
+        // İlerleme durumunu göster
         String raid1Progress = raidBossCounts[0] >= 2 ? "2/2" : raidBossCounts[0] + "/2";
         String raid2Progress = raidBossCounts[0] >= 4 ? "4/4" : raidBossCounts[0] + "/4";
         String raid3Progress = raidBossCounts[0] >= 6 ? "6/6" : raidBossCounts[0] + "/6";
 
-        // Her slot için ayrı satırlar oluştur
-        raidSection.append("       ").append(slot1Status).append("                    ").append(slot2Status).append("                    ").append(slot3Status).append("\n");
-        raidSection.append("      ").append(raid1Progress).append("                   ").append(raid2Progress).append("                   ").append(raid3Progress).append("\n");
+        // String.format kullanarak sabit genişlikli alanlar oluştur
+        raidSection.append(String.format("%-25s %-25s %-25s\n", slot1Status, slot2Status, slot3Status));
+        raidSection.append(String.format("%-25s %-25s %-25s\n", raid1Progress, raid2Progress, raid3Progress));
 
-        // Ödülleri göster (sadece varsa)
+        // Ödülleri göster
         if (!raidRewards[0].equals("No Reward")) {
-            raidSection.append("  ").append(raidRewards[0]);
+            raidSection.append(String.format("%-25s", raidRewards[0]));
+        } else {
+            raidSection.append(String.format("%-25s", ""));
         }
-        raidSection.append("         ");
 
         if (!raidRewards[1].equals("No Reward")) {
-            raidSection.append(raidRewards[1]);
+            raidSection.append(String.format("%-25s", raidRewards[1]));
+        } else {
+            raidSection.append(String.format("%-25s", ""));
         }
-        raidSection.append("           ");
 
         if (!raidRewards[2].equals("No Reward")) {
             raidSection.append(raidRewards[2]);
