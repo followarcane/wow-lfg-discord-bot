@@ -2,7 +2,7 @@ server:
   port: 1905
 
 app:
-  version: 1.0.32  # App Version
+  version: 1.0.33  # App Version
   version-file-path: /root/projects/wowdiscordbot/version.txt
   discord:
     webhook-url: "${PROD_DISCORD_WEBHOOK_URL}"
