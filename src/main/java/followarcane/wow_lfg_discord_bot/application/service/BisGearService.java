@@ -729,7 +729,7 @@ public class BisGearService {
                     String itemName = (String) slotInfo.get("name");
                     String itemUrl = (String) slotInfo.get("url");
 
-                    embed.addField(slotName, "[" + itemName + "](" + itemUrl + ")", true);
+                    embed.addField(slotName, "[" + itemName + "](" + itemUrl + ")", false);
                 }
 
                 embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
