@@ -124,4 +124,5 @@ application-local.yml
 /build/classes/java/main/followarcane/wow_lfg_discord_bot/application/response/ServerFeatureResponse.class
 /.vscode/settings.json
 /.idea/wow-lfg-discord-bot.iml
-/build/libs/WoW-Lfg-Discord-Bot-0.0.1-SNAPSHOT-plain.jar
+/build/
+/.venv
