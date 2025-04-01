@@ -739,11 +739,7 @@ public class WowVaultService {
         else if (mythicLevel == 7) return "Hero 4 (658)";
         else if (mythicLevel == 8) return "Hero 4 (658)";
         else if (mythicLevel == 9) return "Hero 4 (658)";
-        else if (mythicLevel == 10) return "Myth 1 (662)";
-        else if (mythicLevel == 11) return "Myth 1 (662)";
-        else if (mythicLevel == 12) return "Myth 1 (662)";
-        else if (mythicLevel >= 13) return "Myth 1 (662)";
-        else return "Unknown";
+        else return "Myth 1 (662)";
     }
 
     /**
