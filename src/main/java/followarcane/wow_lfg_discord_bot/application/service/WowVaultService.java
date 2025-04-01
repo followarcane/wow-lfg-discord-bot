@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import followarcane.wow_lfg_discord_bot.application.util.ClassColorCodeHelper;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,19 +21,6 @@ public class WowVaultService {
     private final RestTemplate restTemplate;
     private final ClassColorCodeHelper classColorCodeHelper;
     private final BattleNetApiService battleNetApiService;
-
-    @Value("${battle-net.client.id}")
-    private String battleNetClientApi;
-
-    @Value("${battle-net.client.secret}")
-    private String battleNetClientSecret;
-
-    @Value("${battle-net.api.url}")
-    private String battleNetApiUrl;
-
-    // Token önbelleği için değişkenler
-    private String blizzardToken;
-    private long tokenExpiry = 0;
 
     public WowVaultService(RestTemplate restTemplate, ClassColorCodeHelper classColorCodeHelper, BattleNetApiService battleNetApiService) {
         this.restTemplate = restTemplate;
@@ -255,58 +241,97 @@ public class WowVaultService {
 
             // Raid iyileştirme önerileri
             if (blizzardData != null) {
-                int[] bossesKilledByDifficulty = calculateWeeklyRaidProgress(blizzardData, region);
-                int totalBossesKilled = 0;
-                String difficultyName = "normal";
+                try {
+                    // Her boss için en yüksek zorluk seviyesini takip et
+                    Map<String, String> bossHighestDifficulty = new HashMap<>();
 
-                if (bossesKilledByDifficulty[2] > 0) {
-                    totalBossesKilled = bossesKilledByDifficulty[2];
-                    difficultyName = "mythic";
-                } else if (bossesKilledByDifficulty[1] > 0) {
-                    totalBossesKilled = bossesKilledByDifficulty[1];
-                    difficultyName = "heroic";
-                } else {
-                    totalBossesKilled = bossesKilledByDifficulty[0];
-                }
+                    // Haftalık reset zamanını hesapla
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                    cal.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+                    cal.set(Calendar.HOUR_OF_DAY, region.equalsIgnoreCase("eu") ? 7 : 15);
+                    cal.set(Calendar.MINUTE, 0);
+                    cal.set(Calendar.SECOND, 0);
+                    cal.set(Calendar.MILLISECOND, 0);
 
-                if (totalBossesKilled == 0) {
-                    howToImprove.append("• Start raiding Liberation of Undermine to unlock raid slots\n\n");
-                    needsImprovement = true;
-                } else {
-                    // Slot 1 için öneri (2 boss)
-                    if (totalBossesKilled < 2) {
-                        int remaining = 2 - totalBossesKilled;
-                        howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
-                                .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 1 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
+                    long currentTime = System.currentTimeMillis();
+                    if (cal.getTimeInMillis() > currentTime) {
+                        cal.add(Calendar.WEEK_OF_YEAR, -1);
+                    }
+
+                    long weekStartTime = cal.getTimeInMillis();
+
+                    // Unique boss sayısını ve zorluk seviyelerini hesapla
+                    int uniqueBossesKilled = 0;
+                    int mythicBosses = 0;
+                    int heroicBosses = 0;
+                    int normalBosses = 0;
+                    int lfrBosses = 0;
+
+                    // "Liberation of Undermine" raid'ini bul ve boss'ları hesapla
+                    // (Mevcut kod ile aynı mantık)
+
+                    // Unique boss sayısını hesapla
+                    uniqueBossesKilled = bossHighestDifficulty.size();
+
+                    // Zorluk seviyelerine göre boss sayılarını hesapla
+                    for (String difficulty : bossHighestDifficulty.values()) {
+                        switch (difficulty) {
+                            case "mythic":
+                                mythicBosses++;
+                                break;
+                            case "heroic":
+                                heroicBosses++;
+                                break;
+                            case "normal":
+                                normalBosses++;
+                                break;
+                            case "lfr":
+                                lfrBosses++;
+                                break;
+                        }
+                    }
+
+                    // Slot 1 için iyileştirme önerileri (2+ boss)
+                    if (uniqueBossesKilled < 2) {
+                        howToImprove.append("• Kill at least 2 raid bosses to unlock Slot 1 raid reward\n\n");
+                        needsImprovement = true;
+                    } else if (mythicBosses < 2 && heroicBosses + mythicBosses >= 2) {
+                        // Heroic seviyesinde ödül alıyor, mythic'e yükseltmek için öneri
+                        howToImprove.append("• Kill ").append(2 - mythicBosses)
+                                .append(" more mythic boss").append(2 - mythicBosses > 1 ? "es" : "")
+                                .append(" to upgrade Slot 1 raid reward to Myth 1 (662)\n\n");
                         needsImprovement = true;
                     }
 
-                    // Slot 2 için öneri (4 boss)
-                    if (totalBossesKilled < 4) {
-                        int remaining = 4 - totalBossesKilled;
-                        howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
-                                .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 2 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
+                    // Slot 2 için iyileştirme önerileri (4+ boss)
+                    if (uniqueBossesKilled < 4) {
+                        howToImprove.append("• Kill ").append(4 - uniqueBossesKilled)
+                                .append(" more raid boss").append(4 - uniqueBossesKilled > 1 ? "es" : "")
+                                .append(" to unlock Slot 2 raid reward\n\n");
+                        needsImprovement = true;
+                    } else if (mythicBosses < 4 && heroicBosses + mythicBosses >= 4) {
+                        // Heroic seviyesinde ödül alıyor, mythic'e yükseltmek için öneri
+                        howToImprove.append("• Kill ").append(4 - mythicBosses)
+                                .append(" more mythic boss").append(4 - mythicBosses > 1 ? "es" : "")
+                                .append(" to upgrade Slot 2 raid reward to Myth 1 (662)\n\n");
                         needsImprovement = true;
                     }
 
-                    // Slot 3 için öneri (6 boss)
-                    if (totalBossesKilled < 6) {
-                        int remaining = 6 - totalBossesKilled;
-                        howToImprove.append("• Kill ").append(remaining).append(" more ").append(difficultyName)
-                                .append(" boss").append(remaining > 1 ? "es" : "")
-                                .append(" to unlock Slot 3 raid reward (").append(getRaidReward(difficultyName)).append(")\n\n");
+                    // Slot 3 için iyileştirme önerileri (6+ boss)
+                    if (uniqueBossesKilled < 6) {
+                        howToImprove.append("• Kill ").append(6 - uniqueBossesKilled)
+                                .append(" more raid boss").append(6 - uniqueBossesKilled > 1 ? "es" : "")
+                                .append(" to unlock Slot 3 raid reward\n\n");
+                        needsImprovement = true;
+                    } else if (mythicBosses < 6 && heroicBosses + mythicBosses >= 6) {
+                        // Heroic seviyesinde ödül alıyor, mythic'e yükseltmek için öneri
+                        howToImprove.append("• Kill ").append(6 - mythicBosses)
+                                .append(" more mythic boss").append(6 - mythicBosses > 1 ? "es" : "")
+                                .append(" to upgrade Slot 3 raid reward to Myth 1 (662)\n\n");
                         needsImprovement = true;
                     }
-
-                    // Daha yüksek zorluk seviyesi için öneri
-                    if (!difficultyName.equals("mythic")) {
-                        String nextDifficulty = difficultyName.equals("normal") ? "heroic" : "mythic";
-                        howToImprove.append("• Kill bosses in ").append(nextDifficulty)
-                                .append(" difficulty to get better rewards (").append(getRaidReward(nextDifficulty)).append(")\n\n");
-                        needsImprovement = true;
-                    }
+                } catch (Exception e) {
+                    log.error("Error generating raid improvement suggestions: {}", e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
@@ -714,11 +739,7 @@ public class WowVaultService {
         else if (mythicLevel == 7) return "Hero 4 (658)";
         else if (mythicLevel == 8) return "Hero 4 (658)";
         else if (mythicLevel == 9) return "Hero 4 (658)";
-        else if (mythicLevel == 10) return "Myth 1 (662)";
-        else if (mythicLevel == 11) return "Myth 1 (662)";
-        else if (mythicLevel == 12) return "Myth 1 (662)";
-        else if (mythicLevel >= 13) return "Myth 1 (662)";
-        else return "Unknown";
+        else return "Myth 1 (662)";
     }
 
     /**
