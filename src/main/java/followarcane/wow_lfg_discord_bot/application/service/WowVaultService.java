@@ -135,37 +135,102 @@ public class WowVaultService {
         String profileUrl = raiderIoData.get("profile_url").asText();
         String thumbnailUrl = raiderIoData.get("thumbnail_url").asText();
 
-        embed.setTitle(characterName + " | " + characterRealm + " | Great Vault Preview", profileUrl);
-        embed.setThumbnail(thumbnailUrl);
-        embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
+        // Altın rengini kullan (WoW UI'ına benzer)
+        Color goldColor = new Color(207, 171, 49);
+        embed.setColor(goldColor);
 
+        // Başlık ve açıklama
+        embed.setTitle(characterName + "'s Great Vault", profileUrl);
+        embed.setDescription("**Add items to the Great Vault by completing activities each week.\nOnce per week you may select a single reward.**");
+        
         // M+ Great Vault ödüllerini hesapla
         String[] mythicPlusRewards = calculateMythicPlusRewards(raiderIoData);
 
         // Raid Great Vault ödüllerini hesapla
         String[] raidRewards = calculateRaidRewards(blizzardData, region);
 
-        // Great Vault bilgilerini ekle
-        embed.addField("Raid Rewards",
-                "**Slot 1 (2 bosses):** " + raidRewards[0] + "\n" +
-                        "**Slot 2 (4 bosses):** " + raidRewards[1] + "\n" +
-                        "**Slot 3 (6 bosses):** " + raidRewards[2],
-                false);
+        // Raid bölümü
+        StringBuilder raidSection = new StringBuilder();
+        raidSection.append("**Raids**\n");
+        raidSection.append("```\n");
+        raidSection.append("Defeat 2 Liberation of    Defeat 4 Liberation of    Defeat 6 Liberation of\n");
+        raidSection.append("Undermine Bosses          Undermine Bosses          Undermine Bosses\n");
+        raidSection.append("\n");
 
-        embed.addField("Mythic+ Rewards", 
-                "**Slot 1 (1 run):** " + mythicPlusRewards[0] + "\n" +
-                        "**Slot 2 (4 runs):** " + mythicPlusRewards[1] + "\n" +
-                        "**Slot 3 (8 runs):** " + mythicPlusRewards[2],
-                false);
+        // Raid ödüllerinin durumunu göster
+        String slot1Status = raidRewards[0].equals("No Reward") ? "🔒" : "✅";
+        String slot2Status = raidRewards[1].equals("No Reward") ? "🔒" : "✅";
+        String slot3Status = raidRewards[2].equals("No Reward") ? "🔒" : "✅";
 
+        raidSection.append(String.format("%-25s %-25s %-25s\n", slot1Status, slot2Status, slot3Status));
+        raidSection.append(String.format("%-25s %-25s %-25s\n", "0/2", "0/4", "0/6"));
+        raidSection.append("```\n");
 
+        // Mythic+ bölümü
+        StringBuilder dungeonSection = new StringBuilder();
+        dungeonSection.append("**Dungeons**\n");
+        dungeonSection.append("```\n");
+        dungeonSection.append("Complete 1 Heroic,      Complete 4 Heroic,      Complete 8 Heroic,\n");
+        dungeonSection.append("Mythic, or Timewalking  Mythic, or Timewalking  Mythic, or Timewalking\n");
+        dungeonSection.append("Dungeon                 Dungeons                Dungeons\n");
+        dungeonSection.append("\n");
+
+        // M+ ödüllerinin durumunu göster
+        JsonNode runsNode = raiderIoData.path("mythic_plus_weekly_highest_level_runs");
+        int runCount = runsNode.size();
+
+        String m1Status = mythicPlusRewards[0].equals("No Reward") ? "🔒" : "✅";
+        String m2Status = mythicPlusRewards[1].equals("No Reward") ? "🔒" : "✅";
+        String m3Status = mythicPlusRewards[2].equals("No Reward") ? "🔒" : "✅";
+
+        dungeonSection.append(String.format("%-25s %-25s %-25s\n", m1Status, m2Status, m3Status));
+        dungeonSection.append(String.format("%-25s %-25s %-25s\n", runCount + "/1", runCount + "/4", runCount + "/8"));
+        dungeonSection.append("```\n");
+
+        // Ödüller bölümü
+        StringBuilder rewardsSection = new StringBuilder();
+        rewardsSection.append("**Available Rewards**\n");
+        rewardsSection.append("```\n");
+
+        // Raid ödülleri
+        if (!raidRewards[0].equals("No Reward")) {
+            rewardsSection.append("Raid Slot 1: " + raidRewards[0] + "\n");
+        }
+        if (!raidRewards[1].equals("No Reward")) {
+            rewardsSection.append("Raid Slot 2: " + raidRewards[1] + "\n");
+        }
+        if (!raidRewards[2].equals("No Reward")) {
+            rewardsSection.append("Raid Slot 3: " + raidRewards[2] + "\n");
+        }
+
+        // M+ ödülleri
+        if (!mythicPlusRewards[0].equals("No Reward")) {
+            rewardsSection.append("M+ Slot 1: " + mythicPlusRewards[0] + "\n");
+        }
+        if (!mythicPlusRewards[1].equals("No Reward")) {
+            rewardsSection.append("M+ Slot 2: " + mythicPlusRewards[1] + "\n");
+        }
+        if (!mythicPlusRewards[2].equals("No Reward")) {
+            rewardsSection.append("M+ Slot 3: " + mythicPlusRewards[2] + "\n");
+        }
+
+        if (rewardsSection.toString().equals("**Available Rewards**\n```\n")) {
+            rewardsSection.append("No rewards available yet. Complete activities to unlock rewards.\n");
+        }
+
+        rewardsSection.append("```\n");
+
+        // Alanları ekle
+        embed.addField("", raidSection.toString(), false);
+        embed.addField("", dungeonSection.toString(), false);
+        embed.addField("", rewardsSection.toString(), false);
+        
         // How to Improve kısmını ekle
         StringBuilder howToImprove = new StringBuilder();
         boolean needsImprovement = false;
 
         try {
             // M+ iyileştirme önerileri
-            JsonNode runsNode = raiderIoData.path("mythic_plus_weekly_highest_level_runs");
             List<Integer> runLevels = new ArrayList<>();
 
             if (!runsNode.isMissingNode() && runsNode.isArray()) {
@@ -173,7 +238,6 @@ public class WowVaultService {
                     runLevels.add(run.get("mythic_level").asInt());
                 }
 
-                // Seviyeleri büyükten küçüğe sırala
                 Collections.sort(runLevels, Collections.reverseOrder());
 
                 // Slot 1 için öneri
