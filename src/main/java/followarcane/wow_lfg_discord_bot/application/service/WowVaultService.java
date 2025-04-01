@@ -185,7 +185,6 @@ public class WowVaultService {
 
         // Raid bölümü
         StringBuilder raidSection = new StringBuilder();
-        raidSection.append("**Raids**\n");
 
         // Raid ödüllerinin durumunu göster
         String slot1Status = raidBossCounts[0] >= 2 ? "✅" : "🔒";
@@ -221,7 +220,6 @@ public class WowVaultService {
 
         // Mythic+ bölümü
         StringBuilder dungeonSection = new StringBuilder();
-        dungeonSection.append("**Dungeons**\n");
 
         // M+ ödüllerinin durumunu göster
         String m1Status = totalMythicPlusRuns >= 1 ? "✅" : "🔒";
@@ -257,7 +255,6 @@ public class WowVaultService {
 
         // World bölümü
         StringBuilder worldSection = new StringBuilder();
-        worldSection.append("**World**\n");
 
         // World slotları için bilgi
         worldSection.append("Slot 1: Complete 2 Activities\n");
