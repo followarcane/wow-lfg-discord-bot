@@ -123,7 +123,7 @@ public class CharacterStatsService {
         mainStats.append("**Agility:** ").append(df.format(statsData.path("agility").path("effective").asLong())).append("\n");
         mainStats.append("**Intellect:** ").append(df.format(statsData.path("intellect").path("effective").asLong())).append("\n");
         mainStats.append("**Stamina:** ").append(df.format(statsData.path("stamina").path("effective").asLong())).append("\n");
-        mainStats.append("\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        mainStats.append("\n\n\n\n\n");
 
         embed.addField("__**PRIMARY STATS**__", mainStats.toString(), false);
 
@@ -134,7 +134,7 @@ public class CharacterStatsService {
         secondaryStats.append("**Mastery:** ").append(statsData.path("mastery").path("value").asText()).append("%\n");
         secondaryStats.append("**Versatility:** ").append(statsData.get("versatility_damage_done_bonus").asText()).append("%\n");
         secondaryStats.append("**Leech:** ").append(statsData.path("lifesteal").path("value").asText()).append("%\n");
-        secondaryStats.append("\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        secondaryStats.append("\n\n\n\n\n");
 
         embed.addField("__**SECONDARY STATS**__", secondaryStats.toString(), false);
 
@@ -145,7 +145,7 @@ public class CharacterStatsService {
         defenseStats.append("**Parry:** ").append(statsData.path("parry").path("value").asText()).append("%\n");
         defenseStats.append("**Block:** ").append(statsData.path("block").path("value").asText()).append("%\n");
         defenseStats.append("**Avoidance:** ").append(statsData.path("avoidance").path("rating_bonus").asText()).append("%\n");
-        defenseStats.append("\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        defenseStats.append("\n\n\n\n\n");
 
         embed.addField("__**DEFENSE**__", defenseStats.toString(), false);
 
@@ -166,7 +166,7 @@ public class CharacterStatsService {
                     .append(" - ").append(df.format(statsData.get("main_hand_damage_max").asDouble())).append("\n");
             attackStats.append("**Attack Speed:** ").append(statsData.get("main_hand_speed").asText()).append("\n");
         }
-        attackStats.append("\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        attackStats.append("\n\n\n\n\n");
 
         embed.addField("__**ATTACK**__", attackStats.toString(), false);
 

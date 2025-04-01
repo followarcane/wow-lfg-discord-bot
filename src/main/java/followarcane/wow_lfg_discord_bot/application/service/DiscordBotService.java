@@ -75,7 +75,9 @@ public class DiscordBotService extends ListenerAdapter {
 
     private final CharacterStatsService characterStatsService;
 
-    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService, ClassColorCodeHelper classColorCodeHelper, WowVaultService wowVaultService, CharacterStatsService characterStatsService) {
+    private final BisGearService bisGearService;
+
+    public DiscordBotService(MessageRepository messageRepository, DiscordServerRepository discordServerRepository, DiscordService discordService, RequestConverter requestConverter, RestTemplate restTemplate, RecruitmentFilterService filterService, ClassColorCodeHelper classColorCodeHelper, WowVaultService wowVaultService, CharacterStatsService characterStatsService, BisGearService bisGearService) {
         this.messageRepository = messageRepository;
         this.discordServerRepository = discordServerRepository;
         this.discordService = discordService;
@@ -84,6 +86,7 @@ public class DiscordBotService extends ListenerAdapter {
         this.classColorCodeHelper = classColorCodeHelper;
         this.wowVaultService = wowVaultService;
         this.characterStatsService = characterStatsService;
+        this.bisGearService = bisGearService;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -130,7 +133,12 @@ public class DiscordBotService extends ListenerAdapter {
                     Commands.slash("char-stats", "Show character statistics")
                             .addOption(OptionType.STRING, "name", "Character name", true)
                             .addOption(OptionType.STRING, "realm", "Realm name (use dash for spaces, e.g. 'twisting-nether')", true)
-                            .addOption(OptionType.STRING, "region", "Region (EU, US)", true)
+                            .addOption(OptionType.STRING, "region", "Region (EU, US)", true),
+                    Commands.slash("bis-gear", "Show Best in Slot gear from SimulationCraft")
+                            .addOption(OptionType.STRING, "slot", "Equipment slot (head, neck, etc.)", false)
+                            .addOption(OptionType.STRING, "class", "Character class", true)
+                            .addOption(OptionType.STRING, "spec", "Character specialization", true)
+                            .addOption(OptionType.STRING, "hero_talent", "Hero talent (leave empty for all)", false)
             ).queue(
                     success -> log.info("Successfully updated slash commands"),
                     error -> log.error("Error updating slash commands: {}", error.getMessage())
@@ -172,6 +180,9 @@ public class DiscordBotService extends ListenerAdapter {
                 break;
             case "char-stats":
                 handleCharacterStatsCommand(event);
+                break;
+            case "bis-gear":
+                handleBisGearCommand(event);
                 break;
             default:
                 event.reply("Unknown command!").setEphemeral(true).queue();
@@ -248,6 +259,18 @@ public class DiscordBotService extends ListenerAdapter {
         String region = event.getOption("region").getAsString();
 
         EmbedBuilder embed = characterStatsService.createCharacterStatsEmbed(name, realm, region);
+        event.getHook().sendMessageEmbeds(embed.build()).queue();
+    }
+
+    private void handleBisGearCommand(SlashCommandInteractionEvent event) {
+        event.deferReply().queue();
+
+        String slot = event.getOption("slot") != null ? event.getOption("slot").getAsString() : "all";
+        String className = event.getOption("class").getAsString();
+        String specName = event.getOption("spec").getAsString();
+        String heroTalent = event.getOption("hero_talent") != null ? event.getOption("hero_talent").getAsString() : "";
+
+        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
 

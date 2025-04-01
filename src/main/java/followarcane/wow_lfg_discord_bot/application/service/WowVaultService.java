@@ -216,7 +216,7 @@ public class WowVaultService {
         if (!raidRewards[2].equals("No Reward")) {
             raidSection.append(" → " + raidRewards[2]);
         }
-        raidSection.append("\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        raidSection.append("\n\n\n\n\n");
 
         // Mythic+ bölümü
         StringBuilder dungeonSection = new StringBuilder();
@@ -251,7 +251,7 @@ public class WowVaultService {
         if (!mythicPlusRewards[2].equals("No Reward")) {
             dungeonSection.append(" → " + mythicPlusRewards[2]);
         }
-        dungeonSection.append("\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        dungeonSection.append("\n\n\n\n\n");
 
         // World bölümü
         StringBuilder worldSection = new StringBuilder();
@@ -272,7 +272,7 @@ public class WowVaultService {
         worldSection.append(" → Coming Soon");
         worldSection.append("\n\n");
 
-        worldSection.append("Note: World activities tracking will be implemented soon!");
+        worldSection.append("**Note: World activities tracking will be implemented soon!**");
 
         // Alanları ekle
         embed.addField("__**RAIDS**__", raidSection.toString(), false);
