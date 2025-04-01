@@ -217,7 +217,7 @@ public class WowVaultService {
         if (!raidRewards[2].equals("No Reward")) {
             raidSection.append(" → " + raidRewards[2]);
         }
-        raidSection.append("\n");
+        raidSection.append("\n____________________________________\n");
 
         // Mythic+ bölümü
         StringBuilder dungeonSection = new StringBuilder();
@@ -253,7 +253,7 @@ public class WowVaultService {
         if (!mythicPlusRewards[2].equals("No Reward")) {
             dungeonSection.append(" → " + mythicPlusRewards[2]);
         }
-        dungeonSection.append("\n");
+        dungeonSection.append("\n____________________________________\n");
 
         // World bölümü
         StringBuilder worldSection = new StringBuilder();
