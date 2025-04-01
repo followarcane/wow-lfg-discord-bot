@@ -187,7 +187,7 @@ public class WowVaultService {
         StringBuilder raidSection = new StringBuilder();
         raidSection.append("**Raids**\n");
         raidSection.append("```\n");
-        raidSection.append("Defeat 2 Bosses       Defeat 4 Bosses       Defeat 6 Bosses\n\n");
+        raidSection.append("Defeat 2 Bosses       Defeat 4 Bosses       Defeat 6 Bosses\n");
 
         // Raid ödüllerinin durumunu göster
         String slot1Status = raidBossCounts[0] >= 2 ? "✅" : "🔒";
@@ -199,20 +199,20 @@ public class WowVaultService {
         String raid2Progress = raidBossCounts[0] >= 4 ? "4/4" : raidBossCounts[0] + "/4";
         String raid3Progress = raidBossCounts[0] >= 6 ? "6/6" : raidBossCounts[0] + "/6";
 
-        // Her slot için ayrı satırlar kullan
-        raidSection.append(slot1Status + "                     " + slot2Status + "                     " + slot3Status + "\n");
-        raidSection.append(raid1Progress + "                   " + raid2Progress + "                   " + raid3Progress + "\n");
+        // Her slot için ayrı satırlar oluştur
+        raidSection.append("       ").append(slot1Status).append("                    ").append(slot2Status).append("                    ").append(slot3Status).append("\n");
+        raidSection.append("      ").append(raid1Progress).append("                   ").append(raid2Progress).append("                   ").append(raid3Progress).append("\n");
 
-        // Ödülleri göster
+        // Ödülleri göster (sadece varsa)
         if (!raidRewards[0].equals("No Reward")) {
-            raidSection.append(raidRewards[0]);
+            raidSection.append("  ").append(raidRewards[0]);
         }
-        raidSection.append("                ");
+        raidSection.append("         ");
 
         if (!raidRewards[1].equals("No Reward")) {
             raidSection.append(raidRewards[1]);
         }
-        raidSection.append("                ");
+        raidSection.append("           ");
 
         if (!raidRewards[2].equals("No Reward")) {
             raidSection.append(raidRewards[2]);
@@ -919,5 +919,10 @@ public class WowVaultService {
         }
 
         return bossHighestDifficulty;
+    }
+
+    // Yardımcı metot
+    private String padRight(String s, int n) {
+        return String.format("%-" + n + "s", s);
     }
 } 
