@@ -2,7 +2,7 @@ server:
   port: 1905
 
 app:
-  version: 1.0.30  # App Version
+  version: 1.0.31  # App Version
   version-file-path: /root/projects/wowdiscordbot/version.txt
   discord:
     webhook-url: "${PROD_DISCORD_WEBHOOK_URL}"
@@ -10,6 +10,15 @@ app:
 wow-api:
   username: "${PROD_WOW_API_USERNAME}"
   password: "${PROD_WOW_API_PASSWORD}"
+
+battle-net:
+  api:
+    url: https://eu.api.blizzard.com
+  client:
+    id: "${PROD_BATTLE_NET_CLIENT_ID}"
+    secret: "${PROD_BATTLE_NET_CLIENT_SECRET}"
+  redirect:
+    uri: "${PROD_BATTLE_NET_CALLBACK_URL}"
 
 discord:
   api:
