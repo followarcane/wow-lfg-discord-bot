@@ -149,10 +149,13 @@ public class WowVaultService {
         String profileUrl = raiderIoData.get("profile_url").asText();
         String thumbnailUrl = raiderIoData.get("thumbnail_url").asText();
 
-        embed.setTitle(characterName + " | " + characterRealm + " | Great Vault Preview", profileUrl);
+        embed.setTitle(characterName + " | " + characterRealm + " | Great Vault", profileUrl);
         embed.setThumbnail(thumbnailUrl);
         embed.setColor(Color.decode(classColorCodeHelper.getClassColorCode(characterClass)));
 
+        // Başlık mesajı ekle
+        embed.setDescription("**Add items to the Great Vault by completing activities each week.\nOnce per week you may select a single reward.**");
+        
         // M+ koşu sayısını hesapla
         int totalMythicPlusRuns = 0;
         JsonNode runsNode = raiderIoData.path("mythic_plus_weekly_highest_level_runs");
@@ -193,28 +196,83 @@ public class WowVaultService {
             raidRewards = calculateRaidRewardsFromCounts(raidBossCounts);
         }
 
-        // Great Vault bilgilerini ekle
-        StringBuilder raidRewardsText = new StringBuilder();
-        raidRewardsText.append("**Defeat 2 Raid Bosses:** ").append(raidBossCounts[0] >= 2 ? "✅ " : "�� ")
-                .append(Math.min(raidBossCounts[0], 2)).append("/2 - ").append(raidRewards[0]).append("\n");
-        raidRewardsText.append("**Defeat 4 Raid Bosses:** ").append(raidBossCounts[0] >= 4 ? "✅ " : "🔒 ")
-                .append(Math.min(raidBossCounts[0], 4)).append("/4 - ").append(raidRewards[1]).append("\n");
-        raidRewardsText.append("**Defeat 6 Raid Bosses:** ").append(raidBossCounts[0] >= 6 ? "✅ " : "🔒 ")
-                .append(Math.min(raidBossCounts[0], 6)).append("/6 - ").append(raidRewards[2]);
+        // Raid bölümü
+        StringBuilder raidSection = new StringBuilder();
+        raidSection.append("## Raids\n\n");
 
-        embed.addField("Raid Rewards", raidRewardsText.toString(), false);
+        // Raid slotları
+        raidSection.append("**Defeat 2 Liberation of Undermine Bosses**\n");
+        if (raidBossCounts[0] >= 2) {
+            raidSection.append("✅ ").append(raidRewards[0]);
+        } else {
+            raidSection.append("🔒 ").append(raidBossCounts[0]).append("/2");
+        }
+        raidSection.append("\n\n");
 
-        StringBuilder mythicPlusRewardsText = new StringBuilder();
-        mythicPlusRewardsText.append("**Complete 1 Dungeon:** ").append(totalMythicPlusRuns >= 1 ? "✅ " : "🔒 ")
-                .append(Math.min(totalMythicPlusRuns, 1)).append("/1 - ").append(mythicPlusRewards[0]).append("\n");
-        mythicPlusRewardsText.append("**Complete 4 Dungeons:** ").append(totalMythicPlusRuns >= 4 ? "✅ " : "🔒 ")
-                .append(Math.min(totalMythicPlusRuns, 4)).append("/4 - ").append(mythicPlusRewards[1]).append("\n");
-        mythicPlusRewardsText.append("**Complete 8 Dungeons:** ").append(totalMythicPlusRuns >= 8 ? "✅ " : "🔒 ")
-                .append(Math.min(totalMythicPlusRuns, 8)).append("/8 - ").append(mythicPlusRewards[2]);
+        raidSection.append("**Defeat 4 Liberation of Undermine Bosses**\n");
+        if (raidBossCounts[0] >= 4) {
+            raidSection.append("✅ ").append(raidRewards[1]);
+        } else {
+            raidSection.append("🔒 ").append(raidBossCounts[0]).append("/4");
+        }
+        raidSection.append("\n\n");
 
-        embed.addField("Mythic+ Rewards", mythicPlusRewardsText.toString(), false);
-        
-        // How to Improve kısmını ekle
+        raidSection.append("**Defeat 6 Liberation of Undermine Bosses**\n");
+        if (raidBossCounts[0] >= 6) {
+            raidSection.append("✅ ").append(raidRewards[2]);
+        } else {
+            raidSection.append("🔒 ").append(raidBossCounts[0]).append("/6");
+        }
+
+        embed.addField("", raidSection.toString(), false);
+
+        // Dungeons bölümü
+        StringBuilder dungeonSection = new StringBuilder();
+        dungeonSection.append("## Dungeons\n\n");
+
+        // Dungeon slotları
+        dungeonSection.append("**Complete 1 Heroic, Mythic, or Timewalking Dungeon**\n");
+        if (totalMythicPlusRuns >= 1) {
+            dungeonSection.append("✅ ").append(mythicPlusRewards[0]);
+        } else {
+            dungeonSection.append("🔒 ").append(totalMythicPlusRuns).append("/1");
+        }
+        dungeonSection.append("\n\n");
+
+        dungeonSection.append("**Complete 4 Heroic, Mythic, or Timewalking Dungeons**\n");
+        if (totalMythicPlusRuns >= 4) {
+            dungeonSection.append("✅ ").append(mythicPlusRewards[1]);
+        } else {
+            dungeonSection.append("🔒 ").append(totalMythicPlusRuns).append("/4");
+        }
+        dungeonSection.append("\n\n");
+
+        dungeonSection.append("**Complete 8 Heroic, Mythic, or Timewalking Dungeons**\n");
+        if (totalMythicPlusRuns >= 8) {
+            dungeonSection.append("✅ ").append(mythicPlusRewards[2]);
+        } else {
+            dungeonSection.append("🔒 ").append(totalMythicPlusRuns).append("/8");
+        }
+
+        embed.addField("", dungeonSection.toString(), false);
+
+        // PvP bölümü (opsiyonel, veriler yoksa)
+        StringBuilder pvpSection = new StringBuilder();
+        pvpSection.append("## World\n\n");
+
+        // PvP slotları (veriler olmadığı için kilitli gösteriyoruz)
+        pvpSection.append("**Complete 2 Delves or World Activities**\n");
+        pvpSection.append("🔒 0/2\n\n");
+
+        pvpSection.append("**Complete 4 Delves or World Activities**\n");
+        pvpSection.append("🔒 0/4\n\n");
+
+        pvpSection.append("**Complete 8 Delves or World Activities**\n");
+        pvpSection.append("🔒 0/8");
+
+        embed.addField("", pvpSection.toString(), false);
+
+        // How to Improve kısmını ekle (opsiyonel)
         StringBuilder howToImprove = new StringBuilder();
         boolean needsImprovement = false;
 
