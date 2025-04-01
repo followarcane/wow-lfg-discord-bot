@@ -157,10 +157,7 @@ public class WowVaultService {
         String[] mythicPlusRewards = calculateMythicPlusRewards(raiderIoData);
 
         // Raid Great Vault ödüllerini hesapla
-        String[] raidRewards = {"No raid data available", "No raid data available", "No raid data available"};
-        if (blizzardData != null) {
-            raidRewards = calculateRaidRewards(blizzardData, region);
-        }
+        String[] raidRewards = calculateRaidRewards(blizzardData, region);
 
         // Great Vault bilgilerini ekle
         embed.addField("Raid Rewards",
@@ -381,72 +378,165 @@ public class WowVaultService {
     }
 
     /**
-     * Raid verilerine göre Great Vault ödüllerini hesaplar
+     * Raid Great Vault ödüllerini hesaplar
      */
     private String[] calculateRaidRewards(JsonNode blizzardData, String region) {
-        String[] rewards = new String[3];
-
+        String[] rewards = {"No Reward", "No Reward", "No Reward"};
+        
         try {
-            // Her zorluk seviyesi için bu hafta öldürülen boss sayısını hesapla
-            int[] bossesKilledByDifficulty = calculateWeeklyRaidProgress(blizzardData, region);
-
-            // En yüksek zorluk seviyesini ve toplam boss sayısını bul
-            String highestDifficulty = "normal";
-            int totalBossesKilled = 0;
-
-            if (bossesKilledByDifficulty[2] > 0) {
-                highestDifficulty = "mythic";
-                totalBossesKilled = bossesKilledByDifficulty[2];
-            } else if (bossesKilledByDifficulty[1] > 0) {
-                highestDifficulty = "heroic";
-                totalBossesKilled = bossesKilledByDifficulty[1];
-            } else {
-                totalBossesKilled = bossesKilledByDifficulty[0];
+            if (blizzardData == null) {
+                return rewards;
             }
 
-            log.info("Highest difficulty: {}, Total bosses killed: {}", highestDifficulty, totalBossesKilled);
+            // Her boss için en yüksek zorluk seviyesini takip et
+            Map<String, String> bossHighestDifficulty = new HashMap<>();
+            int uniqueBossesKilled = 0;
+            String highestOverallDifficulty = "none";
 
+            // "Liberation of Undermine" raid'ini bul
+            if (blizzardData.has("expansions") && blizzardData.get("expansions").isArray()) {
+                for (JsonNode expansion : blizzardData.get("expansions")) {
+                    if (expansion.has("instances") && expansion.get("instances").isArray()) {
+                        for (JsonNode instanceNode : expansion.get("instances")) {
+                            if (instanceNode.has("instance") &&
+                                    instanceNode.get("instance").has("name") &&
+                                    instanceNode.get("instance").get("name").asText().equals("Liberation of Undermine")) {
+
+                                // Haftalık reset zamanını hesapla
+                                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                                cal.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+                                cal.set(Calendar.HOUR_OF_DAY, region.equalsIgnoreCase("eu") ? 7 : 15);
+                                cal.set(Calendar.MINUTE, 0);
+                                cal.set(Calendar.SECOND, 0);
+                                cal.set(Calendar.MILLISECOND, 0);
+
+                                if (cal.getTimeInMillis() > System.currentTimeMillis()) {
+                                    cal.add(Calendar.WEEK_OF_YEAR, -1);
+                                }
+
+                                long weekStartTime = cal.getTimeInMillis();
+
+                                // Her zorluk seviyesi için kontrol et
+                                if (instanceNode.has("modes") && instanceNode.get("modes").isArray()) {
+                                    for (JsonNode modeNode : instanceNode.get("modes")) {
+                                        String difficulty = modeNode.path("difficulty").path("type").asText().toLowerCase();
+
+                                        // Zorluk seviyesini sırala (mythic > heroic > normal > lfr)
+                                        if (compareDifficulty(difficulty, highestOverallDifficulty) > 0) {
+                                            highestOverallDifficulty = difficulty;
+                                        }
+
+                                        if (modeNode.has("progress")) {
+                                            JsonNode progressNode = modeNode.get("progress");
+
+                                            if (progressNode.has("encounters") && progressNode.get("encounters").isArray()) {
+                                                for (JsonNode encounterNode : progressNode.get("encounters")) {
+                                                    if (encounterNode.has("last_kill_timestamp")) {
+                                                        long killTime = encounterNode.get("last_kill_timestamp").asLong();
+
+                                                        // Bu hafta öldürüldü mü kontrol et
+                                                        if (killTime >= weekStartTime) {
+                                                            String bossId = encounterNode.path("encounter").path("id").asText();
+                                                            String bossName = encounterNode.path("encounter").path("name").asText();
+
+                                                            // Bu boss için daha önce daha yüksek zorluk seviyesinde kill var mı?
+                                                            String currentHighest = bossHighestDifficulty.getOrDefault(bossId, "none");
+
+                                                            if (compareDifficulty(difficulty, currentHighest) > 0) {
+                                                                // Daha yüksek zorluk seviyesi bulundu
+                                                                bossHighestDifficulty.put(bossId, difficulty);
+                                                                log.debug("Boss {} killed at {} difficulty", bossName, difficulty);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Unique boss sayısını hesapla
+                                uniqueBossesKilled = bossHighestDifficulty.size();
+                                log.info("Unique bosses killed this week: {}", uniqueBossesKilled);
+                                log.info("Highest difficulty encountered: {}", highestOverallDifficulty);
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
             // Ödülleri hesapla
-            String rewardText = getRaidReward(highestDifficulty);
+            String rewardText = getRaidReward(highestOverallDifficulty);
 
-            // Slot 1 (2 bosses)
-            if (totalBossesKilled >= 2) {
+            // Slot 1: 2+ unique boss
+            if (uniqueBossesKilled >= 2) {
                 rewards[0] = rewardText;
-            } else if (totalBossesKilled > 0) {
-                rewards[0] = "No Reward";
-            } else {
-                rewards[0] = "No Reward";
             }
 
-            // Slot 2 (4 bosses)
-            if (totalBossesKilled >= 4) {
+            // Slot 2: 4+ unique boss
+            if (uniqueBossesKilled >= 4) {
                 rewards[1] = rewardText;
-            } else if (totalBossesKilled > 0) {
-                rewards[1] = "No Reward";
-            } else {
-                rewards[1] = "No Reward";
             }
 
-            // Slot 3 (6 bosses)
-            if (totalBossesKilled >= 6) {
+            // Slot 3: 6+ unique boss
+            if (uniqueBossesKilled >= 6) {
                 rewards[2] = rewardText;
-            } else if (totalBossesKilled > 0) {
-                rewards[2] = "No Reward";
-            } else {
-                rewards[2] = "No Reward";
             }
-
-            return rewards;
         } catch (Exception e) {
-            log.error("Error calculating raid vault rewards: {}", e.getMessage(), e);
+            log.error("Error calculating raid rewards: {}", e.getMessage(), e);
         }
 
-        // Varsayılan değerler
-        rewards[0] = "No raid data available";
-        rewards[1] = "No raid data available";
-        rewards[2] = "No raid data available";
-
         return rewards;
+    }
+
+    /**
+     * İki zorluk seviyesini karşılaştırır
+     *
+     * @return pozitif: difficulty1 > difficulty2, negatif: difficulty1 < difficulty2, 0: eşit
+     */
+    private int compareDifficulty(String difficulty1, String difficulty2) {
+        int rank1 = getDifficultyRank(difficulty1);
+        int rank2 = getDifficultyRank(difficulty2);
+        return rank1 - rank2;
+    }
+
+    /**
+     * Zorluk seviyesinin sıralama değerini döndürür
+     */
+    private int getDifficultyRank(String difficulty) {
+        switch (difficulty.toLowerCase()) {
+            case "mythic":
+                return 4;
+            case "heroic":
+                return 3;
+            case "normal":
+                return 2;
+            case "lfr":
+                return 1;
+            default:
+                return 0; // "none" veya bilinmeyen
+        }
+    }
+
+    /**
+     * Raid zorluk seviyesine göre Great Vault ödülünü döndürür
+     */
+    private String getRaidReward(String difficulty) {
+        // Bu değerler güncel raid'e göre ayarlanmalı
+        switch (difficulty) {
+            case "mythic":
+                return "Myth 1 (662)";
+            case "heroic":
+                return "Hero 4 (658)";
+            case "normal":
+                return "Hero 2 (652)";
+            case "lfr":
+                return "Champion 4 (645)";
+            default:
+                return "No Reward";
+        }
     }
 
     /**
@@ -580,25 +670,6 @@ public class WowVaultService {
         else if (mythicLevel == 12) return "Myth 1 (662)";
         else if (mythicLevel >= 13) return "Myth 1 (662)";
         else return "Unknown";
-    }
-
-    /**
-     * Raid zorluk seviyesine göre Great Vault ödülünü döndürür
-     */
-    private String getRaidReward(String difficulty) {
-        // Bu değerler güncel raid'e göre ayarlanmalı
-        switch (difficulty) {
-            case "mythic":
-                return "Myth 1 (662)";
-            case "heroic":
-                return "Hero 4 (658)";
-            case "normal":
-                return "Hero 2 (652)";
-            case "lfr":
-                return "Champion 4 (645)";
-            default:
-                return "Unknown reward";
-        }
     }
 
     /**

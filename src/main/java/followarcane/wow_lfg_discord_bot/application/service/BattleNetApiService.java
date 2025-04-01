@@ -110,7 +110,8 @@ public class BattleNetApiService {
                 log.error("Error getting Blizzard API token: {}", e.getMessage(), e);
             }
             return null;
-        }
+        } else
+            log.info("Blizzard API token used from cache");
         return blizzardToken;
     }
 
