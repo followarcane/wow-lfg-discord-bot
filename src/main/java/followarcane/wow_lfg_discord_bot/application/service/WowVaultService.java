@@ -200,78 +200,66 @@ public class WowVaultService {
         StringBuilder raidSection = new StringBuilder();
         raidSection.append("## Raids\n\n");
 
-        // Raid slotları
-        raidSection.append("**Defeat 2 Liberation of Undermine Bosses**\n");
-        if (raidBossCounts[0] >= 2) {
-            raidSection.append("✅ ").append(raidRewards[0]);
-        } else {
-            raidSection.append("🔒 ").append(raidBossCounts[0]).append("/2");
-        }
-        raidSection.append("\n\n");
+        // Raid başlıkları
+        raidSection.append("```\n");
+        raidSection.append("Defeat 2 Bosses      Defeat 4 Bosses      Defeat 6 Bosses\n");
+        raidSection.append("----------------     ----------------     ----------------\n");
 
-        raidSection.append("**Defeat 4 Liberation of Undermine Bosses**\n");
-        if (raidBossCounts[0] >= 4) {
-            raidSection.append("✅ ").append(raidRewards[1]);
-        } else {
-            raidSection.append("🔒 ").append(raidBossCounts[0]).append("/4");
-        }
-        raidSection.append("\n\n");
+        // Raid durumları
+        String slot1Status = raidBossCounts[0] >= 2 ? "✅ " + raidRewards[0] : "🔒 " + raidBossCounts[0] + "/2";
+        String slot2Status = raidBossCounts[0] >= 4 ? "✅ " + raidRewards[1] : "🔒 " + raidBossCounts[0] + "/4";
+        String slot3Status = raidBossCounts[0] >= 6 ? "✅ " + raidRewards[2] : "🔒 " + raidBossCounts[0] + "/6";
 
-        raidSection.append("**Defeat 6 Liberation of Undermine Bosses**\n");
-        if (raidBossCounts[0] >= 6) {
-            raidSection.append("✅ ").append(raidRewards[2]);
-        } else {
-            raidSection.append("🔒 ").append(raidBossCounts[0]).append("/6");
-        }
+        // Statüler için maksimum uzunluk
+        int maxLength = 18;
 
+        // Statüleri kısalt ve hizala
+        slot1Status = formatStatusText(slot1Status, maxLength);
+        slot2Status = formatStatusText(slot2Status, maxLength);
+        slot3Status = formatStatusText(slot3Status, maxLength);
+
+        raidSection.append(slot1Status + "     " + slot2Status + "     " + slot3Status + "\n");
+        raidSection.append("```");
+        
         embed.addField("", raidSection.toString(), false);
 
         // Dungeons bölümü
         StringBuilder dungeonSection = new StringBuilder();
         dungeonSection.append("## Dungeons\n\n");
 
-        // Dungeon slotları
-        dungeonSection.append("**Complete 1 Heroic, Mythic, or Timewalking Dungeon**\n");
-        if (totalMythicPlusRuns >= 1) {
-            dungeonSection.append("✅ ").append(mythicPlusRewards[0]);
-        } else {
-            dungeonSection.append("🔒 ").append(totalMythicPlusRuns).append("/1");
-        }
-        dungeonSection.append("\n\n");
+        // Dungeon başlıkları
+        dungeonSection.append("```\n");
+        dungeonSection.append("Complete 1 Dungeon   Complete 4 Dungeons  Complete 8 Dungeons\n");
+        dungeonSection.append("----------------     ----------------     ----------------\n");
 
-        dungeonSection.append("**Complete 4 Heroic, Mythic, or Timewalking Dungeons**\n");
-        if (totalMythicPlusRuns >= 4) {
-            dungeonSection.append("✅ ").append(mythicPlusRewards[1]);
-        } else {
-            dungeonSection.append("🔒 ").append(totalMythicPlusRuns).append("/4");
-        }
-        dungeonSection.append("\n\n");
+        // Dungeon durumları
+        String dungeonSlot1 = totalMythicPlusRuns >= 1 ? "✅ " + mythicPlusRewards[0] : "🔒 " + totalMythicPlusRuns + "/1";
+        String dungeonSlot2 = totalMythicPlusRuns >= 4 ? "✅ " + mythicPlusRewards[1] : "🔒 " + totalMythicPlusRuns + "/4";
+        String dungeonSlot3 = totalMythicPlusRuns >= 8 ? "✅ " + mythicPlusRewards[2] : "🔒 " + totalMythicPlusRuns + "/8";
 
-        dungeonSection.append("**Complete 8 Heroic, Mythic, or Timewalking Dungeons**\n");
-        if (totalMythicPlusRuns >= 8) {
-            dungeonSection.append("✅ ").append(mythicPlusRewards[2]);
-        } else {
-            dungeonSection.append("🔒 ").append(totalMythicPlusRuns).append("/8");
-        }
+        // Statüleri kısalt ve hizala
+        dungeonSlot1 = formatStatusText(dungeonSlot1, maxLength);
+        dungeonSlot2 = formatStatusText(dungeonSlot2, maxLength);
+        dungeonSlot3 = formatStatusText(dungeonSlot3, maxLength);
 
+        dungeonSection.append(dungeonSlot1 + "     " + dungeonSlot2 + "     " + dungeonSlot3 + "\n");
+        dungeonSection.append("```");
+        
         embed.addField("", dungeonSection.toString(), false);
 
-        // PvP bölümü (opsiyonel, veriler yoksa)
-        StringBuilder pvpSection = new StringBuilder();
-        pvpSection.append("## World\n\n");
+        // World bölümü
+        StringBuilder worldSection = new StringBuilder();
+        worldSection.append("## World\n\n");
 
-        // PvP slotları (veriler olmadığı için kilitli gösteriyoruz)
-        pvpSection.append("**Complete 2 Delves or World Activities**\n");
-        pvpSection.append("🔒 0/2\n\n");
+        // World başlıkları
+        worldSection.append("```\n");
+        worldSection.append("Complete 2 Activities Complete 4 Activities Complete 8 Activities\n");
+        worldSection.append("----------------     ----------------     ----------------\n");
+        worldSection.append("🔒 0/2               🔒 0/4               🔒 0/8\n");
+        worldSection.append("```");
 
-        pvpSection.append("**Complete 4 Delves or World Activities**\n");
-        pvpSection.append("🔒 0/4\n\n");
-
-        pvpSection.append("**Complete 8 Delves or World Activities**\n");
-        pvpSection.append("🔒 0/8");
-
-        embed.addField("", pvpSection.toString(), false);
-
+        embed.addField("", worldSection.toString(), false);
+        
         // How to Improve kısmını ekle (opsiyonel)
         StringBuilder howToImprove = new StringBuilder();
         boolean needsImprovement = false;
@@ -391,6 +379,17 @@ public class WowVaultService {
         embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
 
         return embed;
+    }
+
+    /**
+     * Statü metnini belirli bir uzunluğa göre formatlar
+     */
+    private String formatStatusText(String text, int maxLength) {
+        if (text.length() > maxLength) {
+            return text.substring(0, maxLength - 3) + "...";
+        } else {
+            return text + " ".repeat(maxLength - text.length());
+        }
     }
 
     /**
