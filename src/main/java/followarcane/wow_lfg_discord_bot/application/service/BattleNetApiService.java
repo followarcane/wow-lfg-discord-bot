@@ -11,9 +11,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 @Service
 @Slf4j
 public class BattleNetApiService {
@@ -123,17 +120,15 @@ public class BattleNetApiService {
      */
     public JsonNode fetchCharacterStats(String name, String realm, String region) {
         try {
-            // Özel karakterleri URL kodlaması ile değiştir
-            String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString());
-            String encodedRealm = URLEncoder.encode(realm.toLowerCase().replace("-", " "), StandardCharsets.UTF_8.toString());
+            // Realm adını düzelt (boşluk yerine tire kullan)
+            String formattedRealm = realm.toLowerCase().replace(" ", "-");
 
-            // API URL'sini oluştur - UriComponentsBuilder kullanarak daha güvenli URL oluştur
-            String url = UriComponentsBuilder.fromHttpUrl(battleNetApiUrl + "/profile/wow/character/" +
-                            encodedRealm + "/" + encodedName + "/statistics")
-                    .queryParam("namespace", "profile-" + region.toLowerCase())
-                    .queryParam("locale", "en_GB")
-                    .build()
-                    .toUriString();
+            // Karakter adını küçük harfe çevir
+            String formattedName = name.toLowerCase();
+
+            // API URL'sini oluştur
+            String url = String.format("%s/profile/wow/character/%s/%s/statistics?namespace=profile-%s&locale=en_GB",
+                    battleNetApiUrl, formattedRealm, formattedName, region.toLowerCase());
             
             log.info("Fetching character stats from: {}", url);
 
@@ -156,9 +151,5 @@ public class BattleNetApiService {
             log.error("Error fetching character stats: {}", e.getMessage(), e);
             return null;
         }
-    }
-
-    private String getApiBaseUrl(String region) {
-        return battleNetApiUrl;
     }
 } 
