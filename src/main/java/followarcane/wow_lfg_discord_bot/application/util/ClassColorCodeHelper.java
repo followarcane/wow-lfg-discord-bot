@@ -33,8 +33,6 @@ public class ClassColorCodeHelper {
                 return "#00FF98";
             case "paladin":
                 return "#F48CBA";
-            case "priest":
-                return "#FFFFFF";
             case "rogue":
                 return "#FFF468";
             case "shaman":
