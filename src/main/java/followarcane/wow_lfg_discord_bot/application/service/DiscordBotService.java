@@ -272,10 +272,22 @@ public class DiscordBotService extends ListenerAdapter {
                 className, specName, heroTalent.isEmpty() ? "All" : heroTalent, slot.isEmpty() ? "All" : slot);
 
         try {
-            // Hero talent belirtilmişse veya slot belirtilmişse, tek bir embed göster
+            // Hero talent belirtilmişse veya slot belirtilmişse
             if (!heroTalent.isEmpty() || !slot.isEmpty()) {
-                EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
-                event.replyEmbeds(embed.build()).queue();
+                List<EmbedBuilder> embeds = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
+
+                if (embeds.isEmpty()) {
+                    event.reply("No BIS gear information found for " + className + " " + specName).queue();
+                    return;
+                }
+
+                // İlk embed'i göster
+                event.replyEmbeds(embeds.get(0).build()).queue();
+
+                // Eğer birden fazla embed varsa, diğerlerini takip mesajları olarak gönder
+                for (int i = 1; i < embeds.size(); i++) {
+                    event.getHook().sendMessageEmbeds(embeds.get(i).build()).queue();
+                }
             } else {
                 // Hero talent belirtilmemişse ve slot belirtilmemişse, her hero talent için ayrı bir embed göster
                 List<EmbedBuilder> embeds = bisGearService.createBisGearEmbedsForAllHeroTalents(className, specName);
