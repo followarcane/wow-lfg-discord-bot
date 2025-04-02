@@ -128,8 +128,8 @@ public class BattleNetApiService {
             String encodedRealm = URLEncoder.encode(realm.toLowerCase().replace("-", " "), StandardCharsets.UTF_8.toString());
             
             // API URL'sini oluştur
-            String url = String.format("%s/profile/wow/character/%s/%s/statistics?namespace=profile-%s&locale=en_US",
-                    getApiBaseUrl(region), encodedRealm, encodedName.toLowerCase(), region.toLowerCase());
+            String url = String.format("%s/profile/wow/character/%s/%s/statistics?namespace=profile-%s&locale=en_GB",
+                    getApiBaseUrl(region), encodedRealm, encodedName, region.toLowerCase());
             
             log.info("Fetching character stats from: {}", url);
 
