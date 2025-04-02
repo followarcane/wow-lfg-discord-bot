@@ -353,7 +353,7 @@ public class BisGearService {
                     if (stats != null && !stats.isEmpty()) {
                         stats = truncateStats(stats);
                         if (!stats.isEmpty()) {
-                            fieldContent.append("\n\n").append(stats);
+                            fieldContent.append("\n").append(stats).append("\n");
                         }
                     }
 
@@ -383,7 +383,7 @@ public class BisGearService {
                     if (stats != null && !stats.isEmpty()) {
                         stats = truncateStats(stats);
                         if (!stats.isEmpty()) {
-                            fieldContent.append("\n\n").append(stats);
+                            fieldContent.append("\n").append(stats).append("\n");
                         }
                     }
 
@@ -401,7 +401,7 @@ public class BisGearService {
                 if (stats != null && !stats.isEmpty()) {
                     stats = truncateStats(stats);
                     if (!stats.isEmpty()) {
-                        fieldContent.append("\n\n").append(stats);
+                        fieldContent.append("\n").append(stats).append("\n");
                     }
                 }
 
@@ -743,7 +743,7 @@ public class BisGearService {
         if (stats != null && !stats.isEmpty()) {
             stats = truncateStats(stats);
             if (!stats.isEmpty()) {
-                fieldContent.append("\n\n").append(stats);
+                fieldContent.append("\n").append(stats).append("\n");
             }
         }
 
