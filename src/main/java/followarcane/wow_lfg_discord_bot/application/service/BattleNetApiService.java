@@ -126,10 +126,14 @@ public class BattleNetApiService {
             // Özel karakterleri URL kodlaması ile değiştir
             String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString());
             String encodedRealm = URLEncoder.encode(realm.toLowerCase().replace("-", " "), StandardCharsets.UTF_8.toString());
-            
-            // API URL'sini oluştur
-            String url = String.format("%s/profile/wow/character/%s/%s/statistics?namespace=profile-%s&locale=en_GB",
-                    getApiBaseUrl(region), encodedRealm, encodedName, region.toLowerCase());
+
+            // API URL'sini oluştur - UriComponentsBuilder kullanarak daha güvenli URL oluştur
+            String url = UriComponentsBuilder.fromHttpUrl(battleNetApiUrl + "/profile/wow/character/" +
+                            encodedRealm + "/" + encodedName + "/statistics")
+                    .queryParam("namespace", "profile-" + region.toLowerCase())
+                    .queryParam("locale", "en_GB")
+                    .build()
+                    .toUriString();
             
             log.info("Fetching character stats from: {}", url);
 
@@ -155,9 +159,6 @@ public class BattleNetApiService {
     }
 
     private String getApiBaseUrl(String region) {
-        // Bu metodun içeriği, region'a göre API URL'ini döndürmesi gerekiyor
-        // Bu örnekte, region'a göre API URL'ini döndüren bir basit uygulama kullanılmıştır
-        // Gerçek uygulamada, region'a göre API URL'ini döndüren uygun bir mekanizma kullanılmalıdır
         return battleNetApiUrl;
     }
 } 
