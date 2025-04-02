@@ -1,9 +1,12 @@
 package followarcane.wow_lfg_discord_bot.application.util;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public enum WowHeroTalentEnum {
     // Death Knight
     DEATHBRINGER("Deathbringer", Arrays.asList(WowSpecEnum.BLOOD, WowSpecEnum.FROST_DK),
@@ -171,15 +174,4 @@ public enum WowHeroTalentEnum {
         return talents;
     }
 
-    public String getFormattedName() {
-        return formattedName;
-    }
-
-    public List<WowSpecEnum> getSpecs() {
-        return specs;
-    }
-
-    public List<String> getAliases() {
-        return aliases;
-    }
-} 
+}
