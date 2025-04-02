@@ -67,9 +67,9 @@ public class BisGearServiceManualTest {
     @Test
     public void testCreateBisGearEmbedWithClassSpecHeroTalentAndSlot() {
         // Sınıf, spec, hero talent ve slot belirtildiğinde
-        String className = "priest";
-        String specName = "shadow";
-        String heroTalent = "archon";
+        String className = "hunter";
+        String specName = "beast_mastery";
+        String heroTalent = "";
         String slot = "";
 
         List<EmbedBuilder> embeds = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
