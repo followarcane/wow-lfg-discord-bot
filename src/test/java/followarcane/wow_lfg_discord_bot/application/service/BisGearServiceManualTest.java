@@ -65,118 +65,40 @@ public class BisGearServiceManualTest {
     }
 
     @Test
-    public void testCreateBisGearEmbedWithOnlyClass() {
-        // Sadece sınıf belirtildiğinde
-        String className = "priest";
-        String specName = "";
-        String heroTalent = "";
-        String slot = "";
-
-        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
-
-        // Embed'in oluşturulduğunu doğrula
-        assertNotNull(embed);
-
-        // Embed'in başlığını kontrol et
-        String title = embed.build().getTitle();
-        System.out.println("Title: " + title);
-
-        // Embed'in açıklamasını kontrol et
-        String description = embed.build().getDescription();
-        System.out.println("Description: " + (description != null ? description : "No description"));
-
-        // Embed'in alanlarını kontrol et
-        List<MessageEmbed.Field> fields = embed.build().getFields();
-        System.out.println("Number of fields: " + fields.size());
-        for (MessageEmbed.Field field : fields) {
-            System.out.println("Field: " + field.getName() + " - " + field.getValue());
-        }
-    }
-
-    @Test
-    public void testCreateBisGearEmbedWithClassAndSpec() {
-        // Sınıf ve spec belirtildiğinde
-        String className = "priest";
-        String specName = "shadow";
-        String heroTalent = "";
-        String slot = "";
-
-        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
-
-        // Embed'in oluşturulduğunu doğrula
-        assertNotNull(embed);
-
-        // Embed'in başlığını kontrol et
-        String title = embed.build().getTitle();
-        System.out.println("Title: " + title);
-
-        // Embed'in açıklamasını kontrol et
-        String description = embed.build().getDescription();
-        System.out.println("Description: " + (description != null ? description : "No description"));
-
-        // Embed'in alanlarını kontrol et
-        List<MessageEmbed.Field> fields = embed.build().getFields();
-        System.out.println("Number of fields: " + fields.size());
-        for (MessageEmbed.Field field : fields) {
-            System.out.println("Field: " + field.getName() + " - " + field.getValue());
-        }
-    }
-
-    @Test
-    public void testCreateBisGearEmbedWithClassSpecAndHeroTalent() {
-        // Sınıf, spec ve hero talent belirtildiğinde
-        String className = "priest";
-        String specName = "shadow";
-        String heroTalent = "archon";
-        String slot = "head";
-
-        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
-
-        // Embed'in oluşturulduğunu doğrula
-        assertNotNull(embed);
-
-        // Embed'in başlığını kontrol et
-        String title = embed.build().getTitle();
-        System.out.println("Title: " + title);
-
-        // Embed'in açıklamasını kontrol et
-        String description = embed.build().getDescription();
-        System.out.println("Description: " + (description != null ? description : "No description"));
-
-        // Embed'in alanlarını kontrol et
-        List<MessageEmbed.Field> fields = embed.build().getFields();
-        System.out.println("Number of fields: " + fields.size());
-        for (MessageEmbed.Field field : fields) {
-            System.out.println("Field: " + field.getName() + " - " + field.getValue());
-        }
-    }
-
-    @Test
     public void testCreateBisGearEmbedWithClassSpecHeroTalentAndSlot() {
         // Sınıf, spec, hero talent ve slot belirtildiğinde
         String className = "priest";
         String specName = "shadow";
-        String heroTalent = "";
-        String slot = "Main Hand";
+        String heroTalent = "archon";
+        String slot = "";
 
-        EmbedBuilder embed = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
+        List<EmbedBuilder> embeds = bisGearService.createBisGearEmbed(slot, className, specName, heroTalent);
 
-        // Embed'in oluşturulduğunu doğrula
-        assertNotNull(embed);
+        // Embed listesinin oluşturulduğunu doğrula
+        assertNotNull(embeds);
+        assertFalse(embeds.isEmpty());
 
-        // Embed'in başlığını kontrol et
-        String title = embed.build().getTitle();
-        System.out.println("Title: " + title);
+        System.out.println("Number of embeds: " + embeds.size());
 
-        // Embed'in açıklamasını kontrol et
-        String description = embed.build().getDescription();
-        System.out.println("Description: " + (description != null ? description : "No description"));
+        // Her embed için bilgileri yazdır
+        for (int i = 0; i < embeds.size(); i++) {
+            EmbedBuilder embed = embeds.get(i);
+            System.out.println("\nEmbed #" + (i + 1));
 
-        // Embed'in alanlarını kontrol et
-        List<MessageEmbed.Field> fields = embed.build().getFields();
-        System.out.println("Number of fields: " + fields.size());
-        for (MessageEmbed.Field field : fields) {
-            System.out.println("Field: " + field.getName() + " - " + field.getValue());
+            // Embed'in başlığını kontrol et
+            String title = embed.build().getTitle();
+            System.out.println("Title: " + title);
+
+            // Embed'in açıklamasını kontrol et
+            String description = embed.build().getDescription();
+            System.out.println("Description: " + (description != null ? description : "No description"));
+
+            // Embed'in alanlarını kontrol et
+            List<MessageEmbed.Field> fields = embed.build().getFields();
+            System.out.println("Number of fields: " + fields.size());
+            for (MessageEmbed.Field field : fields) {
+                System.out.println("Field: " + field.getName() + " - " + field.getValue());
+            }
         }
     }
 } 
