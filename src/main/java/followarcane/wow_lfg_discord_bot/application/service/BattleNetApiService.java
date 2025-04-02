@@ -29,10 +29,6 @@ public class BattleNetApiService {
     @Value("${battle-net.api.url}")
     private String battleNetApiUrl;
 
-    // Token önbelleği için değişkenler
-    private String blizzardToken;
-    private long tokenExpiry = 0;
-
     public BattleNetApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
@@ -76,46 +72,40 @@ public class BattleNetApiService {
     }
 
     /**
-     * Blizzard API token'ı alır (önbellek kullanarak)
+     * Blizzard API token'ı alır (önbellek kullanmadan)
      */
     public String getBlizzardToken() {
-        long now = System.currentTimeMillis();
-        if (blizzardToken == null || now >= tokenExpiry) {
-            try {
-                String tokenUrl = "https://oauth.battle.net/token";
+        try {
+            String tokenUrl = "https://oauth.battle.net/token";
 
-                HttpHeaders headers = new HttpHeaders();
-                headers.setBasicAuth(battleNetClientApi, battleNetClientSecret);
-                headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBasicAuth(battleNetClientApi, battleNetClientSecret);
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-                MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-                body.add("grant_type", "client_credentials");
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("grant_type", "client_credentials");
 
-                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-                log.info("Requesting Blizzard API token");
-                ResponseEntity<String> response = restTemplate.exchange(
-                        tokenUrl,
-                        HttpMethod.POST,
-                        request,
-                        String.class
-                );
+            log.info("Requesting new Blizzard API token (cache disabled)");
+            ResponseEntity<String> response = restTemplate.exchange(
+                    tokenUrl,
+                    HttpMethod.POST,
+                    request,
+                    String.class
+            );
 
-                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                    JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
-                    blizzardToken = jsonNode.get("access_token").asText();
-                    int expiresIn = jsonNode.get("expires_in").asInt();
-                    tokenExpiry = now + (expiresIn * 1000) - 300000; // 5 dakika önce yenile
-                    log.info("Blizzard API token obtained, expires in {} seconds", expiresIn);
-                    return blizzardToken;
-                }
-            } catch (Exception e) {
-                log.error("Error getting Blizzard API token: {}", e.getMessage(), e);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+                String token = jsonNode.get("access_token").asText();
+                int expiresIn = jsonNode.get("expires_in").asInt();
+                log.info("New Blizzard API token obtained, expires in {} seconds", expiresIn);
+                return token;
             }
-            return null;
-        } else
-            log.info("Blizzard API token used from cache");
-        return blizzardToken;
+        } catch (Exception e) {
+            log.error("Error getting Blizzard API token: {}", e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
