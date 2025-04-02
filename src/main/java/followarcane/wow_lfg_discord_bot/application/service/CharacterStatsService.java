@@ -11,8 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.awt.*;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 
 @Service
@@ -89,12 +87,11 @@ public class CharacterStatsService {
      */
     private JsonNode fetchCharacterStats(String name, String realm, String region) {
         try {
-            // Özel karakterleri URL kodlaması ile değiştir
-            String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString());
-            String encodedRealm = URLEncoder.encode(realm, StandardCharsets.UTF_8.toString());
-
+            // Realm adını düzelt (tire yerine boşluk kullan)
+            String formattedRealm = realm.replace("-", " ");
+            
             // API isteği yap
-            return battleNetApiService.fetchCharacterStats(encodedName, encodedRealm, region);
+            return battleNetApiService.fetchCharacterStats(name, formattedRealm, region);
         } catch (Exception e) {
             log.error("Error fetching character stats: {}", e.getMessage(), e);
             return null;
