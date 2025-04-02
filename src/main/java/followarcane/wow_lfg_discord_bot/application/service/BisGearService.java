@@ -226,6 +226,18 @@ public class BisGearService {
                 returnValue.replace("_", " ").equalsIgnoreCase("Main Hand")) {
             returnValue = "Main Hand";
         }
+
+        if (returnValue.equalsIgnoreCase("dh") ||
+                returnValue.equalsIgnoreCase("demon_hunter") ||
+                returnValue.equalsIgnoreCase("demon hunter")) {
+            returnValue = "Demon_Hunter";
+        }
+
+        if (returnValue.equalsIgnoreCase("dk") ||
+                returnValue.equalsIgnoreCase("death_knight") ||
+                returnValue.equalsIgnoreCase("death knight")) {
+            returnValue = "Death_Knight";
+        }
         return returnValue;
     }
 
@@ -622,112 +634,132 @@ public class BisGearService {
 
         // Beast Mastery için özel kontrol
         if (formattedSpecName.equalsIgnoreCase("Beast_mastery") ||
-                formattedSpecName.equalsIgnoreCase("Beast mastery") ||
+                formattedSpecName.equalsIgnoreCase("Beast mastery") || formattedSpecName.equalsIgnoreCase("bm") ||
                 formattedSpecName.equalsIgnoreCase("Beastmastery")) {
             formattedSpecName = "Beast_Mastery";
         }
 
         // Sınıf ve spec için tüm hero talent'ları bul
+        boolean foundAnyHeroTalent = false;
+        String searchPrefix = formattedClassName + "_" + formattedSpecName + "_";
+        
         for (String key : cache.keySet()) {
-            if (key.startsWith(formattedClassName + "_" + formattedSpecName + "_")) {
+            if (key.startsWith(searchPrefix)) {
+                foundAnyHeroTalent = true;
                 // Extract hero talent name from key
-                String heroTalentName = key.substring((formattedClassName + "_" + formattedSpecName + "_").length());
+                String heroTalentName = key.substring(searchPrefix.length());
 
                 // Bu hero talent için bir embed oluştur
-                EmbedBuilder embed = new EmbedBuilder();
+                EmbedBuilder embed = createEmbedForHeroTalent(formattedClassName, formattedSpecName, heroTalentName, formattedSlot, cache.get(key));
+                embeds.add(embed);
+            }
+        }
 
-                // Sınıf rengini al
-                Color classColor;
-                try {
-                    classColor = Color.decode(classColorCodeHelper.getClassColorCode(formattedClassName));
-                    logger.info("Using class color for {}: {}", formattedClassName, classColor);
-                } catch (Exception e) {
-                    logger.warn("Could not get class color for {}. Using default color.", formattedClassName);
-                    classColor = Color.GRAY; // Varsayılan renk
-                }
-
-                embed.setColor(classColor);
-
-                // Başlık oluştur
-                String title = "BIS Gear for " + formattedClassName + " " + formattedSpecName + " (" + heroTalentName + ")";
-                if (!formattedSlot.isEmpty()) {
-                    title += " - " + formattedSlot;
-                }
-                embed.setTitle(title);
-
-                // BIS ekipman bilgilerini al
-                Map<String, Map<String, Object>> bisGear = cache.get(key);
-
-                // Slot belirtilmişse, sadece o slotu göster
-                if (!formattedSlot.isEmpty()) {
-                    // Özel durumlar için kontrol (Weapon, Trinket, Finger)
-                    if (formattedSlot.equalsIgnoreCase("Weapon") ||
-                            formattedSlot.equalsIgnoreCase("Weapon1") ||
-                            formattedSlot.equalsIgnoreCase("Mainhand") ||
-                            formattedSlot.equalsIgnoreCase("Main-hand") ||
-                            formattedSlot.equalsIgnoreCase("Main_hand") ||
-                            formattedSlot.equalsIgnoreCase("Main hand") ||
-                            formattedSlot.replace("_", " ").equalsIgnoreCase("Main Hand")) {
-
-                        // Main Hand slotunu ara
-                        for (String slotKey : bisGear.keySet()) {
-                            if (slotKey.equalsIgnoreCase("Main Hand")) {
-                                Map<String, Object> slotInfo = bisGear.get(slotKey);
-                                addItemFieldToEmbed(embed, slotKey, slotInfo);
-                                break;
-                            }
-                        }
-                    } else if (formattedSlot.equalsIgnoreCase("Trinket")) {
-                        // Tüm trinketleri göster
-                        for (Map.Entry<String, Map<String, Object>> entry : bisGear.entrySet()) {
-                            if (entry.getKey().startsWith("Trinket")) {
-                                addItemFieldToEmbed(embed, entry.getKey(), entry.getValue());
-                            }
-                        }
-                    } else if (formattedSlot.equalsIgnoreCase("Finger") || formattedSlot.equalsIgnoreCase("Ring")) {
-                        // Tüm yüzükleri göster
-                        for (Map.Entry<String, Map<String, Object>> entry : bisGear.entrySet()) {
-                            if (entry.getKey().startsWith("Finger")) {
-                                addItemFieldToEmbed(embed, entry.getKey(), entry.getValue());
-                            }
-                        }
-                    } else {
-                        // Diğer slotlar için tam eşleşme veya case-insensitive eşleşme ara
-                        boolean found = false;
-
-                        // Tam eşleşme
-                        if (bisGear.containsKey(formattedSlot)) {
-                            addItemFieldToEmbed(embed, formattedSlot, bisGear.get(formattedSlot));
-                            found = true;
-                        } else {
-                            // Case-insensitive eşleşme
-                            for (String slotKey : bisGear.keySet()) {
-                                if (slotKey.equalsIgnoreCase(formattedSlot)) {
-                                    addItemFieldToEmbed(embed, slotKey, bisGear.get(slotKey));
-                                    found = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (!found) {
-                            embed.setDescription("No BIS gear information found for slot: " + formattedSlot);
-                        }
-                    }
-                } else {
-                    // Slot belirtilmemişse, tüm slotları göster
-                    for (Map.Entry<String, Map<String, Object>> entry : bisGear.entrySet()) {
-                        addItemFieldToEmbed(embed, entry.getKey(), entry.getValue());
-                    }
-                }
-
-                embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
-                
+        // Eğer hero talent bulunamadıysa, doğrudan sınıf_spec anahtarını kontrol et
+        if (!foundAnyHeroTalent) {
+            String directKey = formattedClassName + "_" + formattedSpecName;
+            if (cache.containsKey(directKey)) {
+                // Hero talent olmadan doğrudan spec için bir embed oluştur
+                EmbedBuilder embed = createEmbedForHeroTalent(formattedClassName, formattedSpecName, "", formattedSlot, cache.get(directKey));
                 embeds.add(embed);
             }
         }
 
         return embeds;
+    }
+
+    // Hero talent için embed oluşturan yardımcı metod
+    private EmbedBuilder createEmbedForHeroTalent(String className, String specName, String heroTalentName, String slot, Map<String, Map<String, Object>> bisGear) {
+        EmbedBuilder embed = new EmbedBuilder();
+
+        // Sınıf rengini al
+        Color classColor;
+        try {
+            classColor = Color.decode(classColorCodeHelper.getClassColorCode(className));
+            logger.info("Using class color for {}: {}", className, classColor);
+        } catch (Exception e) {
+            logger.warn("Could not get class color for {}. Using default color.", className);
+            classColor = Color.GRAY; // Varsayılan renk
+        }
+
+        embed.setColor(classColor);
+
+        // Başlık oluştur
+        String title = "BIS Gear for " + className + " " + specName;
+        if (!heroTalentName.isEmpty()) {
+            title += " (" + heroTalentName + ")";
+        }
+        if (!slot.isEmpty()) {
+            title += " - " + slot;
+        }
+        embed.setTitle(title);
+
+        // Slot belirtilmişse, sadece o slotu göster
+        if (!slot.isEmpty()) {
+            // Özel durumlar için kontrol (Weapon, Trinket, Finger)
+            if (slot.equalsIgnoreCase("Weapon") ||
+                    slot.equalsIgnoreCase("Weapon1") ||
+                    slot.equalsIgnoreCase("Mainhand") ||
+                    slot.equalsIgnoreCase("Main-hand") ||
+                    slot.equalsIgnoreCase("Main_hand") ||
+                    slot.equalsIgnoreCase("Main hand") ||
+                    slot.replace("_", " ").equalsIgnoreCase("Main Hand")) {
+
+                // Main Hand slotunu ara
+                for (String slotKey : bisGear.keySet()) {
+                    if (slotKey.equalsIgnoreCase("Main Hand")) {
+                        Map<String, Object> slotInfo = bisGear.get(slotKey);
+                        addItemFieldToEmbed(embed, slotKey, slotInfo);
+                        break;
+                    }
+                }
+            } else if (slot.equalsIgnoreCase("Trinket")) {
+                // Tüm trinketleri göster
+                for (Map.Entry<String, Map<String, Object>> entry : bisGear.entrySet()) {
+                    if (entry.getKey().startsWith("Trinket")) {
+                        addItemFieldToEmbed(embed, entry.getKey(), entry.getValue());
+                    }
+                }
+            } else if (slot.equalsIgnoreCase("Finger") || slot.equalsIgnoreCase("Ring")) {
+                // Tüm yüzükleri göster
+                for (Map.Entry<String, Map<String, Object>> entry : bisGear.entrySet()) {
+                    if (entry.getKey().startsWith("Finger")) {
+                        addItemFieldToEmbed(embed, entry.getKey(), entry.getValue());
+                    }
+                }
+            } else {
+                // Diğer slotlar için tam eşleşme veya case-insensitive eşleşme ara
+                boolean found = false;
+
+                // Tam eşleşme
+                if (bisGear.containsKey(slot)) {
+                    addItemFieldToEmbed(embed, slot, bisGear.get(slot));
+                    found = true;
+                } else {
+                    // Case-insensitive eşleşme
+                    for (String slotKey : bisGear.keySet()) {
+                        if (slotKey.equalsIgnoreCase(slot)) {
+                            addItemFieldToEmbed(embed, slotKey, bisGear.get(slotKey));
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!found) {
+                    embed.setDescription("No BIS gear information found for slot: " + slot);
+                }
+            }
+        } else {
+            // Slot belirtilmemişse, tüm slotları göster
+            for (Map.Entry<String, Map<String, Object>> entry : bisGear.entrySet()) {
+                addItemFieldToEmbed(embed, entry.getKey(), entry.getValue());
+            }
+        }
+
+        embed.setFooter("Powered by Azerite!\nVisit -> https://azerite.app\nDonate -> https://www.patreon.com/Shadlynn/membership", "https://i.imgur.com/fK2PvPV.png");
+
+        return embed;
     }
 
     // Yardımcı metod: Item bilgilerini embed'e ekler
