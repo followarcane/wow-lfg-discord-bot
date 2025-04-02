@@ -129,8 +129,8 @@ public class BattleNetApiService {
             
             // API URL'sini oluştur
             String url = String.format("%s/profile/wow/character/%s/%s/statistics?namespace=profile-%s&locale=en_US",
-                    getApiBaseUrl(region), encodedRealm, encodedName, region.toLowerCase());
-
+                    getApiBaseUrl(region), encodedRealm, encodedName.toLowerCase(), region.toLowerCase());
+            
             log.info("Fetching character stats from: {}", url);
 
             // API isteği yap
