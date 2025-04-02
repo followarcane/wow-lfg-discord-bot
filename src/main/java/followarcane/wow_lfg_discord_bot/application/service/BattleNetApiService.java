@@ -11,6 +11,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Service
 @Slf4j
 public class BattleNetApiService {
@@ -120,35 +123,41 @@ public class BattleNetApiService {
      */
     public JsonNode fetchCharacterStats(String name, String realm, String region) {
         try {
-            // Access token al
-            String accessToken = getBlizzardToken();
-            if (accessToken == null) {
-                log.error("Failed to get access token");
-                return null;
-            }
-
+            // Özel karakterleri URL kodlaması ile değiştir
+            String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString());
+            String encodedRealm = URLEncoder.encode(realm.toLowerCase().replace("-", " "), StandardCharsets.UTF_8.toString());
+            
             // API URL'sini oluştur
-            String apiUrl = UriComponentsBuilder.fromHttpUrl(battleNetApiUrl)
-                    .path("/profile/wow/character/{realm}/{character}/statistics")
-                    .queryParam("namespace", "profile-" + region.toLowerCase())
-                    .queryParam("locale", "en_US")
-                    .buildAndExpand(realm.toLowerCase(), name.toLowerCase())
-                    .toUriString();
+            String url = String.format("%s/profile/wow/character/%s/%s/statistics?namespace=profile-%s&locale=en_US",
+                    getApiBaseUrl(region), encodedRealm, encodedName, region.toLowerCase());
 
-            // API çağrısını yap
+            log.info("Fetching character stats from: {}", url);
+
+            // API isteği yap
             HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(accessToken);
+            headers.setBearerAuth(getBlizzardToken());
+            
             HttpEntity<String> entity = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
-            log.info("Fetching character stats from: {}", apiUrl);
-            ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return new ObjectMapper().readTree(response.getBody());
+            // Yanıtı işle
+            if (response.getStatusCode() == HttpStatus.OK) {
+                String responseBody = response.getBody();
+                return new ObjectMapper().readTree(responseBody);
+            } else {
+                log.error("Error fetching character stats: {}", response.getStatusCode());
+                return null;
             }
         } catch (Exception e) {
             log.error("Error fetching character stats: {}", e.getMessage(), e);
+            return null;
         }
-        return null;
+    }
+
+    private String getApiBaseUrl(String region) {
+        // Bu metodun içeriği, region'a göre API URL'ini döndürmesi gerekiyor
+        // Bu örnekte, region'a göre API URL'ini döndüren bir basit uygulama kullanılmıştır
+        // Gerçek uygulamada, region'a göre API URL'ini döndüren uygun bir mekanizma kullanılmalıdır
+        return battleNetApiUrl;
     }
 } 

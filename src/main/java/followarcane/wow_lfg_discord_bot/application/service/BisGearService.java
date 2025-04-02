@@ -2,7 +2,7 @@ package followarcane.wow_lfg_discord_bot.application.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import followarcane.wow_lfg_discord_bot.application.util.ClassColorCodeHelper;
+import followarcane.wow_lfg_discord_bot.application.util.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,31 +214,32 @@ public class BisGearService {
             return "";
         }
 
-        // İlk harfi büyük, geri kalanı küçük yap
-        String returnValue = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-
-        // Weapon/Main Hand için özel kontrol
-        if (returnValue.equalsIgnoreCase("Weapon") ||
-                returnValue.equalsIgnoreCase("Weapon1") ||
-                returnValue.equalsIgnoreCase("Mainhand") ||
-                returnValue.equalsIgnoreCase("Main-hand") ||
-                returnValue.equalsIgnoreCase("Main_hand") || returnValue.equalsIgnoreCase("Main hand") ||
-                returnValue.replace("_", " ").equalsIgnoreCase("Main Hand")) {
-            returnValue = "Main Hand";
+        // Sınıf kontrolü (en genel kategori)
+        WowClassEnum wowClass = WowClassEnum.fromString(name);
+        if (wowClass != null) {
+            return wowClass.getFormattedName();
         }
 
-        if (returnValue.equalsIgnoreCase("dh") ||
-                returnValue.equalsIgnoreCase("demon_hunter") ||
-                returnValue.equalsIgnoreCase("demon hunter")) {
-            returnValue = "Demon_Hunter";
+        // Spec kontrolü (sınıftan sonra en genel kategori)
+        WowSpecEnum spec = WowSpecEnum.fromString(name);
+        if (spec != null) {
+            return spec.getFormattedName();
         }
 
-        if (returnValue.equalsIgnoreCase("dk") ||
-                returnValue.equalsIgnoreCase("death_knight") ||
-                returnValue.equalsIgnoreCase("death knight")) {
-            returnValue = "Death_Knight";
+        // Slot kontrolü
+        WowSlotEnum slot = WowSlotEnum.fromString(name);
+        if (slot != null) {
+            return slot.getFormattedName();
         }
-        return returnValue;
+
+        // Hero Talent kontrolü (en spesifik kategori)
+        WowHeroTalentEnum heroTalent = WowHeroTalentEnum.fromString(name);
+        if (heroTalent != null) {
+            return heroTalent.getFormattedName();
+        }
+
+        // Hiçbir eşleşme bulunamazsa, ilk harfi büyük yap
+        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
     private String formatClassName(String name) {
@@ -432,130 +433,114 @@ public class BisGearService {
         if (stats == null || stats.isEmpty()) {
             return "";
         }
-        
+
         StringBuilder cleanStats = new StringBuilder();
 
-        // İlevel bilgisini çıkar ama gösterme
-        if (stats.contains("ilevel:")) {
-            int ilvlStart = stats.indexOf("ilevel:");
-            int ilvlEnd = stats.indexOf(",", ilvlStart);
-            if (ilvlEnd > ilvlStart) {
-                // İlevel bilgisini atla, gösterme
-                // cleanStats.append(stats.substring(ilvlStart, ilvlEnd).trim()).append("\n");
+        // İlevel bilgisini çıkar
+        try {
+            int ilevelStart = stats.indexOf("ilevel:");
+            if (ilevelStart != -1) {
+                int ilevelEnd = stats.indexOf(",", ilevelStart);
+                if (ilevelEnd == -1) ilevelEnd = stats.indexOf("}", ilevelStart);
+                if (ilevelEnd == -1) ilevelEnd = stats.length();
+
+                String ilevelInfo = stats.substring(ilevelStart, ilevelEnd)
+                        .replace("ilevel:", "Item Level: ")
+                        .trim();
+                cleanStats.append(ilevelInfo).append("\n");
             }
+        } catch (Exception e) {
+            logger.warn("Error extracting ilevel: {}", e.getMessage());
         }
 
-        // Stats bölümünü çıkar
-        if (stats.contains("stats:")) {
-            try {
-                int statsStart = stats.indexOf("stats:");
-                int statsEnd = -1;
+        // Stats bilgisini çıkar
+        try {
+            int statsStart = stats.indexOf("stats:");
+            if (statsStart != -1) {
+                int statsEnd = stats.indexOf("}", statsStart);
+                if (statsEnd == -1) statsEnd = stats.length();
 
-                // stats: sonrası ilk { karakterini bul
-                int openBrace = stats.indexOf("{", statsStart);
-                if (openBrace != -1) {
-                    // Eşleşen } karakterini bul
-                    int braceCount = 1;
-                    for (int i = openBrace + 1; i < stats.length(); i++) {
-                        if (stats.charAt(i) == '{') braceCount++;
-                        if (stats.charAt(i) == '}') braceCount--;
-
-                        if (braceCount == 0) {
-                            statsEnd = i + 1;
-                            break;
-                        }
-                    }
-                }
-
-                if (statsEnd > statsStart) {
-                    String statsSection = stats.substring(statsStart, statsEnd).trim();
-
-                    // Gereksiz karakterleri temizle
-                    statsSection = statsSection.replace("stats:", "Stats:").replace("{", "").replace("}", "").trim();
-
-                    // Stamina'yı çıkar
-                    statsSection = statsSection.replaceAll("\\+[\\d,]+ Sta,?\\s*", "");
-
-                    // Armor'ı çıkar
-                    statsSection = statsSection.replaceAll("[\\d,]+ Armor,?\\s*", "");
-
-                    cleanStats.append(statsSection).append("\n");
-                }
-            } catch (Exception e) {
-                logger.warn("Error extracting stats section: {}", e.getMessage());
+                String statsInfo = stats.substring(statsStart, statsEnd)
+                        .replace("stats:", "Stats: ")
+                        .replace("{", "")
+                        .replace("}", "")
+                        .trim();
+                cleanStats.append(statsInfo).append("\n");
             }
+        } catch (Exception e) {
+            logger.warn("Error extracting stats: {}", e.getMessage());
         }
 
         // Enchant bilgisini çıkar
-        if (stats.contains("enchant:")) {
-            try {
-                int enchantStart = stats.indexOf("enchant:");
-                int enchantEnd = stats.indexOf(",", enchantStart);
+        try {
+            int enchantStart = stats.indexOf("enchant:");
+            if (enchantStart != -1) {
+                int enchantEnd = stats.indexOf("}", enchantStart);
                 if (enchantEnd == -1) enchantEnd = stats.length();
-                if (enchantEnd > enchantStart) {
-                    String enchant = stats.substring(enchantStart, enchantEnd).trim();
-                    enchant = enchant.replace("enchant:", "Enchant: ").trim();
-                    cleanStats.append(enchant).append("\n");
-                }
-            } catch (Exception e) {
-                logger.warn("Error extracting enchant: {}", e.getMessage());
+
+                String enchantInfo = stats.substring(enchantStart, enchantEnd)
+                        .replace("enchant:", "Enchant: ")
+                        .replace("{", "")
+                        .replace("}", "")
+                        .trim();
+                cleanStats.append(enchantInfo).append("\n");
             }
+        } catch (Exception e) {
+            logger.warn("Error extracting enchant: {}", e.getMessage());
         }
 
-        // Temporary enchant bilgisini çıkar
-        if (stats.contains("temporary_enchant:")) {
-            try {
-                int tempEnchantStart = stats.indexOf("temporary_enchant:");
-                int tempEnchantEnd = stats.indexOf(",", tempEnchantStart);
-                if (tempEnchantEnd == -1) {
-                    // Virgül yoksa, item effects'e kadar veya sonuna kadar al
-                    tempEnchantEnd = stats.indexOf("item effects:", tempEnchantStart);
-                    if (tempEnchantEnd == -1) tempEnchantEnd = stats.length();
-                }
-                if (tempEnchantEnd > tempEnchantStart) {
-                    String tempEnchant = stats.substring(tempEnchantStart, tempEnchantEnd).trim();
-                    tempEnchant = tempEnchant.replace("temporary_enchant:", "Temporary Enchant: ").trim();
-                    cleanStats.append(tempEnchant).append("\n");
-                }
-            } catch (Exception e) {
-                logger.warn("Error extracting temporary enchant: {}", e.getMessage());
+        // Temporary Enchant bilgisini çıkar
+        try {
+            int tempEnchantStart = stats.indexOf("temporary_enchant:");
+            if (tempEnchantStart != -1) {
+                int tempEnchantEnd = stats.indexOf("}", tempEnchantStart);
+                if (tempEnchantEnd == -1) tempEnchantEnd = stats.length();
+
+                String tempEnchantInfo = stats.substring(tempEnchantStart, tempEnchantEnd)
+                        .replace("temporary_enchant:", "Temporary Enchant: ")
+                        .replace("{", "")
+                        .replace("}", "")
+                        .trim();
+                cleanStats.append(tempEnchantInfo).append("\n");
             }
+        } catch (Exception e) {
+            logger.warn("Error extracting temporary enchant: {}", e.getMessage());
         }
 
-        // Gem bilgilerini çıkar
-        if (stats.contains("gems:")) {
-            try {
-                int gemsStart = stats.indexOf("gems:");
+        // Gems bilgisini çıkar
+        try {
+            int gemsStart = stats.indexOf("gems:");
+            if (gemsStart != -1) {
                 int gemsEnd = stats.indexOf("}", gemsStart);
-                if (gemsEnd > gemsStart) {
-                    String gemInfo = stats.substring(gemsStart, gemsEnd + 1)
-                            .replace("gems:", "Gems: ")
-                            .replace("{", "")
-                            .replace("}", "")
-                            .trim();
-                    cleanStats.append(gemInfo).append("\n");
-                }
-            } catch (Exception e) {
-                logger.warn("Error extracting gems: {}", e.getMessage());
+                if (gemsEnd == -1) gemsEnd = stats.length();
+
+                String gemsInfo = stats.substring(gemsStart, gemsEnd)
+                        .replace("gems:", "Gems: ")
+                        .replace("{", "")
+                        .replace("}", "")
+                        .trim();
+                cleanStats.append(gemsInfo).append("\n");
             }
+        } catch (Exception e) {
+            logger.warn("Error extracting gems: {}", e.getMessage());
         }
 
-        // Item effects bilgisini çıkar
-        if (stats.contains("item effects:")) {
-            try {
-                int effectsStart = stats.indexOf("item effects:");
+        // Item Effects bilgisini çıkar
+        try {
+            int effectsStart = stats.indexOf("item effects:");
+            if (effectsStart != -1) {
                 int effectsEnd = stats.indexOf("}", effectsStart);
-                if (effectsEnd > effectsStart) {
-                    String effectsInfo = stats.substring(effectsStart, effectsEnd + 1)
-                            .replace("item effects:", "Item Effects: ")
-                            .replace("{", "")
-                            .replace("}", "")
-                            .trim();
-                    cleanStats.append(effectsInfo).append("\n");
-                }
-            } catch (Exception e) {
-                logger.warn("Error extracting item effects: {}", e.getMessage());
+                if (effectsEnd == -1) effectsEnd = stats.length();
+
+                String effectsInfo = stats.substring(effectsStart, effectsEnd)
+                        .replace("item effects:", "Item Effects: ")
+                        .replace("{", "")
+                        .replace("}", "")
+                        .trim();
+                cleanStats.append(effectsInfo).append("\n");
             }
+        } catch (Exception e) {
+            logger.warn("Error extracting item effects: {}", e.getMessage());
         }
 
         String result = cleanStats.toString().trim();
@@ -580,6 +565,9 @@ public class BisGearService {
             }
             return cleanOriginalStats;
         }
+
+        // Kalan süslü parantezleri temizle
+        result = result.replace("{", "").replace("}", "");
         
         // Discord'un 1024 karakter sınırlaması var
         // Güvenli olmak için 900 karakterle sınırlayalım
