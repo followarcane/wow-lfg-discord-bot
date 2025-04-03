@@ -1,16 +1,19 @@
 package followarcane.wow_lfg_discord_bot.application.util;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public enum WowClassEnum {
     DEATH_KNIGHT("Death_Knight", Arrays.asList("dk", "death knight", "death_knight", "deathknight")),
     DEMON_HUNTER("Demon_Hunter", Arrays.asList("dh", "demon hunter", "demon_hunter", "demonhunter")),
     DRUID("Druid", Arrays.asList("druid", "dru")),
     EVOKER("Evoker", Arrays.asList("evoker", "evo")),
     HUNTER("Hunter", Arrays.asList("hunter", "hunt")),
-    MAGE("Mage", Arrays.asList("mage")),
-    MONK("Monk", Arrays.asList("monk")),
+    MAGE("Mage", List.of("mage")),
+    MONK("Monk", List.of("monk")),
     PALADIN("Paladin", Arrays.asList("paladin", "pala", "pally")),
     PRIEST("Priest", Arrays.asList("priest", "pr")),
     ROGUE("Rogue", Arrays.asList("rogue", "rog")),
@@ -44,11 +47,4 @@ public enum WowClassEnum {
         return null;
     }
 
-    public String getFormattedName() {
-        return formattedName;
-    }
-
-    public List<String> getAliases() {
-        return aliases;
-    }
-} 
+}
