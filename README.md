@@ -1,5 +1,7 @@
 # **This project is an open-source service designed for use by [Azerite.app](https://azerite.app).** 
 
+# **It has evolved a lot over time. Therefore the readme.md below is outdated.** 
+
 # WoW LFG Discord Bot
 
 ## Introduction
