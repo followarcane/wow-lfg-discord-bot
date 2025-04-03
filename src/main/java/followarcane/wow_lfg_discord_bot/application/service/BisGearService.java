@@ -242,37 +242,152 @@ public class BisGearService {
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
-    private String formatClassName(String name) {
-        if (name == null || name.isEmpty()) {
+    private String formatClassName(String className) {
+        if (className == null || className.isEmpty()) {
             return "";
         }
 
-        // İlk harfi büyük, geri kalanı küçük yap
-        String formatted = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-        // Boşlukları alt çizgi ile değiştir
-        formatted = formatted.replace(" ", "_");
+        // WowClassEnum kullanarak sınıf adını düzelt
+        WowClassEnum wowClass = WowClassEnum.fromString(className);
+        if (wowClass != null) {
+            return wowClass.getFormattedName();
+        }
 
-        return formatted;
-    }
+        // Enum'da bulunamazsa manuel olarak düzelt
+        String formattedName = className.trim();
 
-    private String buildKey(String className, String specName, String heroTalent) {
-        logger.info("Building key from: className={}, specName={}, heroTalent={}", className, specName, heroTalent);
+        // Özel durumlar
+        if (formattedName.equalsIgnoreCase("dk") || formattedName.equalsIgnoreCase("death knight")) {
+            return "Death_Knight";
+        } else if (formattedName.equalsIgnoreCase("dh") || formattedName.equalsIgnoreCase("demon hunter")) {
+            return "Demon_Hunter";
+        }
 
-        // Sınıf ve spec adlarını formatla (boşlukları alt çizgi ile değiştir)
-        String formattedClassName = formatClassName(className);
-        String formattedSpecName = formatClassName(specName);
-        String formattedHeroTalent = formatClassName(heroTalent);
+        // Genel düzeltme
+        String[] parts = formattedName.split("_| ");
+        StringBuilder result = new StringBuilder();
 
-        // Anahtar oluştur
-        String key = formattedClassName;
-        if (!formattedSpecName.isEmpty()) {
-            key += "_" + formattedSpecName;
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].length() > 0) {
+                result.append(parts[i].substring(0, 1).toUpperCase());
+                if (parts[i].length() > 1) {
+                    result.append(parts[i].substring(1).toLowerCase());
+                }
+            }
 
-            if (!formattedHeroTalent.isEmpty()) {
-                key += "_" + formattedHeroTalent;
+            if (i < parts.length - 1) {
+                result.append("_");
             }
         }
 
+        return result.toString();
+    }
+
+    private String formatSpecName(String specName) {
+        if (specName == null || specName.isEmpty()) {
+            return "";
+        }
+
+        // WowSpecEnum kullanarak spec adını düzelt
+        WowSpecEnum wowSpec = WowSpecEnum.fromString(specName);
+        if (wowSpec != null) {
+            return wowSpec.getFormattedName();
+        }
+
+        // Enum'da bulunamazsa manuel olarak düzelt
+        String formattedName = specName.trim();
+
+        // Özel durumlar
+        if (formattedName.equalsIgnoreCase("bm") || formattedName.equalsIgnoreCase("beast mastery")) {
+            return "Beast_Mastery";
+        }
+
+        // Genel düzeltme
+        String[] parts = formattedName.split("_| ");
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].length() > 0) {
+                result.append(parts[i].substring(0, 1).toUpperCase());
+                if (parts[i].length() > 1) {
+                    result.append(parts[i].substring(1).toLowerCase());
+                }
+            }
+
+            if (i < parts.length - 1) {
+                result.append("_");
+            }
+        }
+
+        return result.toString();
+    }
+
+    private String formatHeroTalentName(String heroTalent) {
+        if (heroTalent == null || heroTalent.isEmpty()) {
+            return "";
+        }
+
+        // WowHeroTalentEnum kullanarak hero talent adını düzelt
+        WowHeroTalentEnum wowHeroTalent = WowHeroTalentEnum.fromString(heroTalent);
+        if (wowHeroTalent != null && !wowHeroTalent.getFormattedName().isEmpty()) {
+            return wowHeroTalent.getFormattedName();
+        }
+
+        // Enum'da bulunamazsa manuel olarak düzelt
+        String formattedName = heroTalent.trim();
+
+        // Özel durumlar
+        if (formattedName.equalsIgnoreCase("rota") ||
+                formattedName.equalsIgnoreCase("rider of the apocalypse") ||
+                formattedName.equalsIgnoreCase("apocalypse")) {
+            return "Rider";
+        }
+
+        // Genel düzeltme
+        String[] parts = formattedName.split("_| ");
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].length() > 0) {
+                result.append(parts[i].substring(0, 1).toUpperCase());
+                if (parts[i].length() > 1) {
+                    result.append(parts[i].substring(1).toLowerCase());
+                }
+            }
+
+            if (i < parts.length - 1) {
+                result.append("_");
+            }
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Sınıf, spec ve hero talent adlarını birleştirerek önbellek anahtarı oluşturur
+     */
+    private String buildKey(String className, String specName, String heroTalent) {
+        // Sınıf adını düzelt (ilk harfi büyük, diğerleri küçük)
+        String formattedClassName = formatClassName(className);
+
+        // Spec adını düzelt (ilk harfi büyük, diğerleri küçük)
+        String formattedSpecName = formatSpecName(specName);
+
+        // Hero talent adını düzelt
+        String formattedHeroTalent = formatHeroTalentName(heroTalent);
+        
+        // Anahtar oluştur
+        String key = formattedClassName;
+
+        if (formattedSpecName != null && !formattedSpecName.isEmpty()) {
+            key += "_" + formattedSpecName;
+        }
+
+        if (formattedHeroTalent != null && !formattedHeroTalent.isEmpty()) {
+            key += "_" + formattedHeroTalent;
+        }
+
+        logger.info("Building key from: className={}, specName={}, heroTalent={}", formattedClassName, formattedSpecName, formattedHeroTalent);
         logger.info("Generated key: {}", key);
         
         return key;
