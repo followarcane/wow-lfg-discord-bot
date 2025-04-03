@@ -336,9 +336,7 @@ public class BisGearService {
         String title = formattedSlot.isEmpty() ? "All Slots" : formattedSlot;
 
         String specTitle = formattedSpecName.isEmpty() ? "All Specs" : formattedSpecName;
-        if (!formattedHeroTalent.isEmpty()) {
-            specTitle += " (" + formattedHeroTalent + ")";
-        }
+        specTitle += " (" + formattedHeroTalent + ")";
 
         embed.setTitle("BIS Gear for " + formattedClassName.replace("_", " ") + " " + specTitle + " - " + title);
 
