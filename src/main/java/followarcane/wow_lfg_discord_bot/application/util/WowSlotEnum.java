@@ -1,8 +1,11 @@
 package followarcane.wow_lfg_discord_bot.application.util;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public enum WowSlotEnum {
     HEAD("Head", Arrays.asList("head", "helmet", "helm")),
     NECK("Neck", Arrays.asList("neck", "necklace", "amulet")),
@@ -18,8 +21,8 @@ public enum WowSlotEnum {
     FINGER1("Finger1", Arrays.asList("finger1", "ring1")),
     FINGER2("Finger2", Arrays.asList("finger2", "ring2")),
     TRINKET("Trinket", Arrays.asList("trinket", "trinkets")),
-    TRINKET1("Trinket1", Arrays.asList("trinket1")),
-    TRINKET2("Trinket2", Arrays.asList("trinket2")),
+    TRINKET1("Trinket1", List.of("trinket1")),
+    TRINKET2("Trinket2", List.of("trinket2")),
     MAIN_HAND("Main Hand", Arrays.asList("main hand", "main_hand", "mainhand", "weapon", "weapon1", "mh", "main-hand")),
     OFF_HAND("Off Hand", Arrays.asList("off hand", "off_hand", "offhand", "weapon2", "oh", "off-hand"));
 
@@ -49,11 +52,4 @@ public enum WowSlotEnum {
         return null;
     }
 
-    public String getFormattedName() {
-        return formattedName;
-    }
-
-    public List<String> getAliases() {
-        return aliases;
-    }
-} 
+}
