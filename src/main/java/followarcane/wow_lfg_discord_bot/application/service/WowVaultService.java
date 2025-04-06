@@ -198,23 +198,23 @@ public class WowVaultService {
 
         // String.format kullanarak sabit genişlikli alanlar oluştur
         raidSection.append("Slot 1: Defeat 2 Bosses\n");
-        raidSection.append(slot1Status + " " + raid1Progress);
+        raidSection.append(slot1Status).append(" ").append(raid1Progress);
         if (!raidRewards[0].equals("No Reward")) {
-            raidSection.append(" → " + raidRewards[0]);
+            raidSection.append(" → ").append(raidRewards[0]);
         }
         raidSection.append("\n\n");
 
         raidSection.append("Slot 2: Defeat 4 Bosses\n");
-        raidSection.append(slot2Status + " " + raid2Progress);
+        raidSection.append(slot2Status).append(" ").append(raid2Progress);
         if (!raidRewards[1].equals("No Reward")) {
-            raidSection.append(" → " + raidRewards[1]);
+            raidSection.append(" → ").append(raidRewards[1]);
         }
         raidSection.append("\n\n");
 
         raidSection.append("Slot 3: Defeat 6 Bosses\n");
-        raidSection.append(slot3Status + " " + raid3Progress);
+        raidSection.append(slot3Status).append(" ").append(raid3Progress);
         if (!raidRewards[2].equals("No Reward")) {
-            raidSection.append(" → " + raidRewards[2]);
+            raidSection.append(" → ").append(raidRewards[2]);
         }
         raidSection.append("\n\n\n\n\n");
 
@@ -233,51 +233,48 @@ public class WowVaultService {
 
         // Her slot için ayrı bir satır oluştur
         dungeonSection.append("Slot 1: Complete 1 Dungeon\n");
-        dungeonSection.append(m1Status + " " + dungeon1Progress);
+        dungeonSection.append(m1Status).append(" ").append(dungeon1Progress);
         if (!mythicPlusRewards[0].equals("No Reward")) {
-            dungeonSection.append(" → " + mythicPlusRewards[0]);
+            dungeonSection.append(" → ").append(mythicPlusRewards[0]);
         }
         dungeonSection.append("\n\n");
 
         dungeonSection.append("Slot 2: Complete 4 Dungeons\n");
-        dungeonSection.append(m2Status + " " + dungeon2Progress);
+        dungeonSection.append(m2Status).append(" ").append(dungeon2Progress);
         if (!mythicPlusRewards[1].equals("No Reward")) {
-            dungeonSection.append(" → " + mythicPlusRewards[1]);
+            dungeonSection.append(" → ").append(mythicPlusRewards[1]);
         }
         dungeonSection.append("\n\n");
 
         dungeonSection.append("Slot 3: Complete 8 Dungeons\n");
-        dungeonSection.append(m3Status + " " + dungeon3Progress);
+        dungeonSection.append(m3Status).append(" ").append(dungeon3Progress);
         if (!mythicPlusRewards[2].equals("No Reward")) {
-            dungeonSection.append(" → " + mythicPlusRewards[2]);
+            dungeonSection.append(" → ").append(mythicPlusRewards[2]);
         }
         dungeonSection.append("\n\n\n\n\n");
 
         // World bölümü
-        StringBuilder worldSection = new StringBuilder();
 
         // World slotları için bilgi
-        worldSection.append("Slot 1: Complete 2 Activities\n");
-        worldSection.append("🔒 0/2");
-        worldSection.append(" → Coming Soon");
-        worldSection.append("\n\n");
 
-        worldSection.append("Slot 2: Complete 4 Activities\n");
-        worldSection.append("🔒 0/4");
-        worldSection.append(" → Coming Soon");
-        worldSection.append("\n\n");
-
-        worldSection.append("Slot 3: Complete 8 Activities\n");
-        worldSection.append("🔒 0/8");
-        worldSection.append(" → Coming Soon");
-        worldSection.append("\n\n");
-
-        worldSection.append("**Note: World activities tracking will be implemented soon!**");
+        String worldSection = "Slot 1: Complete 2 Activities\n" +
+                "🔒 0/2" +
+                " → Coming Soon" +
+                "\n\n" +
+                "Slot 2: Complete 4 Activities\n" +
+                "🔒 0/4" +
+                " → Coming Soon" +
+                "\n\n" +
+                "Slot 3: Complete 8 Activities\n" +
+                "🔒 0/8" +
+                " → Coming Soon" +
+                "\n\n" +
+                "**Note: World activities tracking will be implemented soon!**";
 
         // Alanları ekle
         embed.addField("__**RAIDS**__", raidSection.toString(), false);
         embed.addField("__**DUNGEONS**__", dungeonSection.toString(), false);
-        embed.addField("__**WORLD**__", worldSection.toString(), false);
+        embed.addField("__**WORLD**__", worldSection, false);
 
         // Karakter bilgilerini ekle
         embed.setThumbnail(thumbnailUrl);
@@ -466,7 +463,7 @@ public class WowVaultService {
      */
     private void addWeeklyRunsToEmbed(EmbedBuilder embed, JsonNode raiderIoData) {
         JsonNode runsNode = raiderIoData.path("mythic_plus_weekly_highest_level_runs");
-        if (!runsNode.isMissingNode() && runsNode.isArray() && runsNode.size() > 0) {
+        if (!runsNode.isMissingNode() && runsNode.isArray() && !runsNode.isEmpty()) {
             // Her 5 run için bir alan oluştur
             int runCount = runsNode.size();
             int runsPerField = 5;
@@ -486,9 +483,9 @@ public class WowVaultService {
                     double score = run.get("score").asDouble();
                     String dgUrl = run.get("url").asText();
 
-                    String upgradeStars = "";
+                    StringBuilder upgradeStars = new StringBuilder();
                     for (int k = 0; k < upgrades; k++) {
-                        upgradeStars += "⭐";
+                        upgradeStars.append("⭐");
                     }
 
                     runsInfo.append("**[").append(dungeon).append("](").append(dgUrl).append(")")
