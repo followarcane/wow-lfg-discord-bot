@@ -735,13 +735,6 @@ public class BisGearService {
         String formattedSpecName = formatName(specName);
         String formattedSlot = formatName(slot);
 
-        // Beast Mastery için özel kontrol
-        if (formattedSpecName.equalsIgnoreCase("Beast_mastery") ||
-                formattedSpecName.equalsIgnoreCase("Beast mastery") || formattedSpecName.equalsIgnoreCase("bm") ||
-                formattedSpecName.equalsIgnoreCase("Beastmastery")) {
-            formattedSpecName = "Beast_Mastery";
-        }
-
         // Sınıf ve spec için tüm hero talent'ları bul
         boolean foundAnyHeroTalent = false;
         String searchPrefix = formattedClassName + "_" + formattedSpecName + "_";
