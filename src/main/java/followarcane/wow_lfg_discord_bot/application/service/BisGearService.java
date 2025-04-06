@@ -214,6 +214,14 @@ public class BisGearService {
             return "";
         }
 
+        // Tam eşleşme kontrolü - özel sınıf adları için
+        if (name.equalsIgnoreCase("hunter")) {
+            return "Hunter";
+        }
+        if (name.equalsIgnoreCase("demon hunter") || name.equalsIgnoreCase("demonhunter") || name.equalsIgnoreCase("dh")) {
+            return "Demon_Hunter";
+        }
+
         // Sınıf kontrolü (en genel kategori)
         WowClassEnum wowClass = WowClassEnum.fromString(name);
         if (wowClass != null) {
