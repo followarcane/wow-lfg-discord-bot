@@ -1,8 +1,11 @@
 package followarcane.wow_lfg_discord_bot.application.util;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public enum WowSpecEnum {
     // Death Knight
     BLOOD("Blood", WowClassEnum.DEATH_KNIGHT, Arrays.asList("blood", "tank", "blood dk")),
@@ -31,7 +34,7 @@ public enum WowSpecEnum {
 
     // Mage
     ARCANE("Arcane", WowClassEnum.MAGE, Arrays.asList("arcane", "arc")),
-    FIRE("Fire", WowClassEnum.MAGE, Arrays.asList("fire")),
+    FIRE("Fire", WowClassEnum.MAGE, List.of("fire")),
     FROST_MAGE("Frost", WowClassEnum.MAGE, Arrays.asList("frost", "frost mage")),
 
     // Monk
@@ -65,8 +68,8 @@ public enum WowSpecEnum {
     DESTRUCTION("Destruction", WowClassEnum.WARLOCK, Arrays.asList("destruction", "destro")),
 
     // Warrior
-    ARMS("Arms", WowClassEnum.WARRIOR, Arrays.asList("arms")),
-    FURY("Fury", WowClassEnum.WARRIOR, Arrays.asList("fury")),
+    ARMS("Arms", WowClassEnum.WARRIOR, List.of("arms")),
+    FURY("Fury", WowClassEnum.WARRIOR, List.of("fury")),
     PROTECTION_WARRIOR("Protection", WowClassEnum.WARRIOR, Arrays.asList("protection", "prot", "prot warr", "tank warrior"));
 
     private final String formattedName;
@@ -116,15 +119,4 @@ public enum WowSpecEnum {
         return null;
     }
 
-    public String getFormattedName() {
-        return formattedName;
-    }
-
-    public WowClassEnum getWowClass() {
-        return wowClass;
-    }
-
-    public List<String> getAliases() {
-        return aliases;
-    }
-} 
+}

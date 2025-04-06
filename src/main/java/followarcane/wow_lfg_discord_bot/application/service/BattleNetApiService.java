@@ -102,7 +102,7 @@ public class BattleNetApiService {
                     JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
                     blizzardToken = jsonNode.get("access_token").asText();
                     int expiresIn = jsonNode.get("expires_in").asInt();
-                    tokenExpiry = now + (expiresIn * 1000) - 300000; // 5 dakika önce yenile
+                    tokenExpiry = now + (expiresIn * 1000L) - 300000; // 5 dakika önce yenile
                     log.info("Blizzard API token obtained, expires in {} seconds", expiresIn);
                     return blizzardToken;
                 }
