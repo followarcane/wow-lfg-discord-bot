@@ -67,8 +67,8 @@ public class BisGearServiceManualTest {
     @Test
     public void testCreateBisGearEmbedWithClassSpecHeroTalentAndSlot() {
         // Sınıf, spec, hero talent ve slot belirtildiğinde
-        String className = "demon hunter";
-        String specName = "dps";
+        String className = "hunter";
+        String specName = "beast_mastery";
         String heroTalent = "";
         String slot = "";
 
