@@ -69,8 +69,6 @@ public class DiscordBotService extends ListenerAdapter {
 
     private final RestTemplate restTemplate;
 
-    private final ClassColorCodeHelper classColorCodeHelper;
-
     private final WowVaultService wowVaultService;
 
     private final CharacterStatsService characterStatsService;
@@ -83,7 +81,6 @@ public class DiscordBotService extends ListenerAdapter {
         this.discordService = discordService;
         this.requestConverter = requestConverter;
         this.restTemplate = restTemplate;
-        this.classColorCodeHelper = classColorCodeHelper;
         this.wowVaultService = wowVaultService;
         this.characterStatsService = characterStatsService;
         this.bisGearService = bisGearService;
@@ -220,9 +217,9 @@ public class DiscordBotService extends ListenerAdapter {
         // Defer reply to give us time to fetch data
         event.deferReply().queue();
 
-        String name = event.getOption("name").getAsString();
-        String realm = event.getOption("realm").getAsString();
-        String region = event.getOption("region").getAsString();
+        String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+        String realm = Objects.requireNonNull(event.getOption("realm")).getAsString();
+        String region = Objects.requireNonNull(event.getOption("region")).getAsString();
 
         // WowVaultService'in createWeeklyRunsEmbed metodunu kullan
         EmbedBuilder embed = wowVaultService.createWeeklyRunsEmbed(name, realm, region);
@@ -235,9 +232,9 @@ public class DiscordBotService extends ListenerAdapter {
         // Defer reply to give us time to fetch data
         event.deferReply().queue();
 
-        String name = event.getOption("name").getAsString();
-        String realm = event.getOption("realm").getAsString().replace(" ", "-");
-        String region = event.getOption("region").getAsString();
+        String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+        String realm = Objects.requireNonNull(event.getOption("realm")).getAsString().replace(" ", "-");
+        String region = Objects.requireNonNull(event.getOption("region")).getAsString();
 
         try {
             // WowVaultService'i kullanarak vault embed'ini oluştur
@@ -254,19 +251,19 @@ public class DiscordBotService extends ListenerAdapter {
     private void handleCharacterStatsCommand(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        String name = event.getOption("name").getAsString();
-        String realm = event.getOption("realm").getAsString();
-        String region = event.getOption("region").getAsString();
+        String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+        String realm = Objects.requireNonNull(event.getOption("realm")).getAsString();
+        String region = Objects.requireNonNull(event.getOption("region")).getAsString();
 
         EmbedBuilder embed = characterStatsService.createCharacterStatsEmbed(name, realm, region);
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
 
     private void handleBisGearCommand(SlashCommandInteractionEvent event) {
-        String className = event.getOption("class").getAsString();
-        String specName = event.getOption("spec").getAsString();
-        String heroTalent = event.getOption("hero_talent") != null ? event.getOption("hero_talent").getAsString() : "";
-        String slot = event.getOption("slot") != null ? event.getOption("slot").getAsString() : "";
+        String className = Objects.requireNonNull(event.getOption("class")).getAsString();
+        String specName = Objects.requireNonNull(event.getOption("spec")).getAsString();
+        String heroTalent = event.getOption("hero_talent") != null ? Objects.requireNonNull(event.getOption("hero_talent")).getAsString() : "";
+        String slot = event.getOption("slot") != null ? Objects.requireNonNull(event.getOption("slot")).getAsString() : "";
 
         log.info("BIS Gear Command - Class: {}, Spec: {}, Hero Talent: {}, Slot: {}",
                 className, specName, heroTalent.isEmpty() ? "All" : heroTalent, slot.isEmpty() ? "All" : slot);

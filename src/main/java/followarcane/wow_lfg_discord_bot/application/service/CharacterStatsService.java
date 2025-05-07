@@ -137,26 +137,24 @@ public class CharacterStatsService {
         embed.addField("__**PRIMARY STATS**__", mainStats.toString(), false);
 
         // İkincil istatistikler
-        StringBuilder secondaryStats = new StringBuilder();
-        secondaryStats.append("**Critical Strike:** ").append(statsData.path("spell_crit").path("value").asText()).append("%\n");
-        secondaryStats.append("**Haste:** ").append(statsData.path("spell_haste").path("value").asText()).append("%\n");
-        secondaryStats.append("**Mastery:** ").append(statsData.path("mastery").path("value").asText()).append("%\n");
-        secondaryStats.append("**Versatility:** ").append(statsData.get("versatility_damage_done_bonus").asText()).append("%\n");
-        secondaryStats.append("**Leech:** ").append(statsData.path("lifesteal").path("value").asText()).append("%\n");
-        secondaryStats.append("\n\n\n\n\n");
+        String secondaryStats = "**Critical Strike:** " + statsData.path("spell_crit").path("value").asText() + "%\n" +
+                "**Haste:** " + statsData.path("spell_haste").path("value").asText() + "%\n" +
+                "**Mastery:** " + statsData.path("mastery").path("value").asText() + "%\n" +
+                "**Versatility:** " + statsData.get("versatility_damage_done_bonus").asText() + "%\n" +
+                "**Leech:** " + statsData.path("lifesteal").path("value").asText() + "%\n" +
+                "\n\n\n\n\n";
 
-        embed.addField("__**SECONDARY STATS**__", secondaryStats.toString(), false);
+        embed.addField("__**SECONDARY STATS**__", secondaryStats, false);
 
         // Savunma istatistikleri
-        StringBuilder defenseStats = new StringBuilder();
-        defenseStats.append("**Armor:** ").append(df.format(statsData.path("armor").path("effective").asLong())).append("\n");
-        defenseStats.append("**Dodge:** ").append(statsData.path("dodge").path("value").asText()).append("%\n");
-        defenseStats.append("**Parry:** ").append(statsData.path("parry").path("value").asText()).append("%\n");
-        defenseStats.append("**Block:** ").append(statsData.path("block").path("value").asText()).append("%\n");
-        defenseStats.append("**Avoidance:** ").append(statsData.path("avoidance").path("rating_bonus").asText()).append("%\n");
-        defenseStats.append("\n\n\n\n\n");
+        String defenseStats = "**Armor:** " + df.format(statsData.path("armor").path("effective").asLong()) + "\n" +
+                "**Dodge:** " + statsData.path("dodge").path("value").asText() + "%\n" +
+                "**Parry:** " + statsData.path("parry").path("value").asText() + "%\n" +
+                "**Block:** " + statsData.path("block").path("value").asText() + "%\n" +
+                "**Avoidance:** " + statsData.path("avoidance").path("rating_bonus").asText() + "%\n" +
+                "\n\n\n\n\n";
 
-        embed.addField("__**DEFENSE**__", defenseStats.toString(), false);
+        embed.addField("__**DEFENSE**__", defenseStats, false);
 
         // Saldırı istatistikleri
         StringBuilder attackStats = new StringBuilder();
