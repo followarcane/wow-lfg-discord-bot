@@ -1,27 +1,19 @@
 package followarcane.wow_lfg_discord_bot.application.service;
 
-import followarcane.wow_lfg_discord_bot.application.request.DiscordChannelRequest;
-import followarcane.wow_lfg_discord_bot.application.request.DiscordServerRequest;
-import followarcane.wow_lfg_discord_bot.application.request.UserRequest;
-import followarcane.wow_lfg_discord_bot.application.request.UserSettingsRequest;
-import followarcane.wow_lfg_discord_bot.application.request.RecruitmentFilterRequest;
+import followarcane.wow_lfg_discord_bot.application.request.*;
 import followarcane.wow_lfg_discord_bot.application.response.RecruitmentFilterResponse;
 import followarcane.wow_lfg_discord_bot.application.response.ServerFeatureResponse;
 import followarcane.wow_lfg_discord_bot.domain.model.*;
-import followarcane.wow_lfg_discord_bot.domain.repository.DiscordChannelRepository;
-import followarcane.wow_lfg_discord_bot.domain.repository.DiscordServerRepository;
-import followarcane.wow_lfg_discord_bot.domain.repository.UserRepository;
-import followarcane.wow_lfg_discord_bot.domain.repository.UserSettingsRepository;
-import followarcane.wow_lfg_discord_bot.domain.repository.ServerFeatureRepository;
+import followarcane.wow_lfg_discord_bot.domain.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -70,12 +62,45 @@ public class DiscordService {
 
     public void addUserSettings(UserSettingsRequest userSettingsRequest, String userId) {
         userSettingsRequest.setUserDiscordId(userId);
+
+        // Önce aynı sunucu ID'si için herhangi bir ayar var mı kontrol et
+        List<UserSettings> existingSettings = userSettingsRepository.findByServer_ServerId(userSettingsRequest.getServerId());
+
+        // Kullanıcı ve sunucu kombinasyonuna göre ayarlar
         UserSettings userSettings = getPureSettingsByServerIdAndUserId(userSettingsRequest.getServerId(), userSettingsRequest.getUserDiscordId());
 
-        // 1. User Settings güncelleme
-        if (userSettings != null) {
+        // Eğer bu kullanıcıya ait ayar yoksa ama sunucu için başka ayarlar varsa
+        if (userSettings == null && !existingSettings.isEmpty()) {
+            // Sunucu için ilk ayarı kullan ve sadece kullanıcı ID'sini değiştir
+            UserSettings firstSettings = existingSettings.get(0);
+
+            // Mevcut ayarları sil (ilk ayar hariç)
+            if (existingSettings.size() > 1) {
+                for (int i = 1; i < existingSettings.size(); i++) {
+                    userSettingsRepository.delete(existingSettings.get(i));
+                }
+            }
+
+            // Yeni kullanıcıyı kurulum sahibi yap
+            User newUser = userRepository.findUserByDiscordId(userId);
+            firstSettings.setUser(newUser);
+
+            // Yeni kullanıcı ayarları ile güncelle
+            updateExistingUserSettings(firstSettings, userSettingsRequest);
+        } else if (userSettings != null) {
+            // Kullanıcının mevcut ayarlarını güncelle
             updateExistingUserSettings(userSettings, userSettingsRequest);
+
+            // Fazladan olan diğer kayıtları sil
+            if (existingSettings.size() > 1) {
+                for (UserSettings settings : existingSettings) {
+                    if (!settings.getId().equals(userSettings.getId())) {
+                        userSettingsRepository.delete(settings);
+                    }
+                }
+            }
         } else {
+            // Yeni ayar oluştur
             createNewUserSettings(userSettingsRequest);
         }
 
@@ -105,6 +130,11 @@ public class DiscordService {
             discordChannelRepository.save(channel);
         }
 
+        // Son değişiklik bilgilerini güncelle
+        User modifyingUser = userRepository.findUserByDiscordId(request.getUserDiscordId());
+        userSettings.setLastModifiedBy(modifyingUser);
+        userSettings.setLastModifiedAt(LocalDateTime.now());
+
         userSettingsRepository.save(userSettings);
     }
 
@@ -131,6 +161,10 @@ public class DiscordService {
         userSettings.setServer(discordServer);
         userSettings.setChannel(discordChannel);
         userSettings.setUser(user);
+
+        // Son değişiklik bilgilerini ekle
+        userSettings.setLastModifiedBy(user);
+        userSettings.setLastModifiedAt(LocalDateTime.now());
 
         return userSettingsRepository.save(userSettings);
     }
