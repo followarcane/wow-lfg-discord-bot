@@ -276,7 +276,7 @@ public class BisGearService {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < parts.length; i++) {
-            if (parts[i].length() > 0) {
+            if (!parts[i].isEmpty()) {
                 result.append(parts[i].substring(0, 1).toUpperCase());
                 if (parts[i].length() > 1) {
                     result.append(parts[i].substring(1).toLowerCase());
@@ -315,7 +315,7 @@ public class BisGearService {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < parts.length; i++) {
-            if (parts[i].length() > 0) {
+            if (!parts[i].isEmpty()) {
                 result.append(parts[i].substring(0, 1).toUpperCase());
                 if (parts[i].length() > 1) {
                     result.append(parts[i].substring(1).toLowerCase());
@@ -356,7 +356,7 @@ public class BisGearService {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < parts.length; i++) {
-            if (parts[i].length() > 0) {
+            if (!parts[i].isEmpty()) {
                 result.append(parts[i].substring(0, 1).toUpperCase());
                 if (parts[i].length() > 1) {
                     result.append(parts[i].substring(1).toLowerCase());
@@ -459,9 +459,7 @@ public class BisGearService {
         String title = formattedSlot.isEmpty() ? "All Slots" : formattedSlot;
 
         String specTitle = formattedSpecName.isEmpty() ? "All Specs" : formattedSpecName;
-        if (!formattedHeroTalent.isEmpty()) {
-            specTitle += " (" + formattedHeroTalent + ")";
-        }
+        specTitle += " (" + formattedHeroTalent + ")";
 
         embed.setTitle("BIS Gear for " + formattedClassName.replace("_", " ") + " " + specTitle + " - " + title);
 
