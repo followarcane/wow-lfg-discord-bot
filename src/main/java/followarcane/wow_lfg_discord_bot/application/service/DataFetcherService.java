@@ -23,12 +23,8 @@ import org.springframework.web.client.RestTemplate;
 import java.awt.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,9 +70,24 @@ public class DataFetcherService {
                 newData.removeAll(previousData);
 
                 if (!newData.isEmpty()) {
-                    List<UserSettings> matchedLfgs = discordService.getAllUserSettings().stream()
+                    List<UserSettings> allSettings = discordService.getAllUserSettings().stream()
                             .filter(settings -> settings.getChannel().getServer().isActive()) // Check if server is active.
                             .toList();
+
+                    // Her sunucu için sadece bir UserSettings kullanmak için Map oluştur
+                    Map<String, UserSettings> serverIdToSettings = new HashMap<>();
+
+                    // Her sunucu için ilk UserSettings'i al
+                    for (UserSettings settings : allSettings) {
+                        String serverId = settings.getChannel().getServer().getServerId();
+                        if (!serverIdToSettings.containsKey(serverId)) {
+                            serverIdToSettings.put(serverId, settings);
+                        }
+                    }
+
+                    // Sadece her sunucu için tekil ayarları kullan
+                    List<UserSettings> matchedLfgs = new ArrayList<>(serverIdToSettings.values());
+                    
                     for (UserSettings settings : matchedLfgs) {
                         List<CharacterInfoResponse> filteredData = newData.stream()
                                 .filter(character -> characterMatchesSettings(character, settings))
@@ -96,7 +107,7 @@ public class DataFetcherService {
                 log.warn("No data fetched or data is empty.");
             }
         } catch (Exception e) {
-            log.error("Error fetching data from WoW API", e);
+            log.error("Error fetching data", e);
         }
     }
 
