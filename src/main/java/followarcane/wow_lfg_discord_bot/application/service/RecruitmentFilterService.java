@@ -78,8 +78,13 @@ public class RecruitmentFilterService {
     }
 
     private boolean checkRoleFilter(RecruitmentFilter filter, String playerRole) {
-        return filter.getRoleFilter().equals("ANY") || 
-               filter.getRoleFilter().contains(playerRole);
+        if (filter.getRoleFilter().equals("ANY")) return true;
+
+        // HEALER ve HEALING rollerini normalize et
+        String normalizedPlayerRole = playerRole.equals("HEALING") ? "HEALER" : playerRole;
+        String normalizedFilterRole = filter.getRoleFilter().equals("HEALING") ? "HEALER" : filter.getRoleFilter();
+
+        return normalizedFilterRole.contains(normalizedPlayerRole);
     }
 
     private boolean checkIlevelFilter(RecruitmentFilter filter, String playerIlevel) {
