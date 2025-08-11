@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # SimulationCraft URL
-SIM_URL = "https://www.simulationcraft.org/reports/TWW2_Raid.html"
+SIM_URL = "https://www.simulationcraft.org/reports/TWW3_Raid.html"
 
 # Profil bilgileri
 PROFILES = [
@@ -17,64 +17,50 @@ PROFILES = [
     {"class_name": "Death_Knight", "spec_name": "Unholy", "hero_talent": "San'layn", "player_id": "player5"},
 
     # Demon Hunter
-    {"class_name": "Demon_Hunter", "spec_name": "Havoc", "hero_talent": "", "player_id": "player7"},
-
-    # Druid
-    {"class_name": "Druid", "spec_name": "Balance", "hero_talent": "", "player_id": "player8"},
-    {"class_name": "Druid", "spec_name": "Feral", "hero_talent": "", "player_id": "player9"},
-
-    # Evoker
-    {"class_name": "Evoker", "spec_name": "Devastation", "hero_talent": "Flameshaper", "player_id": "player10"},
-    {"class_name": "Evoker", "spec_name": "Devastation", "hero_talent": "Scalecommander", "player_id": "player11"},
-
-    # Hunter
-    {"class_name": "Hunter", "spec_name": "Beast_Mastery", "hero_talent": "Pack_Leader", "player_id": "player12"},
-    {"class_name": "Hunter", "spec_name": "Marksmanship", "hero_talent": "Dark_Ranger", "player_id": "player13"},
-    {"class_name": "Hunter", "spec_name": "Survival", "hero_talent": "Pack_Leader", "player_id": "player14"},
+    {"class_name": "Demon_Hunter", "spec_name": "Havoc", "hero_talent": "Aldrachi_Reaver", "player_id": "player7"},
+    {"class_name": "Demon_Hunter", "spec_name": "Havoc", "hero_talent": "Fel-Scarred", "player_id": "player8"},
+    {"class_name": "Demon_Hunter", "spec_name": "Vengeance", "hero_talent": "", "player_id": "player9"},
+    {"class_name": "Demon_Hunter", "spec_name": "Vengeance", "hero_talent": "Aldrachi_Reaver", "player_id": "player10"},
 
     # Mage
-    {"class_name": "Mage", "spec_name": "Arcane", "hero_talent": "Spellslinger", "player_id": "player15"},
-    {"class_name": "Mage", "spec_name": "Arcane", "hero_talent": "Sunfury", "player_id": "player16"},
-    {"class_name": "Mage", "spec_name": "Fire", "hero_talent": "Frostfire", "player_id": "player17"},
-    {"class_name": "Mage", "spec_name": "Fire", "hero_talent": "Sunfury", "player_id": "player18"},
-    {"class_name": "Mage", "spec_name": "Frost", "hero_talent": "Frostfire", "player_id": "player19"},
-    {"class_name": "Mage", "spec_name": "Frost", "hero_talent": "Spellslinger", "player_id": "player20"},
+    {"class_name": "Mage", "spec_name": "Arcane", "hero_talent": "Spellslinger", "player_id": "player11"},
+    {"class_name": "Mage", "spec_name": "Arcane", "hero_talent": "Sunfury", "player_id": "player12"},
+    {"class_name": "Mage", "spec_name": "Fire", "hero_talent": "Frostfire", "player_id": "player13"},
+    {"class_name": "Mage", "spec_name": "Fire", "hero_talent": "Sunfury", "player_id": "player14"},
+    {"class_name": "Mage", "spec_name": "Frost", "hero_talent": "Frostfire", "player_id": "player15"},
+    {"class_name": "Mage", "spec_name": "Frost", "hero_talent": "Spellslinger", "player_id": "player16"},
 
     # Monk
-    {"class_name": "Monk", "spec_name": "Brewmaster", "hero_talent": "", "player_id": "player21"},
-    {"class_name": "Monk", "spec_name": "Windwalker", "hero_talent": "", "player_id": "player22"},
-    {"class_name": "Monk", "spec_name": "Windwalker", "hero_talent": "Shadopan", "player_id": "player23"},
+    {"class_name": "Monk", "spec_name": "Windwalker", "hero_talent": "", "player_id": "player17"},
+    {"class_name": "Monk", "spec_name": "Windwalker", "hero_talent": "Shadopan", "player_id": "player18"},
 
     # Paladin
-    {"class_name": "Paladin", "spec_name": "Protection", "hero_talent": "Lightsmith", "player_id": "player24"},
-    {"class_name": "Paladin", "spec_name": "Retribution", "hero_talent": "", "player_id": "player25"},
-    {"class_name": "Paladin", "spec_name": "Retribution", "hero_talent": "Herald", "player_id": "player27"},
-    {"class_name": "Paladin", "spec_name": "Retribution", "hero_talent": "Templar", "player_id": "player26"},
+    {"class_name": "Paladin", "spec_name": "Protection", "hero_talent": "", "player_id": "player19"},
+    {"class_name": "Paladin", "spec_name": "Protection", "hero_talent": "Templar", "player_id": "player20"},
 
     # Priest
-    {"class_name": "Priest", "spec_name": "Shadow", "hero_talent": "Archon", "player_id": "player29"},
-    {"class_name": "Priest", "spec_name": "Shadow", "hero_talent": "Voidweaver", "player_id": "player28"},
+    {"class_name": "Priest", "spec_name": "Shadow", "hero_talent": "Archon", "player_id": "player21"},
+    {"class_name": "Priest", "spec_name": "Shadow", "hero_talent": "Voidweaver", "player_id": "player22"},
 
     # Rogue
-    {"class_name": "Rogue", "spec_name": "Assassination", "hero_talent": "", "player_id": "player30"},
-    {"class_name": "Rogue", "spec_name": "Outlaw", "hero_talent": "", "player_id": "player31"},
-    {"class_name": "Rogue", "spec_name": "Subtlety", "hero_talent": "", "player_id": "player32"},
+    {"class_name": "Rogue", "spec_name": "Assassination", "hero_talent": "Deathstalker", "player_id": "player23"},
+    {"class_name": "Rogue", "spec_name": "Assassination", "hero_talent": "Fatebound", "player_id": "player24"},
+    {"class_name": "Rogue", "spec_name": "Outlaw", "hero_talent": "", "player_id": "player25"},
+    {"class_name": "Rogue", "spec_name": "Subtlety", "hero_talent": "", "player_id": "player26"},
 
     # Shaman
-    {"class_name": "Shaman", "spec_name": "Elemental", "hero_talent": "Farseer", "player_id": "player33"},
-    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "", "player_id": "player34"},
-    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "Stormbringer", "player_id": "player35"},
+    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "", "player_id": "player27"},
+    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "DRE", "player_id": "player28"},
+    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "Totemic", "player_id": "player29"},
 
     # Warlock
-    {"class_name": "Warlock", "spec_name": "Affliction", "hero_talent": "Hellcaller", "player_id": "player36"},
-    {"class_name": "Warlock", "spec_name": "Demonology", "hero_talent": "Diabolist", "player_id": "player37"},
-    {"class_name": "Warlock", "spec_name": "Destruction", "hero_talent": "Diabolist", "player_id": "player38"},
+    {"class_name": "Warlock", "spec_name": "Affliction", "hero_talent": "Hellcaller", "player_id": "player30"},
+    {"class_name": "Warlock", "spec_name": "Demonology", "hero_talent": "Diabolist", "player_id": "player31"},
+    {"class_name": "Warlock", "spec_name": "Destruction", "hero_talent": "Diabolist", "player_id": "player32"},
 
     # Warrior
-    {"class_name": "Warrior", "spec_name": "Arms", "hero_talent": "", "player_id": "player39"},
-    {"class_name": "Warrior", "spec_name": "Fury", "hero_talent": "", "player_id": "player40"},
-    {"class_name": "Warrior", "spec_name": "Protection", "hero_talent": "Colossus", "player_id": "player41"},
-    {"class_name": "Warrior", "spec_name": "Protection", "hero_talent": "Thane", "player_id": "player42"}
+    {"class_name": "Warrior", "spec_name": "Protection", "hero_talent": "Colossus", "player_id": "player33"},
+    {"class_name": "Warrior", "spec_name": "Protection", "hero_talent": "Thane", "player_id": "player34"}
 ]
 
 def extract_bis_gear(soup, profile):
@@ -203,6 +189,7 @@ def main():
         total_profiles = len(PROFILES)
         processed_profiles = 0
         successful_profiles = 0
+        failed_profiles = []
         
         print(f"\nProcessing {total_profiles} profiles...\n")
         
@@ -222,23 +209,42 @@ def main():
                     all_bis_data[profile_key] = bis_items
                     
                     successful_profiles += 1
-                    print(f"Successfully processed profile: {profile_key}")
+                    print(f"✅ Successfully processed profile: {profile_key}")
+                else:
+                    # Başarısız olan profili kaydet
+                    profile_key = f"{profile['class_name']}_{profile['spec_name']}"
+                    if profile['hero_talent']:
+                        profile_key += f"_{profile['hero_talent']}"
+                    failed_profiles.append(profile_key)
+                    print(f"❌ Failed to process profile: {profile_key}")
                 
                 # İlerleme durumunu göster
                 print(f"Progress: {processed_profiles}/{total_profiles} profiles processed ({successful_profiles} successful)")
                 print("-" * 80)
             except Exception as e:
                 processed_profiles += 1
-                print(f"Error processing profile {profile}: {e}")
+                profile_key = f"{profile['class_name']}_{profile['spec_name']}"
+                if profile['hero_talent']:
+                    profile_key += f"_{profile['hero_talent']}"
+                failed_profiles.append(profile_key)
+                print(f"❌ Error processing profile {profile_key}: {e}")
                 print("-" * 80)
+
+        # Başarısız olan profilleri listele
+        if failed_profiles:
+            print(f"\n❌ Failed profiles ({len(failed_profiles)}):")
+            for failed in failed_profiles:
+                print(f"  - {failed}")
         
         # Tüm verileri tek bir JSON dosyasına kaydet
         output_file = "bis_data.json"
         with open(output_file, "w") as f:
             json.dump(all_bis_data, f, indent=2)
-        
-        print(f"\nAll BIS data saved to {output_file}")
-        print(f"Successfully processed {successful_profiles}/{total_profiles} profiles.")
+
+        print(f"\n📁 All BIS data saved to {output_file}")
+        print(f"✅ Successfully processed {successful_profiles}/{total_profiles} profiles.")
+        if failed_profiles:
+            print(f"❌ Failed: {len(failed_profiles)} profiles")
         
     except Exception as e:
         print(f"Error: {e}")
