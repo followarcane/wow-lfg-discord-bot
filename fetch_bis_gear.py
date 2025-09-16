@@ -22,45 +22,67 @@ PROFILES = [
     {"class_name": "Demon_Hunter", "spec_name": "Vengeance", "hero_talent": "", "player_id": "player9"},
     {"class_name": "Demon_Hunter", "spec_name": "Vengeance", "hero_talent": "Aldrachi_Reaver", "player_id": "player10"},
 
+    # Druid
+    {"class_name": "Druid", "spec_name": "Balance", "hero_talent": "", "player_id": "player11"},
+    {"class_name": "Druid", "spec_name": "Feral", "hero_talent": "DOTC", "player_id": "player12"},
+    {"class_name": "Druid", "spec_name": "Feral", "hero_talent": "Wildstalker", "player_id": "player13"},
+    {"class_name": "Druid", "spec_name": "Guardian", "hero_talent": "", "player_id": "player14"},
+
+    # Evoker
+    {"class_name": "Evoker", "spec_name": "Devastation", "hero_talent": "FS", "player_id": "player15"},
+    {"class_name": "Evoker", "spec_name": "Devastation", "hero_talent": "SC", "player_id": "player16"},
+
+    # Hunter
+    {"class_name": "Hunter", "spec_name": "Beast_Mastery", "hero_talent": "Dark_Ranger", "player_id": "player17"},
+    {"class_name": "Hunter", "spec_name": "Beast_Mastery", "hero_talent": "Pack_Leader", "player_id": "player18"},
+    {"class_name": "Hunter", "spec_name": "Marksmanship", "hero_talent": "", "player_id": "player19"},
+    {"class_name": "Hunter", "spec_name": "Survival", "hero_talent": "", "player_id": "player20"},
+
     # Mage
-    {"class_name": "Mage", "spec_name": "Arcane", "hero_talent": "Spellslinger", "player_id": "player11"},
-    {"class_name": "Mage", "spec_name": "Arcane", "hero_talent": "Sunfury", "player_id": "player12"},
-    {"class_name": "Mage", "spec_name": "Fire", "hero_talent": "Frostfire", "player_id": "player13"},
-    {"class_name": "Mage", "spec_name": "Fire", "hero_talent": "Sunfury", "player_id": "player14"},
-    {"class_name": "Mage", "spec_name": "Frost", "hero_talent": "Frostfire", "player_id": "player15"},
-    {"class_name": "Mage", "spec_name": "Frost", "hero_talent": "Spellslinger", "player_id": "player16"},
+    {"class_name": "Mage", "spec_name": "Arcane", "hero_talent": "Spellslinger", "player_id": "player21"},
+    {"class_name": "Mage", "spec_name": "Arcane", "hero_talent": "Sunfury", "player_id": "player22"},
+    {"class_name": "Mage", "spec_name": "Fire", "hero_talent": "Frostfire", "player_id": "player23"},
+    {"class_name": "Mage", "spec_name": "Fire", "hero_talent": "Sunfury", "player_id": "player24"},
+    {"class_name": "Mage", "spec_name": "Frost", "hero_talent": "Frostfire", "player_id": "player25"},
+    {"class_name": "Mage", "spec_name": "Frost", "hero_talent": "Spellslinger", "player_id": "player26"},
 
     # Monk
-    {"class_name": "Monk", "spec_name": "Windwalker", "hero_talent": "", "player_id": "player17"},
-    {"class_name": "Monk", "spec_name": "Windwalker", "hero_talent": "Shadopan", "player_id": "player18"},
+    {"class_name": "Monk", "spec_name": "Brewmaster", "hero_talent": "", "player_id": "player27"},
+    {"class_name": "Monk", "spec_name": "Windwalker", "hero_talent": "", "player_id": "player28"},
+    {"class_name": "Monk", "spec_name": "Windwalker", "hero_talent": "Shadopan", "player_id": "player29"},
 
     # Paladin
-    {"class_name": "Paladin", "spec_name": "Protection", "hero_talent": "", "player_id": "player19"},
-    {"class_name": "Paladin", "spec_name": "Protection", "hero_talent": "Templar", "player_id": "player20"},
+    {"class_name": "Paladin", "spec_name": "Protection", "hero_talent": "", "player_id": "player30"},
+    {"class_name": "Paladin", "spec_name": "Protection", "hero_talent": "Templar", "player_id": "player31"},
+    {"class_name": "Paladin", "spec_name": "Retribution", "hero_talent": "", "player_id": "player32"},
+    {"class_name": "Paladin", "spec_name": "Retribution", "hero_talent": "Herald", "player_id": "player33"},
 
     # Priest
-    {"class_name": "Priest", "spec_name": "Shadow", "hero_talent": "Archon", "player_id": "player21"},
-    {"class_name": "Priest", "spec_name": "Shadow", "hero_talent": "Voidweaver", "player_id": "player22"},
+    {"class_name": "Priest", "spec_name": "Shadow", "hero_talent": "Archon", "player_id": "player34"},
+    {"class_name": "Priest", "spec_name": "Shadow", "hero_talent": "Voidweaver", "player_id": "player35"},
 
     # Rogue
-    {"class_name": "Rogue", "spec_name": "Assassination", "hero_talent": "Deathstalker", "player_id": "player23"},
-    {"class_name": "Rogue", "spec_name": "Assassination", "hero_talent": "Fatebound", "player_id": "player24"},
-    {"class_name": "Rogue", "spec_name": "Outlaw", "hero_talent": "", "player_id": "player25"},
-    {"class_name": "Rogue", "spec_name": "Subtlety", "hero_talent": "", "player_id": "player26"},
+    {"class_name": "Rogue", "spec_name": "Assassination", "hero_talent": "Deathstalker", "player_id": "player36"},
+    {"class_name": "Rogue", "spec_name": "Assassination", "hero_talent": "Fatebound", "player_id": "player37"},
+    {"class_name": "Rogue", "spec_name": "Outlaw", "hero_talent": "", "player_id": "player38"},
+    {"class_name": "Rogue", "spec_name": "Subtlety", "hero_talent": "", "player_id": "player39"},
 
     # Shaman
-    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "", "player_id": "player27"},
-    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "DRE", "player_id": "player28"},
-    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "Totemic", "player_id": "player29"},
+    {"class_name": "Shaman", "spec_name": "Elemental", "hero_talent": "Farseer", "player_id": "player40"},
+    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "", "player_id": "player41"},
+    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "DRE", "player_id": "player42"},
+    {"class_name": "Shaman", "spec_name": "Enhancement", "hero_talent": "Totemic", "player_id": "player43"},
 
     # Warlock
-    {"class_name": "Warlock", "spec_name": "Affliction", "hero_talent": "Hellcaller", "player_id": "player30"},
-    {"class_name": "Warlock", "spec_name": "Demonology", "hero_talent": "Diabolist", "player_id": "player31"},
-    {"class_name": "Warlock", "spec_name": "Destruction", "hero_talent": "Diabolist", "player_id": "player32"},
+    {"class_name": "Warlock", "spec_name": "Affliction", "hero_talent": "Hellcaller", "player_id": "player44"},
+    {"class_name": "Warlock", "spec_name": "Demonology", "hero_talent": "Diabolist", "player_id": "player45"},
+    {"class_name": "Warlock", "spec_name": "Destruction", "hero_talent": "Diabolist", "player_id": "player46"},
 
     # Warrior
-    {"class_name": "Warrior", "spec_name": "Protection", "hero_talent": "Colossus", "player_id": "player33"},
-    {"class_name": "Warrior", "spec_name": "Protection", "hero_talent": "Thane", "player_id": "player34"}
+    {"class_name": "Warrior", "spec_name": "Arms", "hero_talent": "", "player_id": "player47"},
+    {"class_name": "Warrior", "spec_name": "Fury", "hero_talent": "", "player_id": "player48"},
+    {"class_name": "Warrior", "spec_name": "Protection", "hero_talent": "Colossus", "player_id": "player49"},
+    {"class_name": "Warrior", "spec_name": "Protection", "hero_talent": "Thane", "player_id": "player50"}
 ]
 
 def extract_bis_gear(soup, profile):

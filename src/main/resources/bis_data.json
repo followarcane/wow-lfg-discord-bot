@@ -67,10 +67,10 @@
       "stats": "ilevel: 723, stats: { +37,981 Sta, +6,509 Vers, +3,185 Mastery }, gems: { +147 Haste, +49 Vers, +147 Crit, +49 Vers }, enchant: { +315 Vers (radiant_versatility_3) }"
     },
     "Trinket1": {
-      "name": "Ticking Sack of Terror",
-      "url": "https://www.wowhead.com/item=190652?ilvl=723",
+      "name": "Tome of Light's Devotion",
+      "url": "https://www.wowhead.com/item=219309?ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Mastery }item effects: { equip: Volatile Satchel }"
+      "stats": "ilevel: 723item effects: { equip: Tome of Light's Devotion, use: Tome of Light's Devotion }"
     },
     "Trinket2": {
       "name": "Brand of Ceaseless Ire",
@@ -165,10 +165,10 @@
       "stats": "ilevel: 723item effects: { equip: Tome of Light's Devotion, use: Tome of Light's Devotion }"
     },
     "Trinket2": {
-      "name": "Ticking Sack of Terror",
-      "url": "https://www.wowhead.com/item=190652?ilvl=723",
+      "name": "Unyielding Netherprism",
+      "url": "https://www.wowhead.com/item=242396?ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Mastery }item effects: { equip: Volatile Satchel }"
+      "stats": "ilevel: 723item effects: { equip: Unyielding Netherprism, use: Unyielding Netherprism }"
     },
     "Back": {
       "name": "Reshii Wraps",
@@ -435,10 +435,10 @@
       "stats": "ilevel: 723, stats: { +37,981 Sta, +5,816 Haste, +3,878 Mastery }, gems: { +147 Mastery, +49 Crit, +147 Mastery, +49 Crit }, enchant: { +315 Crit (radiant_critical_strike_3) }"
     },
     "Trinket1": {
-      "name": "Araz's Ritual Forge",
-      "url": "https://www.wowhead.com/item=242402?bonus=7187:1520&ilvl=723",
+      "name": "Cursed Stone Idol",
+      "url": "https://www.wowhead.com/item=246344?ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+      "stats": "ilevel: 723, stats: { +7,890 StrAgi }item effects: { use: Cursed Stone Idol, equip: Cursed Stone Idol }"
     },
     "Trinket2": {
       "name": "Astral Antenna",
@@ -527,10 +527,10 @@
       "stats": "ilevel: 723, stats: { +37,981 Sta, +5,816 Haste, +3,878 Mastery }, gems: { +147 Mastery, +49 Crit, +147 Mastery, +49 Crit }, enchant: { +315 Crit (radiant_critical_strike_3) }"
     },
     "Trinket1": {
-      "name": "Araz's Ritual Forge",
-      "url": "https://www.wowhead.com/item=242402?bonus=7187:1520&ilvl=723",
+      "name": "Cursed Stone Idol",
+      "url": "https://www.wowhead.com/item=246344?ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+      "stats": "ilevel: 723, stats: { +7,890 StrAgi }item effects: { use: Cursed Stone Idol, equip: Cursed Stone Idol }"
     },
     "Trinket2": {
       "name": "Astral Antenna",
@@ -943,6 +943,754 @@
       "stats": "ilevel: 720, weapon: { 8,944 - 14,909, 2.6 }, stats: { +32,831 Sta, +691 Crit, +691 Haste, +4,035 StrAgi }, enchant: councils_guile_3, temporary_enchant: Ironclaw Sharpened Weaponitem effects: { equip: Ascendance }"
     }
   },
+  "Druid_Feral_DOTC": {
+    "Head": {
+      "name": "Skymane of the Mother Eagle",
+      "url": "https://www.wowhead.com/item=237682?gems=213743&bonus=12361:10356:12231:6652:12921:12676:1533:10255:1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 5,926 Armor, +67,522 Sta, +1,993 Haste, +800 Mastery, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Salhadaar's Folly",
+      "url": "https://www.wowhead.com/item=242406?gems=213482:213470&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,440 Crit, +8,254 Mastery }, gems: { +147 Haste, +49 Mastery, +147 Vers, +49 Haste }"
+    },
+    "Shoulders": {
+      "name": "Ritual Pauldrons of the Mother Eagle",
+      "url": "https://www.wowhead.com/item=237680?bonus=12361:10356:12233:6652:12675:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 5,432 Armor, +50,642 Sta, +1,449 Haste, +645 Vers, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "So'azmi's Fractal Vest",
+      "url": "https://www.wowhead.com/item=185786?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,901 Armor, +67,522 Sta, +1,915 Haste, +878 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Rune-Branded Waistband",
+      "url": "https://www.wowhead.com/item=219331?gems=213470&bonus=10421:9633:8902:12053:12050:1485:1808:11304:8960&crafted-stats=49:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 4,345 Armor, +49,246 Sta, +1,037 Mastery, +1,037 Haste, +6,053 AgiInt }, gems: { +147 Vers, +49 Haste }item effects: { equip: Duskthread Lining }"
+    },
+    "Legs": {
+      "name": "Breeches of the Mother Eagle",
+      "url": "https://www.wowhead.com/item=237681?ench=7601&bonus=12361:10356:12232:6652:12676:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 6,913 Armor, +67,522 Sta, +1,845 Crit, +948 Mastery, +8,300 AgiInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Reinforced Sandals",
+      "url": "https://www.wowhead.com/item=243306?ench=7424&bonus=6652:10356:12361:1533:10255:13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 4,938 Armor, +50,642 Sta, +1,434 Vers, +660 Mastery, +6,225 AgiInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Rune-Branded Armbands",
+      "url": "https://www.wowhead.com/item=219334?ench=7391&gems=213470&bonus=10421:9633:8902:12053:12050:1485:1808:11304:8960&crafted-stats=49:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 3,862 Armor, +36,934 Sta, +778 Mastery, +778 Haste, +4,540 AgiInt }, gems: { +147 Vers, +49 Haste }, enchant: { +2,040 Leech (chant_of_armored_leech_3) }item effects: { equip: Duskthread Lining }"
+    },
+    "Hands": {
+      "name": "Wings of the Mother Eagle",
+      "url": "https://www.wowhead.com/item=237683?bonus=12361:10356:12230:6652:12675:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 4,444 Armor, +50,642 Sta, +630 Crit, +1,464 Mastery, +6,225 AgiInt }"
+    },
+    "Finger1": {
+      "name": "Radiant Necromancer's Band",
+      "url": "https://www.wowhead.com/item=221200?ench=7346&gems=213470:213470&bonus=10879&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,739 Vers, +5,955 Mastery }, gems: { +147 Vers, +49 Haste, +147 Vers, +49 Haste }, enchant: { +315 Mastery (radiant_mastery_3) }"
+    },
+    "Finger2": {
+      "name": "Ring of the Panoply",
+      "url": "https://www.wowhead.com/item=246281?ench=7346&gems=213494:213458&bonus=10879&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,324 Crit, +6,370 Haste }, gems: { +147 Mastery, +49 Haste, +147 Crit, +49 Mastery }, enchant: { +315 Mastery (radiant_mastery_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Araz's Ritual Forge",
+      "url": "https://www.wowhead.com/item=242402?bonus=6652:10356:12361:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238045&bonus=12401:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Haste }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Harvester's Interdiction",
+      "url": "https://www.wowhead.com/item=221159?ench=7445&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 19,116 - 25,864, 3.6 }, stats: { +8,300 Agi, +67,522 Sta, +1,636 Vers, +1,157 Mastery }, enchant: stonebound_artistry_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Harvester's Interdiction }"
+    }
+  },
+  "Druid_Feral_Wildstalker": {
+    "Head": {
+      "name": "Skymane of the Mother Eagle",
+      "url": "https://www.wowhead.com/item=237682?gems=213743&bonus=12361:10356:12231:6652:12921:12676:1533:10255:1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 5,926 Armor, +67,522 Sta, +1,993 Haste, +800 Mastery, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Duskblaze's Desperation",
+      "url": "https://www.wowhead.com/item=237569?gems=213482:213482&bonus=10879&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +8,171 Haste, +1,523 Mastery }, gems: { +147 Haste, +49 Mastery, +147 Haste, +49 Mastery }"
+    },
+    "Shoulders": {
+      "name": "Ritual Pauldrons of the Mother Eagle",
+      "url": "https://www.wowhead.com/item=237680?bonus=12361:10356:12233:6652:12675:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 5,432 Armor, +50,642 Sta, +1,449 Haste, +645 Vers, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "So'azmi's Fractal Vest",
+      "url": "https://www.wowhead.com/item=185786?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,901 Armor, +67,522 Sta, +1,915 Haste, +878 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Rune-Branded Waistband",
+      "url": "https://www.wowhead.com/item=219331?gems=213482&bonus=10421:9633:8902:12053:12050:1485:1808:11304:8960&crafted-stats=49:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 4,345 Armor, +49,246 Sta, +1,037 Mastery, +1,037 Haste, +6,053 AgiInt }, gems: { +147 Haste, +49 Mastery }item effects: { equip: Duskthread Lining }"
+    },
+    "Legs": {
+      "name": "Breeches of the Mother Eagle",
+      "url": "https://www.wowhead.com/item=237681?ench=7601&bonus=12361:10356:12232:6652:12676:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 6,913 Armor, +67,522 Sta, +1,845 Crit, +948 Mastery, +8,300 AgiInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Reinforced Sandals",
+      "url": "https://www.wowhead.com/item=243306?ench=7424&bonus=6652:10356:12361:1533:10255:13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 4,938 Armor, +50,642 Sta, +1,434 Vers, +660 Mastery, +6,225 AgiInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Rune-Branded Armbands",
+      "url": "https://www.wowhead.com/item=219334?ench=7391&gems=213482&bonus=10421:9633:8902:12053:12050:1485:1808:11304:8960&crafted-stats=49:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 3,862 Armor, +36,934 Sta, +778 Mastery, +778 Haste, +4,540 AgiInt }, gems: { +147 Haste, +49 Mastery }, enchant: { +2,040 Leech (chant_of_armored_leech_3) }item effects: { equip: Duskthread Lining }"
+    },
+    "Hands": {
+      "name": "Wings of the Mother Eagle",
+      "url": "https://www.wowhead.com/item=237683?bonus=12361:10356:12230:6652:12675:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 4,444 Armor, +50,642 Sta, +630 Crit, +1,464 Mastery, +6,225 AgiInt }"
+    },
+    "Finger1": {
+      "name": "Logic Gate: Alpha",
+      "url": "https://www.wowhead.com/item=237567?ench=7346&gems=213482:213470&bonus=10879&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +7,921 Crit, +1,773 Mastery }, gems: { +147 Haste, +49 Mastery, +147 Vers, +49 Haste }, enchant: { +315 Mastery (radiant_mastery_3) }"
+    },
+    "Finger2": {
+      "name": "Radiant Necromancer's Band",
+      "url": "https://www.wowhead.com/item=221200?ench=7346&gems=213494:213458&bonus=10879&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,739 Vers, +5,955 Mastery }, gems: { +147 Mastery, +49 Haste, +147 Crit, +49 Mastery }, enchant: { +315 Mastery (radiant_mastery_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Araz's Ritual Forge",
+      "url": "https://www.wowhead.com/item=242402?bonus=6652:10356:12361:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238046&bonus=12401:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Mastery }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Harvester's Interdiction",
+      "url": "https://www.wowhead.com/item=221159?ench=7439&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 19,116 - 25,864, 3.6 }, stats: { +8,300 Agi, +67,522 Sta, +1,636 Vers, +1,157 Mastery }, enchant: councils_guile_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Harvester's Interdiction }"
+    }
+  },
+  "Evoker_Devastation_FS": {
+    "Head": {
+      "name": "Spellweaver's Immaculate Focus",
+      "url": "https://www.wowhead.com/item=237655?gems=213743&bonus=1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,738 Armor, +67,522 Sta, +1,821 Crit, +972 Haste, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Ornately Engraved Amplifier",
+      "url": "https://www.wowhead.com/item=185842?gems=213470:213494&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +5,539 Crit, +4,155 Haste }, gems: { +147 Vers, +49 Haste, +147 Mastery, +49 Haste }"
+    },
+    "Shoulders": {
+      "name": "Spellweaver's Immaculate Pauldrons",
+      "url": "https://www.wowhead.com/item=237653?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,010 Armor, +50,642 Sta, +700 Crit, +1,395 Haste, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "Spellweaver's Immaculate Crestward",
+      "url": "https://www.wowhead.com/item=237658?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 11,651 Armor, +67,522 Sta, +1,919 Haste, +874 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Durable Information Securing Container",
+      "url": "https://www.wowhead.com/item=245965?gems=213482&bonus=1489:12352:12239&ilvl=701",
+      "source": "Local",
+      "stats": "ilevel: 701, stats: { 5,569 Armor, +39,811 Sta, +5,071 StrAgiInt }, gems: { +147 Haste, +49 Mastery }item effects: { equip: Durable Information Securing Container, equip: Durable Information Securing Container, use: , equip: Durable Information Securing Container }"
+    },
+    "Legs": {
+      "name": "Spellweaver's Immaculate Runeslacks",
+      "url": "https://www.wowhead.com/item=237654?ench=7534&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,194 Armor, +67,522 Sta, +897 Crit, +1,896 Mastery, +8,300 AgiInt }, enchant: { +930 Int, +895 Sta (sunset_spellthread_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Chain Boots",
+      "url": "https://www.wowhead.com/item=243308?ench=7424&bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,282 Armor, +50,642 Sta, +1,425 Haste, +670 Mastery, +6,225 AgiInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Glyph-Etched Vambraces",
+      "url": "https://www.wowhead.com/item=219342?ench=7391&gems=213482&bonus=8790:11109:8960:1808&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 5,695 Armor, +36,934 Sta, +778 Crit, +778 Haste, +4,540 AgiInt }, gems: { +147 Haste, +49 Mastery }, enchant: { +2,040 Leech (chant_of_armored_leech_3) }item effects: { equip: Writhing Armor Banding }"
+    },
+    "Hands": {
+      "name": "Order Bashers",
+      "url": "https://www.wowhead.com/item=246282?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 6,554 Armor, +50,642 Sta, +1,272 Crit, +823 Mastery, +6,225 AgiInt }"
+    },
+    "Finger1": {
+      "name": "Logic Gate: Omega",
+      "url": "https://www.wowhead.com/item=237570?ench=7340&gems=213482:213482&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,606 Haste, +8,088 Mastery }, gems: { +147 Haste, +49 Mastery, +147 Haste, +49 Mastery }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Finger2": {
+      "name": "Ring of the Panoply",
+      "url": "https://www.wowhead.com/item=246281?ench=7340&gems=213482:213455&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,324 Crit, +6,370 Haste }, gems: { +147 Haste, +49 Mastery, +147 Crit, +49 Haste }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Araz's Ritual Forge",
+      "url": "https://www.wowhead.com/item=242402?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238044&bonus=9893:12239&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Crit }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Voidglass Kris",
+      "url": "https://www.wowhead.com/item=237728?ench=7442&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 3,183 - 5,308, 1.8 }, stats: { +4,150 Int, +20,019 Int, +33,761 Sta, +467 Crit, +930 Mastery }, enchant: stormriders_fury_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Shards of the Void }"
+    },
+    "Off Hand": {
+      "name": "Vagabond's Torch",
+      "url": "https://www.wowhead.com/item=222566?bonus=10421:9633:8902:12053:12050:1485:11300:8960&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { +12,379 Int, +32,831 Sta, +691 Crit, +691 Haste }item effects: { equip: Ascendance }"
+    }
+  },
+  "Evoker_Devastation_SC": {
+    "Head": {
+      "name": "Spellweaver's Immaculate Focus",
+      "url": "https://www.wowhead.com/item=237655?gems=213743&bonus=1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,738 Armor, +67,522 Sta, +1,821 Crit, +972 Haste, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Ornately Engraved Amplifier",
+      "url": "https://www.wowhead.com/item=185842?gems=213470:213494&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +5,539 Crit, +4,155 Haste }, gems: { +147 Vers, +49 Haste, +147 Mastery, +49 Haste }"
+    },
+    "Shoulders": {
+      "name": "Spellweaver's Immaculate Pauldrons",
+      "url": "https://www.wowhead.com/item=237653?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,010 Armor, +50,642 Sta, +700 Crit, +1,395 Haste, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "Spellweaver's Immaculate Crestward",
+      "url": "https://www.wowhead.com/item=237658?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 11,651 Armor, +67,522 Sta, +1,919 Haste, +874 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Durable Information Securing Container",
+      "url": "https://www.wowhead.com/item=245965?gems=213482&bonus=1489:12352:12239&ilvl=701",
+      "source": "Local",
+      "stats": "ilevel: 701, stats: { 5,569 Armor, +39,811 Sta, +5,071 StrAgiInt }, gems: { +147 Haste, +49 Mastery }item effects: { equip: Durable Information Securing Container, equip: Durable Information Securing Container, use: , equip: Durable Information Securing Container }"
+    },
+    "Legs": {
+      "name": "Spellweaver's Immaculate Runeslacks",
+      "url": "https://www.wowhead.com/item=237654?ench=7534&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,194 Armor, +67,522 Sta, +897 Crit, +1,896 Mastery, +8,300 AgiInt }, enchant: { +930 Int, +895 Sta (sunset_spellthread_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Chain Boots",
+      "url": "https://www.wowhead.com/item=243308?ench=7424&bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,282 Armor, +50,642 Sta, +1,425 Haste, +670 Mastery, +6,225 AgiInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Glyph-Etched Vambraces",
+      "url": "https://www.wowhead.com/item=219342?ench=7391&gems=213482&bonus=8790:11109:8960:1808&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 5,695 Armor, +36,934 Sta, +778 Crit, +778 Haste, +4,540 AgiInt }, gems: { +147 Haste, +49 Mastery }, enchant: { +2,040 Leech (chant_of_armored_leech_3) }item effects: { equip: Writhing Armor Banding }"
+    },
+    "Hands": {
+      "name": "Order Bashers",
+      "url": "https://www.wowhead.com/item=246282?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 6,554 Armor, +50,642 Sta, +1,272 Crit, +823 Mastery, +6,225 AgiInt }"
+    },
+    "Finger1": {
+      "name": "Logic Gate: Omega",
+      "url": "https://www.wowhead.com/item=237570?ench=7340&gems=213482:213482&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,606 Haste, +8,088 Mastery }, gems: { +147 Haste, +49 Mastery, +147 Haste, +49 Mastery }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Finger2": {
+      "name": "Ring of the Panoply",
+      "url": "https://www.wowhead.com/item=246281?ench=7340&gems=213482:213455&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,324 Crit, +6,370 Haste }, gems: { +147 Haste, +49 Mastery, +147 Crit, +49 Haste }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Araz's Ritual Forge",
+      "url": "https://www.wowhead.com/item=242402?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238044&bonus=9893:12239&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Crit }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Voidglass Kris",
+      "url": "https://www.wowhead.com/item=237728?ench=7442&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 3,183 - 5,308, 1.8 }, stats: { +4,150 Int, +20,019 Int, +33,761 Sta, +467 Crit, +930 Mastery }, enchant: stormriders_fury_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Shards of the Void }"
+    },
+    "Off Hand": {
+      "name": "Vagabond's Torch",
+      "url": "https://www.wowhead.com/item=222566?bonus=10421:9633:8902:12053:12050:1485:11300:8960&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { +12,379 Int, +32,831 Sta, +691 Crit, +691 Haste }item effects: { equip: Ascendance }"
+    }
+  },
+  "Hunter_Beast_Mastery_Dark_Ranger": {
+    "Head": {
+      "name": "Midnight Herald's Cowl",
+      "url": "https://www.wowhead.com/item=237646?gems=213743&bonus=1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,738 Armor, +67,522 Sta, +963 Crit, +1,830 Haste, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Sin Stained Pendant",
+      "url": "https://www.wowhead.com/item=178827?gems=213467:213491&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,924 Haste, +2,770 Mastery }, gems: { +147 Vers, +49 Crit, +147 Mastery, +49 Crit }"
+    },
+    "Shoulders": {
+      "name": "Midnight Herald's Shadowguards",
+      "url": "https://www.wowhead.com/item=237644?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,010 Armor, +50,642 Sta, +1,421 Crit, +674 Mastery, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "Midnight Herald's Hauberk",
+      "url": "https://www.wowhead.com/item=237649?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 11,651 Armor, +67,522 Sta, +1,962 Crit, +830 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Durable Information Securing Container",
+      "url": "https://www.wowhead.com/item=245965?gems=213479&bonus=1489:12352:12239&ilvl=701",
+      "source": "Local",
+      "stats": "ilevel: 701, stats: { 5,569 Armor, +39,811 Sta, +5,071 StrAgiInt }, gems: { +147 Haste, +49 Crit }item effects: { equip: Durable Information Securing Container, equip: Durable Information Securing Container, use: , equip: Durable Information Securing Container }"
+    },
+    "Legs": {
+      "name": "Midnight Herald's Petticoat",
+      "url": "https://www.wowhead.com/item=237645?ench=7601&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,194 Armor, +67,522 Sta, +953 Crit, +1,840 Mastery, +8,300 AgiInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Chain Boots",
+      "url": "https://www.wowhead.com/item=243308?bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,282 Armor, +50,642 Sta, +1,425 Haste, +670 Mastery, +6,225 AgiInt }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Glyph-Etched Vambraces",
+      "url": "https://www.wowhead.com/item=219342?gems=213479&bonus=10421:9633:8902:12053:12050:1485:11303:8960:1808:8791&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 5,695 Armor, +36,934 Sta, +778 Crit, +778 Mastery, +4,540 AgiInt }, gems: { +147 Haste, +49 Crit }item effects: { equip: Dawnthread Lining }"
+    },
+    "Hands": {
+      "name": "Glyph-Etched Gauntlets",
+      "url": "https://www.wowhead.com/item=219341?bonus=10421:9633:8902:12053:12050:1485:11303:8960:8790&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 6,407 Armor, +49,246 Sta, +1,037 Crit, +1,037 Haste, +6,053 AgiInt }item effects: { equip: Dawnthread Lining }"
+    },
+    "Finger1": {
+      "name": "Band of the Shattered Soul",
+      "url": "https://www.wowhead.com/item=242405?ench=7334&gems=213479:213479&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,385 Crit, +8,309 Haste }, gems: { +147 Haste, +49 Crit, +147 Haste, +49 Crit }, enchant: { +315 Crit (radiant_critical_strike_3) }item effects: { equip: Band of the Shattered Soul }"
+    },
+    "Finger2": {
+      "name": "Logic Gate: Omega",
+      "url": "https://www.wowhead.com/item=237570?ench=7334&gems=213479:213455&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,606 Haste, +8,088 Mastery }, gems: { +147 Haste, +49 Crit, +147 Crit, +49 Haste }, enchant: { +315 Crit (radiant_critical_strike_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Ara-Kara Sacbrood",
+      "url": "https://www.wowhead.com/item=219314?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Haste }item effects: { equip: Ara-Kara Sacbrood }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?gems=238044&bonus=12401:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Crit }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Piercing Strandbow",
+      "url": "https://www.wowhead.com/item=237732?ench=7445&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 15,930 - 21,554, 3 }, stats: { +8,300 Agi, +67,522 Sta, +1,966 Crit, +827 Mastery }, enchant: stonebound_artistry_3, temporary_enchant: Algari Mana Oil"
+    }
+  },
+  "Hunter_Beast_Mastery_Pack_Leader": {
+    "Head": {
+      "name": "Midnight Herald's Cowl",
+      "url": "https://www.wowhead.com/item=237646?gems=213743&bonus=1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,738 Armor, +67,522 Sta, +963 Crit, +1,830 Haste, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Chrysalis of Sundered Souls",
+      "url": "https://www.wowhead.com/item=237568?gems=213479:213479&bonus=1533:12361:12239:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,883 Haste, +7,811 Vers }, gems: { +147 Haste, +49 Crit, +147 Haste, +49 Crit }"
+    },
+    "Shoulders": {
+      "name": "Midnight Herald's Shadowguards",
+      "url": "https://www.wowhead.com/item=237644?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,010 Armor, +50,642 Sta, +1,421 Crit, +674 Mastery, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "Midnight Herald's Hauberk",
+      "url": "https://www.wowhead.com/item=237649?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 11,651 Armor, +67,522 Sta, +1,962 Crit, +830 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Durable Information Securing Container",
+      "url": "https://www.wowhead.com/item=245965?gems=213479&bonus=1489:12352:12239&ilvl=701",
+      "source": "Local",
+      "stats": "ilevel: 701, stats: { 5,569 Armor, +39,811 Sta, +5,071 StrAgiInt }, gems: { +147 Haste, +49 Crit }item effects: { equip: Durable Information Securing Container, equip: Durable Information Securing Container, use: , equip: Durable Information Securing Container }"
+    },
+    "Legs": {
+      "name": "Midnight Herald's Petticoat",
+      "url": "https://www.wowhead.com/item=237645?ench=7601&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,194 Armor, +67,522 Sta, +953 Crit, +1,840 Mastery, +8,300 AgiInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Chain Boots",
+      "url": "https://www.wowhead.com/item=243308?ench=7424&bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,282 Armor, +50,642 Sta, +1,425 Haste, +670 Mastery, +6,225 AgiInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Glyph-Etched Vambraces",
+      "url": "https://www.wowhead.com/item=219342?ench=7385&gems=213479&bonus=10421:9633:8902:12053:12050:1485:11303:8960:1808:8790&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 5,695 Armor, +36,934 Sta, +778 Crit, +778 Haste, +4,540 AgiInt }, gems: { +147 Haste, +49 Crit }, enchant: { +1,090 Avoidance (chant_of_armored_avoidance_3) }item effects: { equip: Dawnthread Lining }"
+    },
+    "Hands": {
+      "name": "Glyph-Etched Gauntlets",
+      "url": "https://www.wowhead.com/item=219341?bonus=10421:9633:8902:12053:12050:1485:11303:8960:8790&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 6,407 Armor, +49,246 Sta, +1,037 Crit, +1,037 Haste, +6,053 AgiInt }item effects: { equip: Dawnthread Lining }"
+    },
+    "Finger1": {
+      "name": "Ring of the Panoply",
+      "url": "https://www.wowhead.com/item=246281?ench=7340&gems=213479:213455&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,324 Crit, +6,370 Haste }, gems: { +147 Haste, +49 Crit, +147 Crit, +49 Haste }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Finger2": {
+      "name": "Devout Zealot's Ring",
+      "url": "https://www.wowhead.com/item=221136?ench=7340&gems=213494:213470&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,647 Crit, +3,047 Haste }, gems: { +147 Mastery, +49 Haste, +147 Vers, +49 Haste }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Trinket1": {
+      "name": "Unyielding Netherprism",
+      "url": "https://www.wowhead.com/item=242396?bonus=1533:12361:12239&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723item effects: { equip: Unyielding Netherprism, use: Unyielding Netherprism }"
+    },
+    "Trinket2": {
+      "name": "Improvised Seaforium Pacemaker",
+      "url": "https://www.wowhead.com/item=232541?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgi }item effects: { equip: Improvised Seaforium Pacemaker, equip: Never Stop Blowing Up }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?ench=7415&gems=238045&bonus=12401:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Haste }, enchant: { +250 RunSpeed (chant_of_burrowing_rapidity_3) }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Yasahm the Riftbreaker",
+      "url": "https://www.wowhead.com/item=185783?ench=7448&bonus=10035:12361:12239&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 14,993 - 22,491, 3 }, stats: { +8,300 Agi, +67,522 Sta, +1,696 Haste, +1,097 Vers }, enchant: oathsworns_tenacity_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Preternatural Charge }"
+    }
+  },
+  "Hunter_Marksmanship": {
+    "Head": {
+      "name": "Midnight Herald's Cowl",
+      "url": "https://www.wowhead.com/item=237646?gems=213743&bonus=1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,738 Armor, +67,522 Sta, +963 Crit, +1,830 Haste, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Ornately Engraved Amplifier",
+      "url": "https://www.wowhead.com/item=185842?gems=213458:213491&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +5,539 Crit, +4,155 Haste }, gems: { +147 Crit, +49 Mastery, +147 Mastery, +49 Crit }"
+    },
+    "Shoulders": {
+      "name": "Midnight Herald's Shadowguards",
+      "url": "https://www.wowhead.com/item=237644?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,010 Armor, +50,642 Sta, +1,421 Crit, +674 Mastery, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "Midnight Herald's Hauberk",
+      "url": "https://www.wowhead.com/item=237649?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 11,651 Armor, +67,522 Sta, +1,962 Crit, +830 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Durable Information Securing Container",
+      "url": "https://www.wowhead.com/item=245965?gems=213467&bonus=1489:12352:12239&ilvl=701",
+      "source": "Local",
+      "stats": "ilevel: 701, stats: { 5,569 Armor, +39,811 Sta, +5,071 StrAgiInt }, gems: { +147 Vers, +49 Crit }item effects: { equip: Durable Information Securing Container, equip: Durable Information Securing Container, use: , equip: Durable Information Securing Container }"
+    },
+    "Legs": {
+      "name": "Midnight Herald's Petticoat",
+      "url": "https://www.wowhead.com/item=237645?ench=7601&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,194 Armor, +67,522 Sta, +953 Crit, +1,840 Mastery, +8,300 AgiInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Chain Boots",
+      "url": "https://www.wowhead.com/item=243308?bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,282 Armor, +50,642 Sta, +1,425 Haste, +670 Mastery, +6,225 AgiInt }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Glyph-Etched Vambraces",
+      "url": "https://www.wowhead.com/item=219342?gems=213467&bonus=10421:9633:8902:12053:12050:1485:11303:8960:1808:8791&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 5,695 Armor, +36,934 Sta, +778 Crit, +778 Mastery, +4,540 AgiInt }, gems: { +147 Vers, +49 Crit }item effects: { equip: Dawnthread Lining }"
+    },
+    "Hands": {
+      "name": "Glyph-Etched Gauntlets",
+      "url": "https://www.wowhead.com/item=219341?bonus=10421:9633:8902:12053:12050:1485:11303:8960:8791&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 6,407 Armor, +49,246 Sta, +1,037 Crit, +1,037 Mastery, +6,053 AgiInt }item effects: { equip: Dawnthread Lining }"
+    },
+    "Finger1": {
+      "name": "Logic Gate: Alpha",
+      "url": "https://www.wowhead.com/item=237567?ench=7334&gems=213467:213467&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +7,921 Crit, +1,773 Mastery }, gems: { +147 Vers, +49 Crit, +147 Vers, +49 Crit }, enchant: { +315 Crit (radiant_critical_strike_3) }"
+    },
+    "Finger2": {
+      "name": "Radiant Necromancer's Band",
+      "url": "https://www.wowhead.com/item=221200?ench=7334&gems=213467:213479&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,739 Vers, +5,955 Mastery }, gems: { +147 Vers, +49 Crit, +147 Haste, +49 Crit }, enchant: { +315 Crit (radiant_critical_strike_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Unyielding Netherprism",
+      "url": "https://www.wowhead.com/item=242396?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723item effects: { equip: Unyielding Netherprism, use: Unyielding Netherprism }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?gems=238044&bonus=12401:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Crit }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Yasahm the Riftbreaker",
+      "url": "https://www.wowhead.com/item=185783?ench=7439&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 14,993 - 22,491, 3 }, stats: { +8,300 Agi, +67,522 Sta, +1,696 Haste, +1,097 Vers }, enchant: councils_guile_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Preternatural Charge }"
+    }
+  },
+  "Hunter_Survival": {
+    "Head": {
+      "name": "Midnight Herald's Cowl",
+      "url": "https://www.wowhead.com/item=237646?gems=213743&bonus=1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,738 Armor, +67,522 Sta, +963 Crit, +1,830 Haste, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Sin Stained Pendant",
+      "url": "https://www.wowhead.com/item=178827?gems=213743:213455&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,924 Haste, +2,770 Mastery }, gems: { +181 StrAgiInt, +147 Crit, +49 Haste }"
+    },
+    "Shoulders": {
+      "name": "Midnight Herald's Shadowguards",
+      "url": "https://www.wowhead.com/item=237644?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,010 Armor, +50,642 Sta, +1,421 Crit, +674 Mastery, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "Midnight Herald's Hauberk",
+      "url": "https://www.wowhead.com/item=237649?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 11,651 Armor, +67,522 Sta, +1,962 Crit, +830 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Clasp of Furious Freedom",
+      "url": "https://www.wowhead.com/item=237554?gems=213497&bonus=1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 6,554 Armor, +50,642 Sta, +669 Haste, +1,426 Mastery, +6,225 AgiInt }, gems: { +147 Mastery, +49 Vers }"
+    },
+    "Legs": {
+      "name": "Midnight Herald's Petticoat",
+      "url": "https://www.wowhead.com/item=237645?ench=7601&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,194 Armor, +67,522 Sta, +953 Crit, +1,840 Mastery, +8,300 AgiInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Chain Boots",
+      "url": "https://www.wowhead.com/item=243308?bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,282 Armor, +50,642 Sta, +1,425 Haste, +670 Mastery, +6,225 AgiInt }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Glyph-Etched Vambraces",
+      "url": "https://www.wowhead.com/item=219342?gems=213497&bonus=10421:9633:8902:12053:12050:1485:11303:8960:1808&crafted-stats=32:49&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 5,695 Armor, +36,934 Sta, +778 Crit, +778 Mastery, +4,540 AgiInt }, gems: { +147 Mastery, +49 Vers }item effects: { equip: Dawnthread Lining }"
+    },
+    "Hands": {
+      "name": "Glyph-Etched Gauntlets",
+      "url": "https://www.wowhead.com/item=219341?bonus=10421:9633:8902:12053:12050:1485:11303:8960:8790&crafted-stats=32:49&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 6,407 Armor, +49,246 Sta, +1,037 Crit, +1,037 Haste, +6,053 AgiInt }item effects: { equip: Dawnthread Lining }"
+    },
+    "Finger1": {
+      "name": "Logic Gate: Omega",
+      "url": "https://www.wowhead.com/item=237570?ench=7340&gems=213497:213470&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,606 Haste, +8,088 Mastery }, gems: { +147 Mastery, +49 Vers, +147 Vers, +49 Haste }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Finger2": {
+      "name": "Signet of the False Accuser",
+      "url": "https://www.wowhead.com/item=178824?ench=7340&gems=213482:213455&bonus=8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +2,908 Haste, +6,786 Mastery }, gems: { +147 Haste, +49 Mastery, +147 Crit, +49 Haste }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Trinket1": {
+      "name": "Araz's Ritual Forge",
+      "url": "https://www.wowhead.com/item=242402?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+    },
+    "Trinket2": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?gems=238044&bonus=12401:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Crit }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Spellstrike Warplance",
+      "url": "https://www.wowhead.com/item=242481?ench=7439&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 15,742 - 29,238, 3.6 }, stats: { +8,300 Agi, +67,522 Sta, +1,217 Crit, +1,576 Haste }, enchant: councils_guile_3, temporary_enchant: Ironclaw Sharpened Weaponitem effects: { use: Warplance Strike }"
+    }
+  },
   "Mage_Arcane_Spellslinger": {
     "Head": {
       "name": "Augur's Ephemeral Wide-Brim",
@@ -951,10 +1699,10 @@
       "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,979 Crit, +813 Haste }, gems: { +181 StrAgiInt }"
     },
     "Neck": {
-      "name": "Bloodstained Memento",
-      "url": "https://www.wowhead.com/item=252009?gems=213458:213482&bonus=8781&ilvl=723",
+      "name": "Chrysalis of Sundered Souls",
+      "url": "https://www.wowhead.com/item=237568?gems=213494:213455&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +2,908 Crit, +6,786 Vers }, gems: { +147 Crit, +49 Mastery, +147 Haste, +49 Mastery }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,883 Haste, +7,811 Vers }, gems: { +147 Mastery, +49 Haste, +147 Crit, +49 Haste }"
     },
     "Shoulders": {
       "name": "Augur's Ephemeral Orbs of Power",
@@ -999,34 +1747,34 @@
       "stats": "ilevel: 723, stats: { 2,588 Armor, +6,225 Int, +50,642 Sta, +868 Vers, +1,227 Mastery }"
     },
     "Finger1": {
-      "name": "Radiant Necromancer's Band",
-      "url": "https://www.wowhead.com/item=221200?ench=7334&gems=213479:213479&bonus=8781&ilvl=723",
+      "name": "High Nerubian Signet",
+      "url": "https://www.wowhead.com/item=221141?ench=7352&gems=213485:213485&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,739 Vers, +5,955 Mastery }, gems: { +147 Haste, +49 Crit, +147 Haste, +49 Crit }, enchant: { +315 Crit (radiant_critical_strike_3) }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,509 Vers, +3,185 Mastery }, gems: { +147 Haste, +49 Vers, +147 Haste, +49 Vers }, enchant: { +315 Vers (radiant_versatility_3) }"
     },
     "Finger2": {
-      "name": "Signet of Collapsing Stars",
-      "url": "https://www.wowhead.com/item=185813?ench=7352&gems=213479:213479&bonus=8781&ilvl=723",
+      "name": "Band of the Shattered Soul",
+      "url": "https://www.wowhead.com/item=242405?ench=7352&gems=213485:213485&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +4,432 Haste, +5,262 Vers }, gems: { +147 Haste, +49 Crit, +147 Haste, +49 Crit }, enchant: { +315 Vers (radiant_versatility_3) }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,385 Crit, +8,309 Haste }, gems: { +147 Haste, +49 Vers, +147 Haste, +49 Vers }, enchant: { +315 Vers (radiant_versatility_3) }item effects: { equip: Band of the Shattered Soul }"
     },
     "Trinket1": {
-      "name": "Araz's Ritual Forge",
-      "url": "https://www.wowhead.com/item=242402?ilvl=723",
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
     },
     "Trinket2": {
-      "name": "Azhiccaran Parapodia",
-      "url": "https://www.wowhead.com/item=242497?ilvl=723",
+      "name": "Diamantine Voidcore",
+      "url": "https://www.wowhead.com/item=242392?ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Haste }item effects: { equip: Azhiccaran Parapodia }"
+      "stats": "ilevel: 723, stats: { +1,995 Mastery }item effects: { equip: Diamantine Voidcore }"
     },
     "Back": {
       "name": "Reshii Wraps",
-      "url": "https://www.wowhead.com/item=235499?bonus=12399:12257&ilvl=730",
+      "url": "https://www.wowhead.com/item=235499?gems=238042&bonus=12399&ilvl=730",
       "source": "Local",
-      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Crit }item effects: { equip: Ethereal Energy }"
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Vers }item effects: { equip: Ethereal Energy }"
     },
     "Main Hand": {
       "name": "Voidglass Sovereign's Blade",
@@ -1049,10 +1797,10 @@
       "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,979 Crit, +813 Haste }, gems: { +181 StrAgiInt }"
     },
     "Neck": {
-      "name": "Bloodstained Memento",
-      "url": "https://www.wowhead.com/item=252009?gems=213458:213482&bonus=8781&ilvl=723",
+      "name": "Chrysalis of Sundered Souls",
+      "url": "https://www.wowhead.com/item=237568?gems=213494:213455&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +2,908 Crit, +6,786 Vers }, gems: { +147 Crit, +49 Mastery, +147 Haste, +49 Mastery }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,883 Haste, +7,811 Vers }, gems: { +147 Mastery, +49 Haste, +147 Crit, +49 Haste }"
     },
     "Shoulders": {
       "name": "Augur's Ephemeral Orbs of Power",
@@ -1097,34 +1845,34 @@
       "stats": "ilevel: 723, stats: { 2,588 Armor, +6,225 Int, +50,642 Sta, +868 Vers, +1,227 Mastery }"
     },
     "Finger1": {
-      "name": "Radiant Necromancer's Band",
-      "url": "https://www.wowhead.com/item=221200?ench=7334&gems=213479:213479&bonus=8781&ilvl=723",
+      "name": "High Nerubian Signet",
+      "url": "https://www.wowhead.com/item=221141?ench=7352&gems=213485:213485&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,739 Vers, +5,955 Mastery }, gems: { +147 Haste, +49 Crit, +147 Haste, +49 Crit }, enchant: { +315 Crit (radiant_critical_strike_3) }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,509 Vers, +3,185 Mastery }, gems: { +147 Haste, +49 Vers, +147 Haste, +49 Vers }, enchant: { +315 Vers (radiant_versatility_3) }"
     },
     "Finger2": {
-      "name": "Signet of Collapsing Stars",
-      "url": "https://www.wowhead.com/item=185813?ench=7352&gems=213479:213479&bonus=8781&ilvl=723",
+      "name": "Band of the Shattered Soul",
+      "url": "https://www.wowhead.com/item=242405?ench=7352&gems=213485:213485&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +4,432 Haste, +5,262 Vers }, gems: { +147 Haste, +49 Crit, +147 Haste, +49 Crit }, enchant: { +315 Vers (radiant_versatility_3) }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,385 Crit, +8,309 Haste }, gems: { +147 Haste, +49 Vers, +147 Haste, +49 Vers }, enchant: { +315 Vers (radiant_versatility_3) }item effects: { equip: Band of the Shattered Soul }"
     },
     "Trinket1": {
-      "name": "Araz's Ritual Forge",
-      "url": "https://www.wowhead.com/item=242402?ilvl=723",
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
     },
     "Trinket2": {
-      "name": "Azhiccaran Parapodia",
-      "url": "https://www.wowhead.com/item=242497?ilvl=723",
+      "name": "Diamantine Voidcore",
+      "url": "https://www.wowhead.com/item=242392?ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Haste }item effects: { equip: Azhiccaran Parapodia }"
+      "stats": "ilevel: 723, stats: { +1,995 Mastery }item effects: { equip: Diamantine Voidcore }"
     },
     "Back": {
       "name": "Reshii Wraps",
-      "url": "https://www.wowhead.com/item=235499?bonus=12399:12257&ilvl=730",
+      "url": "https://www.wowhead.com/item=235499?gems=238042&bonus=12399&ilvl=730",
       "source": "Local",
-      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Crit }item effects: { equip: Ethereal Energy }"
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Vers }item effects: { equip: Ethereal Energy }"
     },
     "Main Hand": {
       "name": "Voidglass Sovereign's Blade",
@@ -1343,6 +2091,104 @@
       "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,979 Crit, +813 Haste }, gems: { +181 StrAgiInt }"
     },
     "Neck": {
+      "name": "Chrysalis of Sundered Souls",
+      "url": "https://www.wowhead.com/item=237568?gems=213494:213455&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,883 Haste, +7,811 Vers }, gems: { +147 Mastery, +49 Haste, +147 Crit, +49 Haste }"
+    },
+    "Shoulders": {
+      "name": "Augur's Ephemeral Orbs of Power",
+      "url": "https://www.wowhead.com/item=237716?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 3,163 Armor, +6,225 Int, +50,642 Sta, +601 Crit, +1,493 Haste }"
+    },
+    "Chest": {
+      "name": "Zealous Warden's Raiment",
+      "url": "https://www.wowhead.com/item=221126?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 4,601 Armor, +8,300 Int, +67,522 Sta, +1,097 Crit, +1,696 Vers }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Forgeweaver's Journal Holster",
+      "url": "https://www.wowhead.com/item=237538?gems=213485&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 2,588 Armor, +6,225 Int, +50,642 Sta, +1,460 Haste, +635 Vers }, gems: { +147 Haste, +49 Vers }"
+    },
+    "Legs": {
+      "name": "Augur's Ephemeral Trousers",
+      "url": "https://www.wowhead.com/item=237717?ench=7531&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 4,026 Armor, +8,300 Int, +67,522 Sta, +942 Haste, +1,850 Mastery }, enchant: { +930 Int (daybreak_spellthread_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Silken Striders",
+      "url": "https://www.wowhead.com/item=243305?ench=7418&bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 2,876 Armor, +6,225 Int, +50,642 Sta, +642 Haste, +1,453 Mastery }, enchant: { +250 RunSpeed (scouts_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Consecrated Cuffs",
+      "url": "https://www.wowhead.com/item=222815?ench=7397&gems=213470&bonus=11109:8960:8795&crafted-stats=36:40&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 2,249 Armor, +4,540 Int, +36,934 Sta, +778 Crit, +778 Vers }, gems: { +147 Vers, +49 Haste }, enchant: { +1,000 RunSpeed (chant_of_armored_speed_3) }item effects: { equip: Writhing Armor Banding }"
+    },
+    "Hands": {
+      "name": "Augur's Ephemeral Mitts",
+      "url": "https://www.wowhead.com/item=237719?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 2,588 Armor, +6,225 Int, +50,642 Sta, +1,456 Haste, +638 Vers }"
+    },
+    "Finger1": {
+      "name": "Signet of Collapsing Stars",
+      "url": "https://www.wowhead.com/item=185813?ench=7352&gems=213512:213470&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +4,432 Haste, +5,262 Vers }, gems: { +205 Sta, +49 Vers, +147 Vers, +49 Haste }, enchant: { +315 Vers (radiant_versatility_3) }"
+    },
+    "Finger2": {
+      "name": "Devout Zealot's Ring",
+      "url": "https://www.wowhead.com/item=221136?ench=7352&gems=213485:213485&bonus=4786:3215:12361:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,647 Crit, +3,047 Haste }, gems: { +147 Haste, +49 Vers, +147 Haste, +49 Vers }, enchant: { +315 Vers (radiant_versatility_3) }"
+    },
+    "Trinket1": {
+      "name": "Diamantine Voidcore",
+      "url": "https://www.wowhead.com/item=242392?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Mastery }item effects: { equip: Diamantine Voidcore }"
+    },
+    "Trinket2": {
+      "name": "Screams of a Forgotten Sky",
+      "url": "https://www.wowhead.com/item=242399?bonus=4800:4786:1533:12361&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Screams of a Forgotten Sky }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?gems=238045&bonus=9893:12239&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Haste }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Voidglass Sovereign's Blade",
+      "url": "https://www.wowhead.com/item=237735?ench=7448&bonus=4800:4786:1533:12361&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 4,599 - 7,666, 2.6 }, stats: { +4,150 Int, +20,019 Int, +33,761 Sta, +451 Crit, +946 Haste }, enchant: oathsworns_tenacity_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Shards of the Void }"
+    },
+    "Off Hand": {
+      "name": "Vagabond's Torch",
+      "url": "https://www.wowhead.com/item=222566?bonus=11300:8960:8795&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { +12,379 Int, +32,831 Sta, +691 Crit, +691 Vers }item effects: { equip: Ascendance }"
+    }
+  },
+  "Mage_Frost_Spellslinger": {
+    "Head": {
+      "name": "Augur's Ephemeral Wide-Brim",
+      "url": "https://www.wowhead.com/item=237718?gems=213743&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,979 Crit, +813 Haste }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
       "name": "Sin Stained Pendant",
       "url": "https://www.wowhead.com/item=178827?gems=213494:213455&ilvl=723",
       "source": "Local",
@@ -1433,102 +2279,96 @@
       "stats": "ilevel: 720, stats: { +12,379 Int, +32,831 Sta, +691 Mastery, +691 Vers }item effects: { equip: Ascendance }"
     }
   },
-  "Mage_Frost_Spellslinger": {
+  "Monk_Brewmaster": {
     "Head": {
-      "name": "Augur's Ephemeral Wide-Brim",
-      "url": "https://www.wowhead.com/item=237718?gems=213743&ilvl=723",
+      "name": "Half-Mask of Fallen Storms",
+      "url": "https://www.wowhead.com/item=237673?gems=213743&bonus=7981:12052:5877:12361:12053:1808&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,979 Crit, +813 Haste }, gems: { +181 StrAgiInt }"
+      "stats": "ilevel: 723, stats: { 5,926 Armor, +67,522 Sta, +905 Crit, +1,888 Vers, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
     },
     "Neck": {
-      "name": "Ornately Engraved Amplifier",
-      "url": "https://www.wowhead.com/item=185842?gems=213497:213461&ilvl=723",
+      "name": "Bloodstained Memento",
+      "url": "https://www.wowhead.com/item=252009?gems=213467:213497&bonus=657:12052:5877:10390:12361:12053:10376:8781&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +5,539 Crit, +4,155 Haste }, gems: { +147 Mastery, +49 Vers, +147 Crit, +49 Vers }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +2,908 Crit, +6,786 Vers }, gems: { +147 Vers, +49 Crit, +147 Mastery, +49 Vers }"
     },
     "Shoulders": {
-      "name": "Augur's Ephemeral Orbs of Power",
-      "url": "https://www.wowhead.com/item=237716?ilvl=723",
+      "name": "Glyphs of Fallen Storms",
+      "url": "https://www.wowhead.com/item=237671?bonus=7981:12052:5877:12361:12053&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 3,163 Armor, +6,225 Int, +50,642 Sta, +601 Crit, +1,493 Haste }"
+      "stats": "ilevel: 723, stats: { 5,432 Armor, +50,642 Sta, +1,370 Haste, +725 Mastery, +6,225 AgiInt }"
     },
     "Chest": {
-      "name": "Zealous Warden's Raiment",
-      "url": "https://www.wowhead.com/item=221126?ench=7364&ilvl=723",
+      "name": "Gi of Fallen Storms",
+      "url": "https://www.wowhead.com/item=237676?ench=7364&bonus=7981:12052:5877:12361:12053&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 4,601 Armor, +8,300 Int, +67,522 Sta, +1,097 Crit, +1,696 Vers }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+      "stats": "ilevel: 723, stats: { 7,901 Armor, +67,522 Sta, +818 Haste, +1,975 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
     },
     "Waist": {
-      "name": "Cord of the Dark Word",
-      "url": "https://www.wowhead.com/item=178822?gems=213485&bonus=4786:523:10032:12361&ilvl=723",
+      "name": "Adrenal Surge Clasp",
+      "url": "https://www.wowhead.com/item=219502?gems=213461&bonus=12050:9627:12053:11307&ilvl=720",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 2,588 Armor, +6,225 Int, +50,642 Sta, +1,317 Crit, +778 Vers }, gems: { +147 Haste, +49 Vers }"
+      "stats": "ilevel: 720, stats: { 4,345 Armor, +49,246 Sta, +1,185 Crit, +889 Vers, +6,053 AgiInt }, gems: { +147 Crit, +49 Vers }item effects: { equip: Adrenal Surge }"
     },
     "Legs": {
-      "name": "Augur's Ephemeral Trousers",
-      "url": "https://www.wowhead.com/item=237717?ench=7531&ilvl=723",
+      "name": "Anomalous Starlit Breeches",
+      "url": "https://www.wowhead.com/item=185801?ench=7601&bonus=657:12052:5877:10390:12361:12053&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 4,026 Armor, +8,300 Int, +67,522 Sta, +942 Haste, +1,850 Mastery }, enchant: { +930 Int (daybreak_spellthread_3) }"
+      "stats": "ilevel: 723, stats: { 6,913 Armor, +67,522 Sta, +1,696 Crit, +1,097 Vers, +8,300 AgiInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
     },
     "Feet": {
-      "name": "Interloper's Silken Striders",
-      "url": "https://www.wowhead.com/item=243305?ench=7418&bonus=13504&ilvl=723",
+      "name": "Interloper's Reinforced Sandals",
+      "url": "https://www.wowhead.com/item=243306?ench=7424&bonus=7981:12052:5877:12361:12053:13504&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 2,876 Armor, +6,225 Int, +50,642 Sta, +642 Haste, +1,453 Mastery }, enchant: { +250 RunSpeed (scouts_march_3) }item effects: { equip: Reshii Grace }"
+      "stats": "ilevel: 723, stats: { 4,938 Armor, +50,642 Sta, +1,434 Vers, +660 Mastery, +6,225 AgiInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
     },
     "Wrists": {
-      "name": "Consecrated Cuffs",
-      "url": "https://www.wowhead.com/item=222815?ench=7397&gems=213470&bonus=11109:8960:8795&crafted-stats=36:40&ilvl=720",
+      "name": "Rune-Branded Armbands",
+      "url": "https://www.wowhead.com/item=219334?ench=7391&gems=213479&bonus=12050:12053:9627:11307:8795:11109&ilvl=720",
       "source": "Local",
-      "stats": "ilevel: 720, stats: { 2,249 Armor, +4,540 Int, +36,934 Sta, +778 Crit, +778 Vers }, gems: { +147 Vers, +49 Haste }, enchant: { +1,000 RunSpeed (chant_of_armored_speed_3) }item effects: { equip: Writhing Armor Banding }"
+      "stats": "ilevel: 720, stats: { 3,862 Armor, +36,934 Sta, +778 Crit, +778 Vers, +4,540 AgiInt }, gems: { +147 Haste, +49 Crit }, enchant: { +2,040 Leech (chant_of_armored_leech_3) }item effects: { equip: Writhing Armor Banding }"
     },
     "Hands": {
-      "name": "Augur's Ephemeral Mitts",
-      "url": "https://www.wowhead.com/item=237719?ilvl=723",
+      "name": "Grasp of Fallen Storms",
+      "url": "https://www.wowhead.com/item=237674?bonus=7981:12052:5877:12361:12053&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 2,588 Armor, +6,225 Int, +50,642 Sta, +1,456 Haste, +638 Vers }"
+      "stats": "ilevel: 723, stats: { 4,444 Armor, +50,642 Sta, +1,470 Crit, +625 Mastery, +6,225 AgiInt }"
     },
     "Finger1": {
-      "name": "Signet of Collapsing Stars",
-      "url": "https://www.wowhead.com/item=185813?ench=7352&gems=213512:213470&ilvl=723",
+      "name": "Logic Gate: Alpha",
+      "url": "https://www.wowhead.com/item=237567?ench=7470&gems=213461:213461&bonus=7981:12052:5877:12361:12053:10376:8781&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +4,432 Haste, +5,262 Vers }, gems: { +205 Sta, +49 Vers, +147 Vers, +49 Haste }, enchant: { +315 Vers (radiant_versatility_3) }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +7,921 Crit, +1,773 Mastery }, gems: { +147 Crit, +49 Vers, +147 Crit, +49 Vers }, enchant: { +-115 Haste, +390 Crit (cursed_critical_strike_3) }"
     },
     "Finger2": {
       "name": "High Nerubian Signet",
-      "url": "https://www.wowhead.com/item=221141?ench=7352&gems=213470:213470&ilvl=723",
+      "url": "https://www.wowhead.com/item=221141?ench=7470&gems=213461:213461&bonus=657:12052:5877:10390:12361:12053:10376:8781&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,509 Vers, +3,185 Mastery }, gems: { +147 Vers, +49 Haste, +147 Vers, +49 Haste }, enchant: { +315 Vers (radiant_versatility_3) }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,509 Vers, +3,185 Mastery }, gems: { +147 Crit, +49 Vers, +147 Crit, +49 Vers }, enchant: { +-115 Haste, +390 Crit (cursed_critical_strike_3) }"
     },
     "Trinket1": {
-      "name": "Araz's Ritual Forge",
-      "url": "https://www.wowhead.com/item=242402?bonus=4800:4786:1533:12361&ilvl=723",
+      "name": "Tome of Light's Devotion",
+      "url": "https://www.wowhead.com/item=219309?bonus=657:12052:5877:10390:12361:12053&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+      "stats": "ilevel: 723item effects: { equip: Tome of Light's Devotion, use: Tome of Light's Devotion }"
     },
     "Trinket2": {
-      "name": "Azhiccaran Parapodia",
-      "url": "https://www.wowhead.com/item=242497?bonus=4786:3215:12361&ilvl=723",
+      "name": "Brand of Ceaseless Ire",
+      "url": "https://www.wowhead.com/item=242401?bonus=7981:12052:5877:12361:12053&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Haste }item effects: { equip: Azhiccaran Parapodia }"
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Brand of Ceaseless Ire }"
     },
     "Back": {
       "name": "Reshii Wraps",
-      "url": "https://www.wowhead.com/item=235499?gems=238045&bonus=9893:12239&ilvl=730",
+      "url": "https://www.wowhead.com/item=235499?ench=7409&gems=238042&bonus=9893:12401&ilvl=730",
       "source": "Local",
-      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Haste }item effects: { equip: Ethereal Energy }"
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Vers }, enchant: { +1,020 Leech (chant_of_leeching_fangs_3) }item effects: { equip: Ethereal Energy }"
     },
     "Main Hand": {
-      "name": "Voidglass Kris",
-      "url": "https://www.wowhead.com/item=237728?ench=7448&bonus=4800:4786:1533:12361&ilvl=723",
+      "name": "Harvester's Interdiction",
+      "url": "https://www.wowhead.com/item=221159?ench=7445&bonus=657:12052:5877:10390:12361:12053&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, weapon: { 3,183 - 5,308, 1.8 }, stats: { +4,150 Int, +20,019 Int, +33,761 Sta, +467 Crit, +930 Mastery }, enchant: oathsworns_tenacity_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Shards of the Void }"
-    },
-    "Off Hand": {
-      "name": "Vagabond's Torch",
-      "url": "https://www.wowhead.com/item=222566?bonus=11300:8960:8795&ilvl=720",
-      "source": "Local",
-      "stats": "ilevel: 720, stats: { +12,379 Int, +32,831 Sta, +691 Crit, +691 Vers }item effects: { equip: Ascendance }"
+      "stats": "ilevel: 723, weapon: { 19,116 - 25,864, 3.6 }, stats: { +8,300 Agi, +67,522 Sta, +1,636 Vers, +1,157 Mastery }, enchant: stonebound_artistry_3, temporary_enchant: Ironclaw Sharpened Weaponitem effects: { equip: Harvester's Interdiction }"
     }
   },
   "Monk_Windwalker": {
@@ -1911,6 +2751,190 @@
       "stats": "ilevel: 723, stats: { 51,352 Armor, +4,150 Str, +12,730 Int, +33,761 Sta, +481 Crit, +915 Haste }"
     }
   },
+  "Paladin_Retribution": {
+    "Head": {
+      "name": "Crown of Absolute Command",
+      "url": "https://www.wowhead.com/item=246283?gems=213482&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 13,144 Armor, +67,522 Sta, +1,516 Crit, +1,277 Haste, +8,300 StrInt }, gems: { +147 Haste, +49 Mastery }"
+    },
+    "Neck": {
+      "name": "Salhadaar's Folly",
+      "url": "https://www.wowhead.com/item=242406?gems=213743:213482&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,440 Crit, +8,254 Mastery }, gems: { +181 StrAgiInt, +147 Haste, +49 Mastery }"
+    },
+    "Shoulders": {
+      "name": "Chargers of the Lucent Battalion",
+      "url": "https://www.wowhead.com/item=237617?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 12,049 Armor, +50,642 Sta, +1,453 Haste, +642 Vers, +6,225 StrInt }"
+    },
+    "Chest": {
+      "name": "Cuirass of the Lucent Battalion",
+      "url": "https://www.wowhead.com/item=237622?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 17,526 Armor, +67,522 Sta, +957 Crit, +1,836 Haste, +8,300 StrInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Everforged Greatbelt",
+      "url": "https://www.wowhead.com/item=222431?gems=213458&bonus=10421:9633:8902:12053:12050:1485:1808:11303:8960:8793&crafted-stats=32:49&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 9,638 Armor, +49,246 Sta, +1,037 Mastery, +1,037 Haste, +6,053 StrInt }, gems: { +147 Crit, +49 Mastery }item effects: { equip: Dawnthread Lining }"
+    },
+    "Legs": {
+      "name": "Cuisses of the Lucent Battalion",
+      "url": "https://www.wowhead.com/item=237618?ench=7601&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 15,335 Armor, +67,522 Sta, +972 Crit, +1,821 Mastery, +8,300 StrInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Plated Sabatons",
+      "url": "https://www.wowhead.com/item=243307?ench=7418&bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,953 Armor, +50,642 Sta, +650 Crit, +1,444 Haste, +6,225 StrInt }, enchant: { +250 RunSpeed (scouts_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Everforged Vambraces",
+      "url": "https://www.wowhead.com/item=222435?ench=7385&gems=213743&bonus=10421:9633:8902:12053:12050:1485:1808:11303:8960&crafted-stats=32:49&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 8,567 Armor, +36,934 Sta, +778 Crit, +778 Mastery, +4,540 StrInt }, gems: { +181 StrAgiInt }, enchant: { +1,090 Avoidance (chant_of_armored_avoidance_3) }item effects: { equip: Dawnthread Lining }"
+    },
+    "Hands": {
+      "name": "Protectors of the Lucent Battalion",
+      "url": "https://www.wowhead.com/item=237620?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 9,858 Armor, +50,642 Sta, +1,420 Crit, +674 Mastery, +6,225 StrInt }"
+    },
+    "Finger1": {
+      "name": "Devout Zealot's Ring",
+      "url": "https://www.wowhead.com/item=221136?ench=7340&gems=213473:213491&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +6,647 Crit, +3,047 Haste }, gems: { +147 Vers, +49 Mastery, +147 Mastery, +49 Crit }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Finger2": {
+      "name": "Radiant Necromancer's Band",
+      "url": "https://www.wowhead.com/item=221200?ench=7340&gems=213482:213482&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,739 Vers, +5,955 Mastery }, gems: { +147 Haste, +49 Mastery, +147 Haste, +49 Mastery }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Screams of a Forgotten Sky",
+      "url": "https://www.wowhead.com/item=242399?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Screams of a Forgotten Sky }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?gems=238045&bonus=12399:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Haste }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Supermassive Starcrusher",
+      "url": "https://www.wowhead.com/item=237725?ench=7439&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 19,678 - 25,302, 3.6 }, stats: { +8,300 Str, +67,522 Sta, +902 Crit, +1,891 Haste }, enchant: councils_guile_3, temporary_enchant: Algari Mana Oil"
+    }
+  },
+  "Paladin_Retribution_Herald": {
+    "Head": {
+      "name": "Crown of Absolute Command",
+      "url": "https://www.wowhead.com/item=246283?gems=213482&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 13,144 Armor, +67,522 Sta, +1,516 Crit, +1,277 Haste, +8,300 StrInt }, gems: { +147 Haste, +49 Mastery }"
+    },
+    "Neck": {
+      "name": "Salhadaar's Folly",
+      "url": "https://www.wowhead.com/item=242406?gems=213743:213482&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,440 Crit, +8,254 Mastery }, gems: { +181 StrAgiInt, +147 Haste, +49 Mastery }"
+    },
+    "Shoulders": {
+      "name": "Chargers of the Lucent Battalion",
+      "url": "https://www.wowhead.com/item=237617?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 12,049 Armor, +50,642 Sta, +1,453 Haste, +642 Vers, +6,225 StrInt }"
+    },
+    "Chest": {
+      "name": "Cuirass of the Lucent Battalion",
+      "url": "https://www.wowhead.com/item=237622?ench=7364&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 17,526 Armor, +67,522 Sta, +957 Crit, +1,836 Haste, +8,300 StrInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Everforged Greatbelt",
+      "url": "https://www.wowhead.com/item=222431?gems=213458&bonus=10421:9633:8902:12053:12050:1485:1808:11303:8960:8793&crafted-stats=32:49&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 9,638 Armor, +49,246 Sta, +1,037 Mastery, +1,037 Haste, +6,053 StrInt }, gems: { +147 Crit, +49 Mastery }item effects: { equip: Dawnthread Lining }"
+    },
+    "Legs": {
+      "name": "Cuisses of the Lucent Battalion",
+      "url": "https://www.wowhead.com/item=237618?ench=7601&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 15,335 Armor, +67,522 Sta, +972 Crit, +1,821 Mastery, +8,300 StrInt }, enchant: { +895 Sta, +930 StrAgi (stormbound_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Plated Sabatons",
+      "url": "https://www.wowhead.com/item=243307?ench=7418&bonus=13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,953 Armor, +50,642 Sta, +650 Crit, +1,444 Haste, +6,225 StrInt }, enchant: { +250 RunSpeed (scouts_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Everforged Vambraces",
+      "url": "https://www.wowhead.com/item=222435?ench=7385&gems=213743&bonus=10421:9633:8902:12053:12050:1485:1808:11303:8960&crafted-stats=32:49&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 8,567 Armor, +36,934 Sta, +778 Crit, +778 Mastery, +4,540 StrInt }, gems: { +181 StrAgiInt }, enchant: { +1,090 Avoidance (chant_of_armored_avoidance_3) }item effects: { equip: Dawnthread Lining }"
+    },
+    "Hands": {
+      "name": "Protectors of the Lucent Battalion",
+      "url": "https://www.wowhead.com/item=237620?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 9,858 Armor, +50,642 Sta, +1,420 Crit, +674 Mastery, +6,225 StrInt }"
+    },
+    "Finger1": {
+      "name": "Ring of the Panoply",
+      "url": "https://www.wowhead.com/item=246281?ench=7340&gems=213473:213491&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,324 Crit, +6,370 Haste }, gems: { +147 Vers, +49 Mastery, +147 Mastery, +49 Crit }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Finger2": {
+      "name": "Radiant Necromancer's Band",
+      "url": "https://www.wowhead.com/item=221200?ench=7340&gems=213482:213482&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,739 Vers, +5,955 Mastery }, gems: { +147 Haste, +49 Mastery, +147 Haste, +49 Mastery }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Screams of a Forgotten Sky",
+      "url": "https://www.wowhead.com/item=242399?ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Screams of a Forgotten Sky }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?gems=238045&bonus=12399:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Haste }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Supermassive Starcrusher",
+      "url": "https://www.wowhead.com/item=237725?ench=7439&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 19,678 - 25,302, 3.6 }, stats: { +8,300 Str, +67,522 Sta, +902 Crit, +1,891 Haste }, enchant: councils_guile_3, temporary_enchant: Algari Mana Oil"
+    }
+  },
   "Priest_Shadow_Archon": {
     "Head": {
       "name": "Dying Star's Veil",
@@ -2196,13 +3220,13 @@
       "name": "Vengeful Netherspike",
       "url": "https://www.wowhead.com/item=237740?ench=7463&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, weapon: { 6,367 - 10,614, 1.8 }, stats: { +4,150 Agi, +33,761 Sta, +951 Crit, +446 Mastery }, enchant: authority_of_radiant_power_3, temporary_enchant: Ironclaw Sharpened Weapon"
+      "stats": "ilevel: 723, weapon: { 6,367 - 10,614, 1.8 }, stats: { +4,150 Agi, +33,761 Sta, +951 Crit, +446 Mastery }, enchant: authority_of_radiant_power_3, temporary_enchant: Algari Mana Oil"
     },
     "Off Hand": {
       "name": "Everforged Stabber",
       "url": "https://www.wowhead.com/item=222438?ench=7463&bonus=10421:9633:8902:8791:11300:8960&ilvl=720",
       "source": "Local",
-      "stats": "ilevel: 720, weapon: { 6,192 - 10,322, 1.8 }, stats: { +4,035 Agi, +32,831 Sta, +691 Crit, +691 Mastery }, enchant: authority_of_radiant_power_3, temporary_enchant: Ironclaw Sharpened Weaponitem effects: { equip: Ascendance }"
+      "stats": "ilevel: 720, weapon: { 6,192 - 10,322, 1.8 }, stats: { +4,035 Agi, +32,831 Sta, +691 Crit, +691 Mastery }, enchant: authority_of_radiant_power_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Ascendance }"
     }
   },
   "Rogue_Assassination_Fatebound": {
@@ -2294,13 +3318,13 @@
       "name": "Vengeful Netherspike",
       "url": "https://www.wowhead.com/item=237740?ench=7463&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, weapon: { 6,367 - 10,614, 1.8 }, stats: { +4,150 Agi, +33,761 Sta, +951 Crit, +446 Mastery }, enchant: authority_of_radiant_power_3, temporary_enchant: Ironclaw Sharpened Weapon"
+      "stats": "ilevel: 723, weapon: { 6,367 - 10,614, 1.8 }, stats: { +4,150 Agi, +33,761 Sta, +951 Crit, +446 Mastery }, enchant: authority_of_radiant_power_3, temporary_enchant: Algari Mana Oil"
     },
     "Off Hand": {
       "name": "Everforged Stabber",
       "url": "https://www.wowhead.com/item=222438?ench=7463&bonus=10421:9633:8902:8791:11300:8960&ilvl=720",
       "source": "Local",
-      "stats": "ilevel: 720, weapon: { 6,192 - 10,322, 1.8 }, stats: { +4,035 Agi, +32,831 Sta, +691 Crit, +691 Mastery }, enchant: authority_of_radiant_power_3, temporary_enchant: Ironclaw Sharpened Weaponitem effects: { equip: Ascendance }"
+      "stats": "ilevel: 720, weapon: { 6,192 - 10,322, 1.8 }, stats: { +4,035 Agi, +32,831 Sta, +691 Crit, +691 Mastery }, enchant: authority_of_radiant_power_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Ascendance }"
     }
   },
   "Rogue_Outlaw": {
@@ -2497,6 +3521,104 @@
       "url": "https://www.wowhead.com/item=237729?ench=7448&bonus=1533:12361:12239&ilvl=723",
       "source": "Local",
       "stats": "ilevel: 723, weapon: { 6,367 - 10,614, 1.8 }, stats: { +4,150 Agi, +33,761 Sta, +464 Vers, +933 Mastery }, enchant: oathsworns_tenacity_3, temporary_enchant: Ironclaw Sharpened Weapon"
+    }
+  },
+  "Shaman_Elemental_Farseer": {
+    "Head": {
+      "name": "Nathrian Usurper's Mask",
+      "url": "https://www.wowhead.com/item=178816?gems=213743&bonus=10032:12361:12239:1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,738 Armor, +67,522 Sta, +977 Haste, +1,815 Vers, +8,300 AgiInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Momma's Mega Medallion",
+      "url": "https://www.wowhead.com/item=251880?gems=213473:213494&bonus=1572:12361:12239:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,462 Vers, +6,232 Mastery }, gems: { +147 Vers, +49 Mastery, +147 Mastery, +49 Haste }"
+    },
+    "Shoulders": {
+      "name": "Fangs of Channeled Fury",
+      "url": "https://www.wowhead.com/item=237635?bonus=12361:10356:12233:6652:12675:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 8,010 Armor, +50,642 Sta, +644 Haste, +1,451 Mastery, +6,225 AgiInt }"
+    },
+    "Chest": {
+      "name": "Furs of Channeled Fury",
+      "url": "https://www.wowhead.com/item=237640?ench=7364&bonus=12361:10356:12229:6652:12676:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 11,651 Armor, +67,522 Sta, +1,931 Crit, +862 Mastery, +8,300 AgiInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Clasp of Furious Freedom",
+      "url": "https://www.wowhead.com/item=237554?gems=213458&bonus=1533:12361:12239:1808&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 6,554 Armor, +50,642 Sta, +669 Haste, +1,426 Mastery, +6,225 AgiInt }, gems: { +147 Crit, +49 Mastery }"
+    },
+    "Legs": {
+      "name": "Tassets of Channeled Fury",
+      "url": "https://www.wowhead.com/item=237636?ench=7534&bonus=12361:10356:12232:6652:12676:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,194 Armor, +67,522 Sta, +1,823 Haste, +969 Mastery, +8,300 AgiInt }, enchant: { +930 Int, +895 Sta (sunset_spellthread_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Chain Boots",
+      "url": "https://www.wowhead.com/item=243308?ench=7424&bonus=1533:12361:12239:13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 7,282 Armor, +50,642 Sta, +1,425 Haste, +670 Mastery, +6,225 AgiInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Glyph-Etched Vambraces",
+      "url": "https://www.wowhead.com/item=219342?ench=7385&gems=213482&bonus=10421:9633:8902:12053:12050:1485:1808:11109:8960:8794&crafted-stats=49:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 5,695 Armor, +36,934 Sta, +778 Mastery, +778 Vers, +4,540 AgiInt }, gems: { +147 Haste, +49 Mastery }, enchant: { +1,090 Avoidance (chant_of_armored_avoidance_3) }item effects: { equip: Writhing Armor Banding }"
+    },
+    "Hands": {
+      "name": "Claws of Channeled Fury",
+      "url": "https://www.wowhead.com/item=237638?bonus=12361:10356:12230:6652:12675:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 6,554 Armor, +50,642 Sta, +659 Crit, +1,435 Haste, +6,225 AgiInt }"
+    },
+    "Finger1": {
+      "name": "Signet of Collapsing Stars",
+      "url": "https://www.wowhead.com/item=185813?ench=7352&gems=213458:213458&bonus=10035:12361:12239:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +4,432 Haste, +5,262 Vers }, gems: { +147 Crit, +49 Mastery, +147 Crit, +49 Mastery }, enchant: { +315 Vers (radiant_versatility_3) }"
+    },
+    "Finger2": {
+      "name": "Seal of the Panoply",
+      "url": "https://www.wowhead.com/item=185840?ench=7352&gems=213458:213458&bonus=10035:12361:12239:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,324 Vers, +6,370 Mastery }, gems: { +147 Crit, +49 Mastery, +147 Crit, +49 Mastery }, enchant: { +315 Vers (radiant_versatility_3) }"
+    },
+    "Trinket1": {
+      "name": "Araz's Ritual Forge",
+      "url": "https://www.wowhead.com/item=242402?bonus=6652:10356:12361:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+    },
+    "Trinket2": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?bonus=1533:12361:12239&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238046&bonus=9893:12239&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Mastery }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Voidglass Kris",
+      "url": "https://www.wowhead.com/item=237728?ench=7448&bonus=6652:10356:12361:1533:10255&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 3,183 - 5,308, 1.8 }, stats: { +4,150 Int, +20,019 Int, +33,761 Sta, +467 Crit, +930 Mastery }, enchant: oathsworns_tenacity_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Shards of the Void }"
+    },
+    "Off Hand": {
+      "name": "Vagabond's Torch",
+      "url": "https://www.wowhead.com/item=222566?bonus=10421:9633:8902:12053:12050:1485:11300:8960:8794&crafted-stats=49:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { +12,379 Int, +32,831 Sta, +691 Mastery, +691 Vers }item effects: { equip: Ascendance }"
     }
   },
   "Shaman_Enhancement": {
@@ -2795,10 +3917,10 @@
   },
   "Warlock_Affliction_Hellcaller": {
     "Head": {
-      "name": "Cowl of Branching Fate",
-      "url": "https://www.wowhead.com/item=185795?gems=213743&bonus=10035:12361:12239:1808&ilvl=723",
+      "name": "Elysian Flame Crown",
+      "url": "https://www.wowhead.com/item=221131?gems=213743&bonus=3215:12361:12239:1808&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,696 Crit, +1,097 Vers }, gems: { +181 StrAgiInt }"
+      "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,037 Vers, +1,755 Mastery }, gems: { +181 StrAgiInt }"
     },
     "Neck": {
       "name": "Salhadaar's Folly",
@@ -2867,10 +3989,10 @@
       "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
     },
     "Trinket2": {
-      "name": "Azhiccaran Parapodia",
-      "url": "https://www.wowhead.com/item=242497?bonus=3215:12361:12239&ilvl=723",
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?bonus=1533:12361:12239&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Haste }item effects: { equip: Azhiccaran Parapodia }"
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
     },
     "Back": {
       "name": "Reshii Wraps",
@@ -2893,16 +4015,16 @@
   },
   "Warlock_Demonology_Diabolist": {
     "Head": {
-      "name": "Cowl of Branching Fate",
-      "url": "https://www.wowhead.com/item=185795?gems=213743&bonus=10035:12361:12239:1808&ilvl=723",
+      "name": "Elysian Flame Crown",
+      "url": "https://www.wowhead.com/item=221131?gems=213743&bonus=3215:12361:12239:1808&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,696 Crit, +1,097 Vers }, gems: { +181 StrAgiInt }"
+      "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,037 Vers, +1,755 Mastery }, gems: { +181 StrAgiInt }"
     },
     "Neck": {
       "name": "Chrysalis of Sundered Souls",
-      "url": "https://www.wowhead.com/item=237568?gems=213497:213479&bonus=1533:12361:12239:8781&ilvl=723",
+      "url": "https://www.wowhead.com/item=237568?gems=213491:213461&bonus=1533:12361:12239:8781&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,883 Haste, +7,811 Vers }, gems: { +147 Mastery, +49 Vers, +147 Haste, +49 Crit }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,883 Haste, +7,811 Vers }, gems: { +147 Mastery, +49 Crit, +147 Crit, +49 Vers }"
     },
     "Shoulders": {
       "name": "Inquisitor's Gaze of Madness",
@@ -2918,9 +4040,9 @@
     },
     "Waist": {
       "name": "Durable Information Securing Container",
-      "url": "https://www.wowhead.com/item=242664?gems=213455&bonus=1489:12352:12239&ilvl=701",
+      "url": "https://www.wowhead.com/item=242664?gems=213461&bonus=1489:12352:12239&ilvl=701",
       "source": "Local",
-      "stats": "ilevel: 701, stats: { 2,199 Armor, +39,811 Sta, +5,071 StrAgiInt }, gems: { +147 Crit, +49 Haste }item effects: { equip: Durable Information Securing Container, equip: Durable Information Securing Container, use: , equip: Durable Information Securing Container }"
+      "stats": "ilevel: 701, stats: { 2,199 Armor, +39,811 Sta, +5,071 StrAgiInt }, gems: { +147 Crit, +49 Vers }item effects: { equip: Durable Information Securing Container, equip: Durable Information Securing Container, use: , equip: Durable Information Securing Container }"
     },
     "Legs": {
       "name": "Inquisitor's Leggings of Madness",
@@ -2936,9 +4058,9 @@
     },
     "Wrists": {
       "name": "Consecrated Cuffs",
-      "url": "https://www.wowhead.com/item=222815?ench=7397&gems=213467&bonus=10421:9633:8902:12053:12050:1485:1808:11109:8960:8791&crafted-stats=36:49&ilvl=720",
+      "url": "https://www.wowhead.com/item=222815?ench=7397&gems=213461&bonus=10421:9633:8902:12053:12050:1485:1808:11109:8960:8791&crafted-stats=36:49&ilvl=720",
       "source": "Local",
-      "stats": "ilevel: 720, stats: { 2,249 Armor, +4,540 Int, +36,934 Sta, +778 Crit, +778 Mastery }, gems: { +147 Vers, +49 Crit }, enchant: { +1,000 RunSpeed (chant_of_armored_speed_3) }item effects: { equip: Writhing Armor Banding }"
+      "stats": "ilevel: 720, stats: { 2,249 Armor, +4,540 Int, +36,934 Sta, +778 Crit, +778 Mastery }, gems: { +147 Crit, +49 Vers }, enchant: { +1,000 RunSpeed (chant_of_armored_speed_3) }item effects: { equip: Writhing Armor Banding }"
     },
     "Hands": {
       "name": "Inquisitor's Clutches of Madness",
@@ -2948,15 +4070,15 @@
     },
     "Finger1": {
       "name": "Logic Gate: Alpha",
-      "url": "https://www.wowhead.com/item=237567?ench=7352&gems=213455:213455&bonus=1533:12361:12239:8781&ilvl=723",
+      "url": "https://www.wowhead.com/item=237567?ench=7352&gems=213461:213461&bonus=1533:12361:12239:8781&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +7,921 Crit, +1,773 Mastery }, gems: { +147 Crit, +49 Haste, +147 Crit, +49 Haste }, enchant: { +315 Vers (radiant_versatility_3) }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +7,921 Crit, +1,773 Mastery }, gems: { +147 Crit, +49 Vers, +147 Crit, +49 Vers }, enchant: { +315 Vers (radiant_versatility_3) }"
     },
     "Finger2": {
       "name": "Band of the Shattered Soul",
-      "url": "https://www.wowhead.com/item=242405?ench=7352&gems=213455:213455&bonus=1533:12361:12239:8781&ilvl=723",
+      "url": "https://www.wowhead.com/item=242405?ench=7352&gems=213467:213479&bonus=1533:12361:12239:8781&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,385 Crit, +8,309 Haste }, gems: { +147 Crit, +49 Haste, +147 Crit, +49 Haste }, enchant: { +315 Vers (radiant_versatility_3) }item effects: { equip: Band of the Shattered Soul }"
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,385 Crit, +8,309 Haste }, gems: { +147 Vers, +49 Crit, +147 Haste, +49 Crit }, enchant: { +315 Vers (radiant_versatility_3) }item effects: { equip: Band of the Shattered Soul }"
     },
     "Trinket1": {
       "name": "Azhiccaran Parapodia",
@@ -2965,16 +4087,16 @@
       "stats": "ilevel: 723, stats: { +1,995 Haste }item effects: { equip: Azhiccaran Parapodia }"
     },
     "Trinket2": {
-      "name": "Araz's Ritual Forge",
-      "url": "https://www.wowhead.com/item=242402?bonus=1533:12361:12239&ilvl=723",
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?bonus=1533:12361:12239&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Crit }item effects: { equip: Araz's Ritual Forge, use: Araz's Ritual Forge }"
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
     },
     "Back": {
       "name": "Reshii Wraps",
-      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238042&bonus=9893:12239&ilvl=730",
+      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238044&bonus=9893:12239&ilvl=730",
       "source": "Local",
-      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Vers }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Crit }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
     },
     "Main Hand": {
       "name": "Voidglass Kris",
@@ -2991,10 +4113,10 @@
   },
   "Warlock_Destruction_Diabolist": {
     "Head": {
-      "name": "Cowl of Branching Fate",
-      "url": "https://www.wowhead.com/item=185795?gems=213743&bonus=10035:12361:12239:1808&ilvl=723",
+      "name": "Elysian Flame Crown",
+      "url": "https://www.wowhead.com/item=221131?gems=213743&bonus=3215:12361:12239:1808&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,696 Crit, +1,097 Vers }, gems: { +181 StrAgiInt }"
+      "stats": "ilevel: 723, stats: { 3,451 Armor, +8,300 Int, +67,522 Sta, +1,037 Vers, +1,755 Mastery }, gems: { +181 StrAgiInt }"
     },
     "Neck": {
       "name": "Salhadaar's Folly",
@@ -3015,10 +4137,10 @@
       "stats": "ilevel: 723, stats: { 4,601 Armor, +8,300 Int, +67,522 Sta, +856 Haste, +1,937 Mastery }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
     },
     "Waist": {
-      "name": "Cord of the Dark Word",
-      "url": "https://www.wowhead.com/item=178822?gems=213473&bonus=10032:12361:12239:1808&ilvl=723",
+      "name": "Honorbound Retainer's Sash",
+      "url": "https://www.wowhead.com/item=221121?gems=213467&bonus=3215:12361:12239:1808&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { 2,588 Armor, +6,225 Int, +50,642 Sta, +1,317 Crit, +778 Vers }, gems: { +147 Vers, +49 Mastery }"
+      "stats": "ilevel: 723, stats: { 2,588 Armor, +6,225 Int, +50,642 Sta, +868 Crit, +1,227 Mastery }, gems: { +147 Vers, +49 Crit }"
     },
     "Legs": {
       "name": "Inquisitor's Leggings of Madness",
@@ -3063,10 +4185,10 @@
       "stats": "ilevel: 723, stats: { +1,995 Haste }item effects: { equip: Azhiccaran Parapodia }"
     },
     "Trinket2": {
-      "name": "Diamantine Voidcore",
-      "url": "https://www.wowhead.com/item=242392?bonus=1533:12361:12239&ilvl=723",
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?bonus=1533:12361:12239&ilvl=723",
       "source": "Local",
-      "stats": "ilevel: 723, stats: { +1,995 Mastery }item effects: { equip: Diamantine Voidcore }"
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
     },
     "Back": {
       "name": "Reshii Wraps",
@@ -3085,6 +4207,196 @@
       "url": "https://www.wowhead.com/item=222566?bonus=10421:9633:8902:12053:12050:1485:11300:8960:8795&crafted-stats=36:49&ilvl=720",
       "source": "Local",
       "stats": "ilevel: 720, stats: { +12,379 Int, +32,831 Sta, +691 Crit, +691 Vers }item effects: { equip: Ascendance }"
+    }
+  },
+  "Warrior_Arms": {
+    "Head": {
+      "name": "Living Weapon's Faceshield",
+      "url": "https://www.wowhead.com/item=237610?gems=213743&bonus=523:10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 13,144 Armor, +67,522 Sta, +1,940 Crit, +853 Haste, +8,300 StrInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Salhadaar's Folly",
+      "url": "https://www.wowhead.com/item=242406?gems=213470:213485&bonus=10356:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,440 Crit, +8,254 Mastery }, gems: { +147 Vers, +49 Haste, +147 Haste, +49 Vers }"
+    },
+    "Shoulders": {
+      "name": "Living Weapon's Ramparts",
+      "url": "https://www.wowhead.com/item=237608?bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 12,049 Armor, +50,642 Sta, +1,426 Haste, +668 Vers, +6,225 StrInt }"
+    },
+    "Chest": {
+      "name": "Living Weapon's Bulwark",
+      "url": "https://www.wowhead.com/item=237613?ench=7364&bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 17,526 Armor, +67,522 Sta, +833 Crit, +1,960 Mastery, +8,300 StrInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Everforged Greatbelt",
+      "url": "https://www.wowhead.com/item=222431?gems=213485&bonus=1485:11304:8960:12053:12050:1808&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 9,638 Armor, +49,246 Sta, +1,037 Crit, +1,037 Haste, +6,053 StrInt }, gems: { +147 Haste, +49 Vers }item effects: { equip: Duskthread Lining }"
+    },
+    "Legs": {
+      "name": "Living Weapon's Legguards",
+      "url": "https://www.wowhead.com/item=237609?ench=7595&bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 15,335 Armor, +67,522 Sta, +926 Haste, +1,866 Mastery, +8,300 StrInt }, enchant: { +980 BonusArmor, +930 StrAgi (defenders_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Plated Sabatons",
+      "url": "https://www.wowhead.com/item=243307?ench=7424&bonus=10356:13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,953 Armor, +50,642 Sta, +650 Crit, +1,444 Haste, +6,225 StrInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Everforged Vambraces",
+      "url": "https://www.wowhead.com/item=222435?gems=213485&bonus=1485:11304:8960:12053:12050:1808&crafted-stats=32:36&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 8,567 Armor, +36,934 Sta, +778 Crit, +778 Haste, +4,540 StrInt }, gems: { +147 Haste, +49 Vers }item effects: { equip: Duskthread Lining }"
+    },
+    "Hands": {
+      "name": "Living Weapon's Crushers",
+      "url": "https://www.wowhead.com/item=237611?bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 9,858 Armor, +50,642 Sta, +696 Crit, +1,399 Haste, +6,225 StrInt }"
+    },
+    "Finger1": {
+      "name": "Signet of Collapsing Stars",
+      "url": "https://www.wowhead.com/item=185813?ench=7334&gems=213485:213494&bonus=657:12052:5877:10390:12361:12053:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +4,432 Haste, +5,262 Vers }, gems: { +147 Haste, +49 Vers, +147 Mastery, +49 Haste }, enchant: { +315 Crit (radiant_critical_strike_3) }"
+    },
+    "Finger2": {
+      "name": "Band of the Shattered Soul",
+      "url": "https://www.wowhead.com/item=242405?ench=7334&gems=213482:213455&bonus=10356:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,385 Crit, +8,309 Haste }, gems: { +147 Haste, +49 Mastery, +147 Crit, +49 Haste }, enchant: { +315 Crit (radiant_critical_strike_3) }item effects: { equip: Band of the Shattered Soul }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Eradicating Arcanocore",
+      "url": "https://www.wowhead.com/item=242394?bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 Str }item effects: { equip: Eradicating Arcanocore }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238045&bonus=12401:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Haste }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Maw of the Void",
+      "url": "https://www.wowhead.com/item=243365?ench=7448&bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 19,678 - 25,302, 3.6 }, stats: { +67,522 Sta, +2,793 Crit, +8,300 StrAgi }, enchant: oathsworns_tenacity_3, temporary_enchant: Algari Mana Oilitem effects: { use: Maw of the Void }"
+    }
+  },
+  "Warrior_Fury": {
+    "Head": {
+      "name": "Living Weapon's Faceshield",
+      "url": "https://www.wowhead.com/item=237610?gems=213743&bonus=523:10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 13,144 Armor, +67,522 Sta, +1,940 Crit, +853 Haste, +8,300 StrInt }, gems: { +181 StrAgiInt }"
+    },
+    "Neck": {
+      "name": "Chrysalis of Sundered Souls",
+      "url": "https://www.wowhead.com/item=237568?gems=213470:213473&bonus=10356:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +1,883 Haste, +7,811 Vers }, gems: { +147 Vers, +49 Haste, +147 Vers, +49 Mastery }"
+    },
+    "Shoulders": {
+      "name": "Living Weapon's Ramparts",
+      "url": "https://www.wowhead.com/item=237608?bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 12,049 Armor, +50,642 Sta, +1,426 Haste, +668 Vers, +6,225 StrInt }"
+    },
+    "Chest": {
+      "name": "Living Weapon's Bulwark",
+      "url": "https://www.wowhead.com/item=237613?ench=7364&bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 17,526 Armor, +67,522 Sta, +833 Crit, +1,960 Mastery, +8,300 StrInt }, enchant: { +745 StrAgiInt (crystalline_radiance_3) }"
+    },
+    "Waist": {
+      "name": "Living Weapon's Chain",
+      "url": "https://www.wowhead.com/item=237607?gems=213497&bonus=523:10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 9,858 Armor, +50,642 Sta, +613 Haste, +1,481 Mastery, +6,225 StrInt }, gems: { +147 Mastery, +49 Vers }"
+    },
+    "Legs": {
+      "name": "Living Weapon's Legguards",
+      "url": "https://www.wowhead.com/item=237609?ench=7595&bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 15,335 Armor, +67,522 Sta, +926 Haste, +1,866 Mastery, +8,300 StrInt }, enchant: { +980 BonusArmor, +930 StrAgi (defenders_armor_kit_3) }"
+    },
+    "Feet": {
+      "name": "Interloper's Plated Sabatons",
+      "url": "https://www.wowhead.com/item=243307?ench=7424&bonus=10356:13504&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 10,953 Armor, +50,642 Sta, +650 Crit, +1,444 Haste, +6,225 StrInt }, enchant: { +895 Sta (defenders_march_3) }item effects: { equip: Reshii Grace }"
+    },
+    "Wrists": {
+      "name": "Everforged Vambraces",
+      "url": "https://www.wowhead.com/item=222435?gems=213497&bonus=9627:12053:12050:8960:1808:11109:8793&crafted-stats=36:40&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, stats: { 8,567 Armor, +36,934 Sta, +778 Mastery, +778 Haste, +4,540 StrInt }, gems: { +147 Mastery, +49 Vers }item effects: { equip: Writhing Armor Banding }"
+    },
+    "Hands": {
+      "name": "Living Weapon's Crushers",
+      "url": "https://www.wowhead.com/item=237611?bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { 9,858 Armor, +50,642 Sta, +696 Crit, +1,399 Haste, +6,225 StrInt }"
+    },
+    "Finger1": {
+      "name": "Radiant Necromancer's Band",
+      "url": "https://www.wowhead.com/item=221200?ench=7340&gems=213497:213482&bonus=657:12052:5877:10390:12361:12053:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +3,739 Vers, +5,955 Mastery }, gems: { +147 Mastery, +49 Vers, +147 Haste, +49 Mastery }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Finger2": {
+      "name": "Signet of the False Accuser",
+      "url": "https://www.wowhead.com/item=178824?ench=7340&gems=213485:213461&bonus=657:12052:5877:10390:12361:12053:8781&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +37,981 Sta, +2,908 Haste, +6,786 Mastery }, gems: { +147 Haste, +49 Vers, +147 Crit, +49 Vers }, enchant: { +315 Haste (radiant_haste_3) }"
+    },
+    "Trinket1": {
+      "name": "Astral Antenna",
+      "url": "https://www.wowhead.com/item=242395?bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 StrAgiInt }item effects: { equip: Astral Antenna }"
+    },
+    "Trinket2": {
+      "name": "Eradicating Arcanocore",
+      "url": "https://www.wowhead.com/item=242394?bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, stats: { +7,890 Str }item effects: { equip: Eradicating Arcanocore }"
+    },
+    "Back": {
+      "name": "Reshii Wraps",
+      "url": "https://www.wowhead.com/item=235499?ench=7403&gems=238045&bonus=12401:9893&ilvl=730",
+      "source": "Local",
+      "stats": "ilevel: 730, stats: { +40,541 Sta, +4,983 StrAgiInt, +1,836 Haste }, enchant: { +545 Avoidance (chant_of_winged_grace_3) }item effects: { equip: Ethereal Energy }"
+    },
+    "Main Hand": {
+      "name": "Circuit Breaker",
+      "url": "https://www.wowhead.com/item=234490?ench=7442&bonus=10356&ilvl=723",
+      "source": "Local",
+      "stats": "ilevel: 723, weapon: { 16,867 - 28,113, 3.6 }, stats: { +8,300 Str, +67,522 Sta, +1,755 Haste, +1,037 Mastery }, enchant: stormriders_fury_3, temporary_enchant: Algari Mana Oil"
+    },
+    "Off Hand": {
+      "name": "Everforged Greataxe",
+      "url": "https://www.wowhead.com/item=222443?ench=7448&bonus=9627:12053:12050:11300:8960:8793&crafted-stats=36:40&ilvl=720",
+      "source": "Local",
+      "stats": "ilevel: 720, weapon: { 14,215 - 29,525, 3.6 }, stats: { +65,661 Sta, +1,383 Mastery, +1,383 Haste, +8,071 StrAgi }, enchant: oathsworns_tenacity_3, temporary_enchant: Algari Mana Oilitem effects: { equip: Ascendance }"
     }
   },
   "Warrior_Protection_Colossus": {
