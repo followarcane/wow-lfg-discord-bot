@@ -112,6 +112,12 @@ public class DataFetcherService {
     }
 
     private boolean characterMatchesSettings(CharacterInfoResponse character, UserSettings settings) {
+        log.info("Evaluating player: {} from {} ({}) for Discord server: {}",
+                character.getName(),
+                character.getRealm(),
+                character.getRegion().toUpperCase(),
+                settings.getChannel().getServer().getServerName());
+        
         List<String> settingLanguages = Arrays.stream(settings.getLanguage().replaceAll("\\s+", "").toLowerCase().split(","))
                 .toList();
         List<String> characterLanguages = Arrays.stream(character.getLanguages().replaceAll("\\s+", "").toLowerCase().split(","))
@@ -136,8 +142,6 @@ public class DataFetcherService {
             .orElse("0/8N");  // Default değer
             
         playerInfo.put("progress", progress);
-
-        log.info("[PLAYER_INFO] Created player info map: {}", playerInfo);
 
         return filterService.shouldSendMessage(settings.getChannel().getServer().getServerId(), playerInfo);
     }
