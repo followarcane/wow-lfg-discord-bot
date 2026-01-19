@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.ExceptionEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -314,6 +315,25 @@ public class DiscordBotService extends ListenerAdapter {
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         discordService.deActiveGuild(event.getGuild().getId());
+    }
+
+    @Override
+    public void onException(ExceptionEvent event) {
+        Throwable throwable = event.getCause();
+
+        // UNKNOWN_MESSAGE_TYPE hatalarını yakala ve logla, ancak botun çökmesini engelle
+        if (throwable instanceof IllegalArgumentException &&
+                throwable.getMessage() != null &&
+                throwable.getMessage().contains("UNKNOWN_MESSAGE_TYPE")) {
+            log.warn("[JDA_WARNING] Unknown message type encountered (likely POLL_RESULT type 46). This is expected with newer Discord features. Error: {}",
+                    throwable.getMessage());
+            // Hatayı yakaladık, bot çalışmaya devam edecek
+            return;
+        }
+
+        // Diğer hatalar için varsayılan davranışı kullan
+        log.error("[JDA_ERROR] Unhandled exception in JDA: {}", throwable.getMessage(), throwable);
+        super.onException(event);
     }
 
     public DiscordServer addGuildToRepository(String serverId, String serverName, String ownerId, User user, String systemChannelId, String prefix, String icon, String banner, String description) {
