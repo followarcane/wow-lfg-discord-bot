@@ -31,6 +31,96 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DataFetcherService {
 
+    @Scheduled(fixedRate = 60000)
+    public void fetchData() {
+        log.info("[LFG_FETCH] Fetching data from WoW API...");
+
+        try {
+            String wowApi = "http://localhost:8080/api/v1/wdc/latest-lfg";
+            ResponseEntity<List<CharacterInfoResponse>> response = restTemplate.exchange(
+                    wowApi, HttpMethod.GET, null, new ParameterizedTypeReference<List<CharacterInfoResponse>>() {
+                    });
+            List<CharacterInfoResponse> data = response.getBody();
+
+            if (data != null && !data.isEmpty()) {
+                Set<CharacterInfoResponse> newData = new HashSet<>(data);
+                newData.removeAll(previousData);
+
+                if (!newData.isEmpty()) {
+                    String newCharacterNames = newData.stream()
+                            .map(c -> c.getName() + " (" + c.getRealm() + " " + c.getRegion() + ")")
+                            .collect(Collectors.joining(", "));
+                    log.info("[LFG_FETCH] New characters since last run: {} | count={}", newCharacterNames, newData.size());
+
+                    List<UserSettings> allSettings = discordService.getAllUserSettings().stream()
+                            .filter(settings -> settings.getChannel().getServer().isActive())
+                            .toList();
+
+                    Map<String, UserSettings> serverIdToSettings = new HashMap<>();
+                    for (UserSettings settings : allSettings) {
+                        String serverId = settings.getChannel().getServer().getServerId();
+                        if (!serverIdToSettings.containsKey(serverId)) {
+                            serverIdToSettings.put(serverId, settings);
+                        }
+                    }
+
+                    List<UserSettings> matchedLfgs = new ArrayList<>(serverIdToSettings.values());
+                    String serverNamesList = matchedLfgs.stream()
+                            .map(s -> s.getChannel().getServer().getServerName())
+                            .collect(Collectors.joining(", "));
+                    log.info("[LFG_FETCH] Servers to process (active, with LFG channel): {}", serverNamesList);
+
+                    int totalMessagesSent = 0;
+                    List<String> charactersWithZeroPosts = new ArrayList<>();
+
+                    for (CharacterInfoResponse character : newData) {
+                        String charKey = character.getName() + "|" + character.getRealm() + "|" + character.getRegion();
+                        List<String> postedServers = new ArrayList<>();
+                        List<String> skippedServers = new ArrayList<>();
+                        Map<MatchOutcome, List<String>> noMatchByReason = new EnumMap<>(MatchOutcome.class);
+                        for (MatchOutcome o : MatchOutcome.values()) {
+                            if (o != MatchOutcome.MATCH) noMatchByReason.put(o, new ArrayList<>());
+                        }
+
+                        for (UserSettings settings : matchedLfgs) {
+                            String serverName = settings.getChannel().getServer().getServerName();
+                            MatchOutcome outcome = characterMatchesSettings(character, settings, charKey);
+                            if (outcome == MatchOutcome.MATCH) {
+                                if (settings.getChannel().getLastSentCharacters().contains(character.getName())) {
+                                    skippedServers.add(serverName);
+                                    log.debug("[LFG_SKIPPED] character={} -> server=\"{}\" reason=already_in_lastSent list={}", charKey, serverName, settings.getChannel().getLastSentCharacters());
+                                } else {
+                                    postedServers.add(serverName);
+                                    String channelId = settings.getChannel().getChannelId();
+                                    log.info("[LFG_POSTED] character={} -> server=\"{}\" channel={}", charKey, serverName, channelId);
+                                    sendFilteredMessage(character, settings);
+                                }
+                            } else {
+                                noMatchByReason.get(outcome).add(serverName);
+                            }
+                        }
+
+                        totalMessagesSent += postedServers.size();
+                        if (postedServers.isEmpty()) {
+                            charactersWithZeroPosts.add(charKey);
+                        }
+
+                        logCharacterSummary(charKey, postedServers, skippedServers, noMatchByReason);
+                    }
+
+                    log.info("[LFG_FETCH] Run complete. New characters: {}. Total messages sent: {}. Characters with 0 posts: {}", newData.size(), totalMessagesSent, charactersWithZeroPosts.isEmpty() ? "none" : String.join(", ", charactersWithZeroPosts));
+                    previousData = new HashSet<>(data);
+                } else {
+                    log.info("[LFG_FETCH] No new data (total characters from API: {}). Characters are only processed when they first appear in the API or right after bot restart.", data.size());
+                }
+            } else {
+                log.warn("[LFG_FETCH] No data fetched or data is empty.");
+            }
+        } catch (Exception e) {
+            log.error("[LFG_FETCH] Error fetching data", e);
+        }
+    }
+
     private final DiscordBotService discordBotService;
     private final DiscordService discordService;
     private final RecruitmentFilterService filterService;
@@ -54,125 +144,107 @@ public class DataFetcherService {
         this.restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(apiProperties.getUsername(), apiProperties.getPassword()));
     }
 
-    @Scheduled(fixedRate = 60000)
-    public void fetchData() {
-        log.info("Fetching data from WoW API...");
-
-        try {
-            String wowApi = "http://localhost:8080/api/v1/wdc/latest-lfg";
-            ResponseEntity<List<CharacterInfoResponse>> response = restTemplate.exchange(
-                    wowApi, HttpMethod.GET, null, new ParameterizedTypeReference<List<CharacterInfoResponse>>() {
-                    });
-            List<CharacterInfoResponse> data = response.getBody();
-
-            if (data != null && !data.isEmpty()) {
-                Set<CharacterInfoResponse> newData = new HashSet<>(data);
-                newData.removeAll(previousData);
-
-                if (!newData.isEmpty()) {
-                    List<UserSettings> allSettings = discordService.getAllUserSettings().stream()
-                            .filter(settings -> settings.getChannel().getServer().isActive()) // Check if server is active.
-                            .toList();
-
-                    // Her sunucu için sadece bir UserSettings kullanmak için Map oluştur
-                    Map<String, UserSettings> serverIdToSettings = new HashMap<>();
-
-                    // Her sunucu için ilk UserSettings'i al
-                    for (UserSettings settings : allSettings) {
-                        String serverId = settings.getChannel().getServer().getServerId();
-                        if (!serverIdToSettings.containsKey(serverId)) {
-                            serverIdToSettings.put(serverId, settings);
-                        }
-                    }
-
-                    // Sadece her sunucu için tekil ayarları kullan
-                    List<UserSettings> matchedLfgs = new ArrayList<>(serverIdToSettings.values());
-                    
-                    for (UserSettings settings : matchedLfgs) {
-                        List<CharacterInfoResponse> filteredData = newData.stream()
-                                .filter(character -> characterMatchesSettings(character, settings))
-                                .toList();
-
-                        for (CharacterInfoResponse character : filteredData) {
-                            if (!settings.getChannel().getLastSentCharacters().contains(character.getName())) {
-                                sendFilteredMessage(character, settings);
-                            }
-                        }
-                    }
-                    previousData = new HashSet<>(data); // Update the previous data
-                } else {
-                    log.info("No new data found. Skipping message send.");
-                }
-            } else {
-                log.warn("No data fetched or data is empty.");
+    /**
+     * Per-character summary: which character was posted where, where not, and why.
+     */
+    private void logCharacterSummary(String charKey, List<String> postedServers, List<String> skippedServers, Map<MatchOutcome, List<String>> noMatchByReason) {
+        int totalNoMatch = noMatchByReason.values().stream().mapToInt(List::size).sum();
+        log.info("[LFG_SUMMARY] ---------- Character: {} ----------", charKey);
+        log.info("[LFG_SUMMARY]   POSTED (message sent): {} servers {}", postedServers.size(), postedServers.isEmpty() ? "" : "-> " + postedServers);
+        log.info("[LFG_SUMMARY]   SKIPPED (already sent recently): {} servers {}", skippedServers.size(), skippedServers.isEmpty() ? "" : "-> " + skippedServers);
+        log.info("[LFG_SUMMARY]   NOT POSTED (no match): {} servers", totalNoMatch);
+        noMatchByReason.forEach((reason, servers) -> {
+            if (!servers.isEmpty()) {
+                log.info("[LFG_SUMMARY]     - {}: {}", reason, servers);
             }
-        } catch (Exception e) {
-            log.error("Error fetching data", e);
-        }
+        });
     }
 
-    private boolean characterMatchesSettings(CharacterInfoResponse character, UserSettings settings) {
-        log.info("Evaluating player: {} from {} ({}) for Discord server: {}",
-                character.getName(),
-                character.getRealm(),
-                character.getRegion().toUpperCase(),
-                settings.getChannel().getServer().getServerName());
-        
-        List<String> settingLanguages = Arrays.stream(settings.getLanguage().replaceAll("\\s+", "").toLowerCase().split(","))
-                .toList();
-        List<String> characterLanguages = Arrays.stream(character.getLanguages().replaceAll("\\s+", "").toLowerCase().split(","))
+    /**
+     * Returns match outcome; if rejected, which step (language/realm/region/filter). No per-server log here, aggregated in summary.
+     */
+    private MatchOutcome characterMatchesSettings(CharacterInfoResponse character, UserSettings settings, String charKey) {
+        String settingsLanguageRaw = settings.getLanguage() != null ? settings.getLanguage() : "";
+        List<String> settingLanguages = Arrays.stream(settingsLanguageRaw.replaceAll("\\s+", "").toLowerCase().split(","))
+                .filter(s -> !s.isEmpty())
                 .toList();
 
-        boolean languageMatch = settingLanguages.stream().anyMatch(characterLanguages::contains);
-        boolean realmMatch = character.getRealm().equalsIgnoreCase(settings.getRealm()) || settings.getRealm().equalsIgnoreCase("All Realms");
-        boolean regionMatch = character.getRegion().equalsIgnoreCase(settings.getRegion());
+        String charLanguagesRaw = character.getLanguages() != null ? character.getLanguages().trim() : "";
+        List<String> characterLanguages = charLanguagesRaw.isEmpty()
+                ? List.of()
+                : Arrays.stream(charLanguagesRaw.replaceAll("\\s+", "").toLowerCase().split(","))
+                .filter(s -> !s.isEmpty())
+                .toList();
 
-        if (!languageMatch || !realmMatch || !regionMatch) {
-            return false;
-        }
+        boolean languageMatch = !characterLanguages.isEmpty()
+                && settingLanguages.stream().anyMatch(characterLanguages::contains);
+        if (!languageMatch) return MatchOutcome.NO_LANGUAGE;
+
+        String charRealm = character.getRealm() != null ? character.getRealm().trim() : "";
+        String settingRealm = settings.getRealm() != null ? settings.getRealm().trim() : "";
+        boolean realmMatch = charRealm.equalsIgnoreCase(settingRealm) || "All Realms".equalsIgnoreCase(settingRealm);
+        if (!realmMatch) return MatchOutcome.NO_REALM;
+
+        String charRegion = character.getRegion() != null ? character.getRegion().trim() : "";
+        String settingRegion = settings.getRegion() != null ? settings.getRegion().trim() : "";
+        boolean regionMatch = charRegion.equalsIgnoreCase(settingRegion);
+        if (!regionMatch) return MatchOutcome.NO_REGION;
 
         Map<String, String> playerInfo = new HashMap<>();
+        playerInfo.put("name", character.getName());
+        playerInfo.put("realm", character.getRealm());
         playerInfo.put("class", character.getRaiderIOData().getClassType());
         playerInfo.put("role", character.getRaiderIOData().getActiveSpecRole());
         playerInfo.put("ilevel", character.getILevel() != null ? character.getILevel() : "0");
-        
         String progress = character.getRaidProgressions().stream()
-            .findFirst()
-            .map(RaidProgressionResponse::getSummary)
-            .orElse("0/8N");  // Default değer
-            
+                .findFirst()
+                .map(RaidProgressionResponse::getSummary)
+                .orElse("0/8N");
         playerInfo.put("progress", progress);
 
-        return filterService.shouldSendMessage(settings.getChannel().getServer().getServerId(), playerInfo);
+        boolean filterPass = filterService.shouldSendMessage(settings.getChannel().getServer().getServerId(), playerInfo);
+        if (!filterPass) return MatchOutcome.NO_FILTER;
+        return MatchOutcome.MATCH;
     }
 
     private void sendFilteredMessage(CharacterInfoResponse character, UserSettings settings) {
         try {
             EmbedBuilder embedBuilder = getEmbedBuilder(character, settings);
-            
+
             Map<String, String> playerInfo = new HashMap<>();
+            playerInfo.put("name", character.getName());
+            playerInfo.put("realm", character.getRealm() != null ? character.getRealm() : "");
             playerInfo.put("class", character.getRaiderIOData().getClassType());
             playerInfo.put("role", character.getRaiderIOData().getActiveSpecRole());
             playerInfo.put("ilevel", character.getILevel() != null ? character.getILevel() : "0");
-            
             String progress = character.getRaidProgressions().stream()
                 .findFirst()
-                .map(raid -> raid.getSummary())
-                .orElse("0/8N");  // Default değer
-                
+                    .map(raid -> raid.getSummary())
+                .orElse("0/8N");
             playerInfo.put("progress", progress);
 
             discordBotService.sendEmbedMessageToChannel(
-                settings.getChannel().getChannelId(), 
+                settings.getChannel().getChannelId(),
                 embedBuilder,
                 playerInfo
             );
 
             discordService.updateLastSentCharacters(settings.getChannel(), character.getName());
         } catch (Exception e) {
-            log.error("[FILTER_ERROR] Error sending filtered message for character {}: {}", 
+            log.error("[FILTER_ERROR] Error sending filtered message for character {}: {}",
                 character.getName(), e.getMessage(), e);
         }
+    }
+
+    /**
+     * LFG match result: which step rejected or matched.
+     */
+    private enum MatchOutcome {
+        MATCH,
+        NO_LANGUAGE,
+        NO_REALM,
+        NO_REGION,
+        NO_FILTER
     }
 
     private static @NotNull EmbedBuilder getEmbedBuilder(CharacterInfoResponse character, UserSettings settings) {

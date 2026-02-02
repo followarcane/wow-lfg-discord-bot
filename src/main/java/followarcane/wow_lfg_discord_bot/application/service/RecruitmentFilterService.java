@@ -35,12 +35,14 @@ public class RecruitmentFilterService {
             boolean progressMatch = checkProgressFilter(filter, playerInfo.get("progress"));
 
             boolean finalResult = classMatch && roleMatch && ilevelMatch && progressMatch;
-            
-            // Eğer filtre başarısız olduysa nedenini logla
+
+            // Eğer filtre başarısız olduysa nedenini logla (karakter bilgisi varsa ekle)
             if (!finalResult) {
-                log.info("[FILTER_FAILED] Server: {}, Failed filters: {}", 
-                    serverId,
-                    getFailedFilters(classMatch, roleMatch, ilevelMatch, progressMatch, filter, playerInfo));
+                String charContext = playerInfo.containsKey("name") && playerInfo.containsKey("realm")
+                        ? String.format(" [%s|%s]", playerInfo.get("name"), playerInfo.get("realm"))
+                        : "";
+                log.info("[FILTER_FAILED] Server: {}{}, Failed filters: {}",
+                        serverId, charContext, getFailedFilters(classMatch, roleMatch, ilevelMatch, progressMatch, filter, playerInfo));
             }
 
             return finalResult;
