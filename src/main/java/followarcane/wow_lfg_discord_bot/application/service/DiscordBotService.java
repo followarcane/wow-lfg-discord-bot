@@ -380,13 +380,14 @@ public class DiscordBotService extends ListenerAdapter {
                 return;
             }
 
+            String charLabel = (playerInfo.containsKey("name") && playerInfo.containsKey("realm"))
+                    ? playerInfo.get("name") + "|" + playerInfo.get("realm")
+                    : "unknown";
             channel.sendMessageEmbeds(embed.build()).queue(
-                success -> log.info("[DISCORD_SUCCESS] Message sent. ChannelID: {}, GuildID: {}", 
-                    channelId, 
-                    channel.getGuild().getId()),
-                error -> log.error("[DISCORD_ERROR] Failed to send message. ChannelID: {}, Error: {}", 
-                    channelId, 
-                    error.getMessage())
+                    success -> log.info("[DISCORD_SUCCESS] Character {} posted to ChannelID: {}, GuildID: {}",
+                            charLabel, channelId, channel.getGuild().getId()),
+                    error -> log.error("[DISCORD_ERROR] Character {} failed to send. ChannelID: {}, Error: {}",
+                            charLabel, channelId, error.getMessage())
             );
 
             Message message = new Message();
